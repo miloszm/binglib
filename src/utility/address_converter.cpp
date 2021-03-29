@@ -1,15 +1,7 @@
-#ifdef ADDRESS_CONVERTER_HPP
-#define ADDRESS_CONVERTER_HPP
-
 #include "address_converter.hpp"
 
 using namespace std;
 
-class AddressConverter {
-public:
-    static string base58_to_spk_hex(string base58Address){
-        return "";
-    }
-};
-
-#endif
+string AddressConverter::base58_to_spk_hex(string base58Address){
+    return "76a91461c95cddadf465cac9b0751edad16624d01572c088ac";
+}

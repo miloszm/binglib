@@ -1,18 +1,11 @@
 #define BOOST_TEST_MODULE bing_test
 #include <boost/test/included/unit_test.hpp>
 
-//#include "utility/address_converter.hpp"
-//#include <iostream>
+#include "utility/address_converter.hpp"
+#include <iostream>
 
 using namespace std;
 
-
-class AddressConverter {
-public:
-    static string base58_to_spk_hex(string base58Address){
-        return "";
-    }
-};
 
 
 BOOST_AUTO_TEST_CASE(address_conversion_test)
