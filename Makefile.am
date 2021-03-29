@@ -5,11 +5,12 @@ lib_LTLIBRARIES = src/libbinglib.la
 
 src_libbinglib_la_SOURCES = src/utility/address_converter.cpp
 
+src_libbinglib_la_LIBADD= @bitcoin_client_LIBS@
+
 
 include_binglibdir = ${includedir}/binglib
 include_binglib_HEADERS = \
     src/utility/address_converter.hpp
-
 
 
 

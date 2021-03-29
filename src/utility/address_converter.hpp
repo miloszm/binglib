@@ -5,7 +5,7 @@
 
 class AddressConverter {
 public:
-    static std::string base58_to_spk_hex(std::string base58Address);
+    static std::string base58_to_spkh_hex(std::string base58_address);
 };
 
 #endif
