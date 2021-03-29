@@ -1,5 +1,9 @@
 ACLOCAL_AMFLAGS = -I m4
 
+
+pkgconfig_DATA = libbinglib.pc
+
+
 lib_LTLIBRARIES = src/libbinglib.la
 
 
