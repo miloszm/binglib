@@ -14,7 +14,8 @@ src_libbinglib_la_LIBADD= @bitcoin_client_LIBS@
 
 include_binglibdir = ${includedir}/binglib
 include_binglib_HEADERS = \
-    src/utility/address_converter.hpp
+    src/utility/address_converter.hpp \
+    src/wallet/bing_wallet.hpp
 
 
 
