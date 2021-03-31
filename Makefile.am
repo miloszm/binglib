@@ -7,7 +7,7 @@ pkgconfig_DATA = libbinglib.pc
 lib_LTLIBRARIES = src/libbinglib.la
 
 
-src_libbinglib_la_SOURCES = src/utility/address_converter.cpp
+src_libbinglib_la_SOURCES = src/utility/address_converter.cpp src/wallet/bing_wallet.cpp
 
 src_libbinglib_la_LIBADD= @bitcoin_client_LIBS@
 
@@ -18,10 +18,15 @@ include_binglib_HEADERS = \
 
 
 
-check_PROGRAMS = test1
-test1_SOURCES = \
-    test/utility/address_converter.cpp
-test1_CPPFLAGS = -I$(top_srcdir)/src
-test1_LDADD= src/libbinglib.la
-TESTS = $(check_PROGRAMS)
+check_PROGRAMS = test_utility test_wallet
+test_utility_SOURCES = \
+    test/utility/address_converter_test.cpp
+test_utility_CPPFLAGS = -I$(top_srcdir)/src
+test_utility_LDADD= src/libbinglib.la
 
+test_wallet_SOURCES = \
+    test/wallet/bing_wallet_test.cpp
+test_wallet_CPPFLAGS = -I$(top_srcdir)/src
+test_wallet_LDADD= src/libbinglib.la
+
+TESTS = $(check_PROGRAMS)
