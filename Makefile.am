@@ -11,7 +11,8 @@ src_libbinglib_la_SOURCES = src/utility/address_converter.cpp \
                             src/wallet/bing_wallet.cpp \
                             src/electrumclient/json_socket_client.cpp \
                             src/electrumclient/electrum_client.cpp \
-                            src/electrumclient/electrum_api_client.cpp
+                            src/electrumclient/electrum_api_client.cpp \
+                            src/libbitcoinclient/libb_client.cpp
 
 
 src_libbinglib_la_LIBADD= @bitcoin_client_LIBS@ @openssl_libcrypto_LIBS@ @openssl_libssl_LIBS@
@@ -23,7 +24,8 @@ include_binglib_HEADERS = \
     src/wallet/bing_wallet.hpp \
     src/electrumclient/json_socket_client.hpp \
     src/electrumclient/electrum_client.hpp \
-    src/electrumclient/electrum_api_client.hpp
+    src/electrumclient/electrum_api_client.hpp \
+    src/libbitcoinclient/libb_client.hpp
 
 
 
