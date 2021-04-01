@@ -7,15 +7,23 @@ pkgconfig_DATA = libbinglib.pc
 lib_LTLIBRARIES = src/libbinglib.la
 
 
-src_libbinglib_la_SOURCES = src/utility/address_converter.cpp src/wallet/bing_wallet.cpp
+src_libbinglib_la_SOURCES = src/utility/address_converter.cpp \
+                            src/wallet/bing_wallet.cpp \
+                            src/electrumclient/json_socket_client.cpp \
+                            src/electrumclient/electrum_client.cpp \
+                            src/electrumclient/electrum_api_client.cpp
 
-src_libbinglib_la_LIBADD= @bitcoin_client_LIBS@
+
+src_libbinglib_la_LIBADD= @bitcoin_client_LIBS@ @openssl_libcrypto_LIBS@ @openssl_libssl_LIBS@
 
 
 include_binglibdir = ${includedir}/binglib
 include_binglib_HEADERS = \
     src/utility/address_converter.hpp \
-    src/wallet/bing_wallet.hpp
+    src/wallet/bing_wallet.hpp \
+    src/electrumclient/json_socket_client.hpp \
+    src/electrumclient/electrum_client.hpp \
+    src/electrumclient/electrum_api_client.hpp
 
 
 
