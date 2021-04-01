@@ -1,3 +1,4 @@
+#include "src/common/bing_common.hpp"
 #include "libb_client.hpp"
 
 void LibbClient::init(std::string url) {
