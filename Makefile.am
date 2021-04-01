@@ -22,6 +22,7 @@ src_libbinglib_la_LIBADD= @bitcoin_client_LIBS@ @openssl_libcrypto_LIBS@ @openss
 
 include_binglibdir = ${includedir}/binglib
 include_binglib_HEADERS = \
+    src/common/bing_common.hpp \
     src/utility/address_converter.hpp \
     src/wallet/bing_wallet.hpp \
     src/electrumclient/json_socket_client.hpp \
