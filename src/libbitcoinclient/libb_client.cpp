@@ -51,8 +51,13 @@ void LibbClient::fetch_utxo(const wallet::payment_address address,
 void LibbClient::send_tx(std::string tx_hex) {
   const auto on_error = [](const code &ec) {
     std::ostringstream oss;
-    oss << "Error Code: " << ec.message();
-    throw std::invalid_argument(oss.str());
+    if (ec.message() == "success"){
+        throw std::invalid_argument("Error");
+    }
+    else {
+        oss << "Error Code: " << ec.message();
+        throw std::invalid_argument(oss.str());
+    }
   };
 
   chain::transaction tx;
