@@ -50,18 +50,19 @@ void LibbClient::fetch_utxo(const wallet::payment_address address,
 
 void LibbClient::send_tx(std::string tx_hex) {
   const auto on_error = [](const code &ec) {
-    std::cout << "Error Code: " << ec.message() << std::endl;
+    std::ostringstream oss;
+    oss << "Error Code: " << ec.message();
+    throw std::invalid_argument(oss.str());
   };
 
   chain::transaction tx;
   data_chunk tx_chunk;
   if (!decode_base16(tx_chunk, tx_hex)) {
-    std::cout << "could not decode from hex\n";
-    return;
+    throw std::invalid_argument("could not decode transaction from hex");
   }
 
   if (!tx.from_data(tx_chunk)) {
-    std::cout << "could not decode transaction\n";
+    throw std::invalid_argument("could not decode transaction");
   } else {
     client.transaction_pool_broadcast(on_error, on_error, tx);
   }
