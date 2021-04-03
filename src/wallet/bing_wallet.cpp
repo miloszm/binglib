@@ -1,4 +1,4 @@
-#include "src/common/bing_common.hpp"
+#include <binglib/bing_common.hpp>
 #include "bing_wallet.hpp"
 
 using namespace std;

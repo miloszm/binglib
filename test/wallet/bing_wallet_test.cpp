@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE bing_test
 #include <boost/test/included/unit_test.hpp>
 
-#include "src/common/bing_common.hpp"
+#include <binglib/bing_common.hpp>
 #include "wallet/bing_wallet.hpp"
 #include <iostream>
 

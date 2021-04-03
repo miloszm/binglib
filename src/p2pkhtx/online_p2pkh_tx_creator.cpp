@@ -1,4 +1,4 @@
-#include "src/common/bing_common.hpp"
+#include <binglib/bing_common.hpp>
 #include <bitcoin/bitcoin.hpp>
 #include <binglib/libb_client.hpp>
 #include <binglib/funds_finder.hpp>

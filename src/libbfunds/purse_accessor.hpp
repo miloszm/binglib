@@ -1,7 +1,7 @@
 #ifndef PURSE_ACCESSOR_HPP
 #define PURSE_ACCESSOR_HPP
 
-#include "src/common/bing_common.hpp"
+#include <binglib/bing_common.hpp>
 #include <binglib/electrum_api_client.hpp>
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>

@@ -1,7 +1,7 @@
 #ifndef FUNDS_FINDER_HPP
 #define FUNDS_FINDER_HPP
 
-#include "src/common/bing_common.hpp"
+#include <binglib/bing_common.hpp>
 #include <bitcoin/bitcoin.hpp>
 
 class FundsFinder {
