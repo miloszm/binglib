@@ -46,7 +46,7 @@ string OnlineP2pkhTxCreator::construct_p2pkh_tx_from_address(
     auto available_funds = utxos_funds.second;
     if (utxos_funds.first.empty()){
         ostringstream oss;
-        oss << "Insufficient funds, required " << satoshis_needed << ", maximum at one address available " << available_funds;
+        oss << "Insufficient funds, required " << satoshis_needed << ", maximum available " << available_funds;
         throw std::invalid_argument(oss.str());
     }
     auto refund = available_funds - satoshis_needed;
