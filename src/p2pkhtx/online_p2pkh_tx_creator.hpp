@@ -1,6 +1,7 @@
 #ifndef ONLINE_P2PKH_TX_CREATOR_HPP
 #define ONLINE_P2PKH_TX_CREATOR_HPP
 
+#include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
 #include <string>
 
