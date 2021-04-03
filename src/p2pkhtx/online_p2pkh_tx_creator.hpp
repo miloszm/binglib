@@ -11,20 +11,20 @@ class OnlineP2pkhTxCreator {
 public:
     static string construct_p2pkh_tx_from_address(
             LibbClient &libb_client,
-            const std::string src_addr,
-            const std::string priv_key_wif,
+            const string src_addr,
+            const string priv_key_wif,
             const uint64_t amount_to_transfer,
             const uint64_t satoshis_fee,
-            const std::string target_addr
+            const string target_addr
     );
 
     static string construct_p2pkh_tx_from_address(
             LibbClient &libb_client,
-            const std::string src_addr,
+            const string src_addr,
             const bc::wallet::ec_private priv_key_ec,
             const uint64_t amount_to_transfer,
             const uint64_t satoshis_fee,
-            const std::string target_addr
+            const string target_addr
     );
 };
 
