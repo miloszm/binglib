@@ -16,6 +16,7 @@ public:
   void fetch_utxo(const wallet::payment_address address, uint64_t satoshis,
                   wallet::select_outputs::algorithm,
                   chain::points_value &points_value);
+  void send_tx(std::string tx_hex);
 
 private:
   client::connection_type connection;

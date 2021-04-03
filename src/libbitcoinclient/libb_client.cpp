@@ -1,5 +1,9 @@
-#include <binglib/bing_common.hpp>
 #include "libb_client.hpp"
+#include <binglib/bing_common.hpp>
+
+
+// TODO
+// eliminate all cout here and convert to exceptions
 
 void LibbClient::init(std::string url) {
   connection.server = config::endpoint(url);
@@ -26,9 +30,10 @@ size_t LibbClient::fetch_height() {
   return height;
 }
 
-void
-LibbClient::fetch_utxo(const wallet::payment_address address, uint64_t satoshis,
-                       wallet::select_outputs::algorithm algorithm, chain::points_value &points_value) {
+void LibbClient::fetch_utxo(const wallet::payment_address address,
+                            uint64_t satoshis,
+                            wallet::select_outputs::algorithm algorithm,
+                            chain::points_value &points_value) {
 
   const auto on_error = [](const code &ec) {
     std::cout << "Error Code: " << ec.message() << std::endl;
@@ -41,4 +46,23 @@ LibbClient::fetch_utxo(const wallet::payment_address address, uint64_t satoshis,
   client.blockchain_fetch_unspent_outputs(on_error, on_reply, address, satoshis,
                                           algorithm);
   client.wait();
+}
+
+void LibbClient::send_tx(std::string tx_hex) {
+  const auto on_error = [](const code &ec) {
+    std::cout << "Error Code: " << ec.message() << std::endl;
+  };
+
+  chain::transaction tx;
+  data_chunk tx_chunk;
+  if (!decode_base16(tx_chunk, tx_hex)) {
+    std::cout << "could not decode from hex\n";
+    return;
+  }
+
+  if (!tx.from_data(tx_chunk)) {
+    std::cout << "could not decode transaction\n";
+  } else {
+    client.transaction_pool_broadcast(on_error, on_error, tx);
+  }
 }
