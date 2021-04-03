@@ -14,7 +14,8 @@ src_libbinglib_la_SOURCES = src/utility/address_converter.cpp \
                             src/electrumclient/electrum_api_client.cpp \
                             src/libbitcoinclient/libb_client.cpp \
                             src/libbfunds/purse_accessor.cpp \
-                            src/libbfunds/funds_finder.cpp
+                            src/libbfunds/funds_finder.cpp \
+                            src/p2pkhtx/online_p2pkh_tx_creator.cpp
 
 
 src_libbinglib_la_LIBADD= @bitcoin_client_LIBS@ @openssl_libcrypto_LIBS@ @openssl_libssl_LIBS@
@@ -30,7 +31,8 @@ include_binglib_HEADERS = \
     src/electrumclient/electrum_api_client.hpp \
     src/libbitcoinclient/libb_client.hpp \
     src/libbfunds/purse_accessor.hpp \
-    src/libbfunds/funds_finder.hpp
+    src/libbfunds/funds_finder.hpp \
+    src/p2pkhtx/online_p2pkh_tx_creator.hpp
 
 
 
