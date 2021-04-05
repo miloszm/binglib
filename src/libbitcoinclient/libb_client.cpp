@@ -1,7 +1,6 @@
 #include "libb_client.hpp"
 #include <binglib/bing_common.hpp>
 
-
 // TODO
 // eliminate all cout here and convert to exceptions
 
@@ -51,12 +50,15 @@ void LibbClient::fetch_utxo(const wallet::payment_address address,
 void LibbClient::send_tx(std::string tx_hex) {
   const auto on_error = [](const code &ec) {
     std::ostringstream oss;
-    if (ec.message() == "success"){
-        throw std::invalid_argument("Error");
-    }
-    else {
-        oss << "Error Code: " << ec.message();
-        throw std::invalid_argument(oss.str());
+    oss << "Send failed with error code: " << ec.message();
+    throw std::invalid_argument(oss.str());
+  };
+
+  const auto on_reply = [](const code &ec) {
+    std::ostringstream oss;
+    if (ec != error::success) {
+      oss << "Send failed " << ec.message();
+      throw std::invalid_argument(oss.str());
     }
   };
 
@@ -69,6 +71,7 @@ void LibbClient::send_tx(std::string tx_hex) {
   if (!tx.from_data(tx_chunk)) {
     throw std::invalid_argument("could not decode transaction");
   } else {
-    client.transaction_pool_broadcast(on_error, on_error, tx);
+    client.transaction_pool_broadcast(on_error, on_reply, tx);
+    client.wait();
   }
 }
