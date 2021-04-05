@@ -39,7 +39,6 @@ bool JsonSocketClient::verify_certificate(
   char subject_name[256];
   X509 *cert = X509_STORE_CTX_get_current_cert(ctx.native_handle());
   X509_NAME_oneline(X509_get_subject_name(cert), subject_name, 256);
-  std::cout << "Verifying: " << subject_name << "\n";
 
   return preverified;
 }
@@ -51,9 +50,7 @@ void JsonSocketClient::connect(const tcp::resolver::results_type &endpoints) {
                                if (!error) {
                                  handshake();
                                } else {
-                                 std::cout
-                                     << "Connect failed: " << error.message()
-                                     << "\n";
+                                 throw std::runtime_error(error.message());
                                }
                              });
 }
@@ -62,13 +59,9 @@ void JsonSocketClient::handshake() {
   socket_.async_handshake(boost::asio::ssl::stream_base::client,
                           [this](const boost::system::error_code &error) {
                             if (!error) {
-                              std::cout << "unlocking prepare_connection"
-                                        << "\n";
                               prepare_connection.unlock();
                             } else {
-                              std::cout
-                                  << "Handshake failed: " << error.message()
-                                  << "\n";
+                              throw std::runtime_error(error.message());
                             }
                           });
 }

@@ -1,5 +1,5 @@
-#include "libb_client.hpp"
 #include <binglib/bing_common.hpp>
+#include "libb_client.hpp"
 
 // TODO
 // eliminate all cout here and convert to exceptions
