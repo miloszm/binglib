@@ -10,7 +10,7 @@ using namespace bc::wallet;
 using namespace bc::machine;
 
 
-string OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
+LockTxInfo OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
         LibbClient &libb_client,
         const string src_addr,
         const string priv_key_wif,
@@ -23,7 +23,7 @@ string OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
 }
 
 
-string OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
+LockTxInfo OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
         LibbClient &libb_client,
         const string src_addr,
         const ec_private priv_key_ec,
@@ -100,17 +100,19 @@ string OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
 
     string tx_to_unlock = encode_hash(tx.hash());
 
-    cout << "===== data that will be needed to unlock the funds: ====" << "\n";
-    cout << "1) lock time: " << lock_until << "\n";
-    cout << "2) private key of address: " << src_addr << "\n";
-    cout << "3) available amount: " << amount_to_transfer << "\n";
-    cout << "   from ^^ please subtract fee" << "\n";
-    cout << "4) funding transaction id: " << tx_to_unlock << "\n";
-    cout << "5) desired target address to which the unlocked funds will be transferred" << "\n";
-    cout << "YOU NEED TO PRESERVE THIS DATA TO AVOID LOSS OF FUNDS!" << "\n";
-    cout << "==========================" << "\n";
-    cout << "==========================" << "\n";
+    ostringstream infoss;
+    infoss << "==========================" << "\n";
+    infoss << "===== data that will be needed to unlock the funds: ====" << "\n";
+    infoss << "1) lock time: " << lock_until << "\n";
+    infoss << "2) private key of address: " << src_addr << "\n";
+    infoss << "3) available amount: " << amount_to_transfer << "\n";
+    infoss << "   from ^^ please subtract fee" << "\n";
+    infoss << "4) funding transaction id: " << tx_to_unlock << "\n";
+    infoss << "5) desired target address to which the unlocked funds will be transferred" << "\n";
+    infoss << "YOU NEED TO PRESERVE THIS DATA TO AVOID LOSS OF FUNDS!" << "\n";
+    infoss << "==========================" << "\n";
+    infoss << "==========================" << "\n";
 
-    return encode_base16(tx.to_data());
+    return LockTxInfo { encode_base16(tx.to_data()), infoss.str() };
 
 }
