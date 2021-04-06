@@ -17,7 +17,8 @@ src_libbinglib_la_SOURCES = src/utility/address_converter.cpp \
                             src/libbfunds/funds_finder.cpp \
                             src/p2pkhtx/online_p2pkh_tx_creator.cpp \
                             src/libbscript/redeem_script.cpp \
-                            src/locktx/online_lock_tx_creator.cpp
+                            src/locktx/online_lock_tx_creator.cpp \
+                            src/unlocktx/offline_unlock_tx_creator.cpp
 
 
 src_libbinglib_la_LIBADD= @bitcoin_client_LIBS@ @openssl_libcrypto_LIBS@ @openssl_libssl_LIBS@
@@ -36,7 +37,8 @@ include_binglib_HEADERS = \
     src/libbfunds/funds_finder.hpp \
     src/p2pkhtx/online_p2pkh_tx_creator.hpp \
     src/libbscript/redeem_script.hpp \
-    src/locktx/online_lock_tx_creator.hpp
+    src/locktx/online_lock_tx_creator.hpp \
+    src/unlocktx/offline_unlock_tx_creator.hpp
 
 
 
