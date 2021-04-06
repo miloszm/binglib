@@ -48,17 +48,17 @@ void LibbClient::fetch_utxo(const wallet::payment_address address,
 }
 
 void LibbClient::send_tx(std::string tx_hex) {
-  const auto on_error = [](const code &ec) {
-    std::ostringstream oss;
+  std::ostringstream oss;
+  bool is_error = false;
+  const auto on_error = [&](const code &ec) {
     oss << "Send failed with error code: " << ec.message();
-    throw std::invalid_argument(oss.str());
+    is_error = true;
   };
 
-  const auto on_reply = [](const code &ec) {
-    std::ostringstream oss;
+  const auto on_reply = [&](const code &ec) {
     if (ec != error::success) {
       oss << "Send failed " << ec.message();
-      throw std::invalid_argument(oss.str());
+      is_error = true;
     }
   };
 
@@ -73,5 +73,7 @@ void LibbClient::send_tx(std::string tx_hex) {
   } else {
     client.transaction_pool_broadcast(on_error, on_reply, tx);
     client.wait();
+    if (is_error)
+        throw std::invalid_argument(oss.str());
   }
 }
