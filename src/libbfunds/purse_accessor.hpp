@@ -6,6 +6,12 @@
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
 
+struct AddressFundsInfo {
+    std::string address;
+    uint64_t requested_funds;
+    uint64_t actual_funds;
+};
+
 struct AddressFunds {
   std::string address;
   uint64_t requested_funds;
@@ -29,6 +35,10 @@ public:
   static void scan_balances(ElectrumApiClient &electrum_client,
                             std::vector<std::string> &addresses,
                             map<string, uint64_t> &address_to_balance);
+  static AddressFundsInfo
+  look_for_address_with_balance(uint64_t requested_funds,
+                                std::vector<std::string> &addresses,
+                                map<string, uint64_t> &address_to_balance);
 };
 
 #endif

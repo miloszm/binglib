@@ -69,3 +69,20 @@ void PurseAccessor::scan_balances(ElectrumApiClient &electrum_api_client,
     address_to_balance[a] = balance.confirmed;
   }
 }
+
+AddressFundsInfo PurseAccessor::look_for_address_with_balance(
+    uint64_t requested_funds,
+    vector<string> &addresses, map<string, uint64_t> &address_to_balance) {
+  AddressFundsInfo maxFunds = AddressFundsInfo{"", 0, 0};
+  for (string& a : addresses) {
+    uint64_t balance = address_to_balance[a];
+    if (balance >= requested_funds) {
+        return AddressFundsInfo{a, requested_funds, balance};
+    } else {
+      if (balance >= maxFunds.actual_funds) {
+        maxFunds = AddressFundsInfo{a, requested_funds, balance};
+      }
+    }
+  }
+  return maxFunds;
+}
