@@ -10,7 +10,7 @@ using namespace bc::wallet;
 using namespace bc::machine;
 
 
-void OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
+string OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
         LibbClient &libb_client,
         const string src_addr,
         const string priv_key_wif,
@@ -23,7 +23,7 @@ void OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
 }
 
 
-void OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
+string OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
         LibbClient &libb_client,
         const string src_addr,
         const ec_private priv_key_ec,
@@ -43,15 +43,16 @@ void OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
     auto utxos = utxos_funds.first;
     auto available_funds = utxos_funds.second;
     if (utxos_funds.first.empty()){
-        cout << "Insufficient funds, required " << satoshis_needed << ", maximum at one address available " << available_funds << "\n";
-        return;
+        ostringstream oss;
+        oss << "Insufficient funds, required " << satoshis_needed << ", maximum at one address available " << available_funds << "\n";
+        throw std::invalid_argument(oss.str());
     }
     auto refund = available_funds - satoshis_needed;
 
     // output 0
     script cltv_script = RedeemScript::to_pay_key_hash_pattern_with_lock(pub_key_data_chunk, lock_until);
     if(!cltv_script.is_valid()){
-        std::cout << "CLTV Script Invalid!" << std::endl;
+        throw std::invalid_argument("CLTV Script Invalid!");
     }
     short_hash script_hash = bitcoin_short_hash(cltv_script.to_data(0));
     script pay2ScriptHashLockingScript = script(cltv_script.to_pay_script_hash_pattern(script_hash));
@@ -109,5 +110,7 @@ void OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
     cout << "YOU NEED TO PRESERVE THIS DATA TO AVOID LOSS OF FUNDS!" << "\n";
     cout << "==========================" << "\n";
     cout << "==========================" << "\n";
+
+    return encode_base16(tx.to_data());
 
 }

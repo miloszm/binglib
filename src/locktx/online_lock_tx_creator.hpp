@@ -10,7 +10,7 @@ using namespace std;
 
 class OnlineLockTxCreator {
 public:
-    static void construct_p2sh_time_locking_tx_from_address(
+    static string construct_p2sh_time_locking_tx_from_address(
             LibbClient &libb_client,
             const std::string src_addr,
             const std::string priv_key_wif,
@@ -19,7 +19,7 @@ public:
             const uint32_t lock_until
     );
 
-    static void construct_p2sh_time_locking_tx_from_address(
+    static string construct_p2sh_time_locking_tx_from_address(
             LibbClient &libb_client,
             const std::string src_addr,
             const bc::wallet::ec_private priv_key_ec,
