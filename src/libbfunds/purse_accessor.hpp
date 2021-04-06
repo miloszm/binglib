@@ -26,6 +26,9 @@ public:
                             LibbClient &libb_client, uint64_t requested_funds,
                             std::vector<std::string> &addresses,
                             map<string, uint64_t> &address_to_balance);
+  static void scan_balances(ElectrumApiClient &electrum_client,
+                            std::vector<std::string> &addresses,
+                            map<string, uint64_t> &address_to_balance);
 };
 
 #endif
