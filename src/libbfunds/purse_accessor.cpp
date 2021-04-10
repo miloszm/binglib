@@ -107,3 +107,35 @@ void PurseAccessor::find_utxos(LibbClient &libb_client, vector<string>& addresse
         }
     }
 }
+
+
+/**
+ * note: fetching transaction for every input is wasteful
+ * need to introduce transactions cache
+ */
+void PurseAccessor::find_history(LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items){
+    for (string& address: addresses) {
+        vector<chain::history> history;
+        libb_client.fetch_history(payment_address(address), history);
+        for (chain::history h: history){
+            HistoryItem item;
+            item.address = address;
+            if (h.output.hash() != null_hash){
+                item.utxo_output = UtxoInfo{address, encode_hash(h.output.hash()), h.output.index(), h.value};
+            }
+            else {
+                item.utxo_output = UtxoInfo{};
+            }
+            if (h.spend.hash() != null_hash){
+                chain::transaction tr;
+                libb_client.fetch_tx(encode_hash(h.spend.hash()), tr);
+                uint64_t spend_value = tr.outputs().at(h.spend.index()).value();
+                item.utxo_input = UtxoInfo{address, encode_hash(h.spend.hash()), h.spend.index(), spend_value};
+            }
+            else {
+                item.utxo_input = UtxoInfo{};
+            }
+            history_items.push_back(item);
+        }
+    }
+}

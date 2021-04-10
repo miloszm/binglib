@@ -47,6 +47,50 @@ void LibbClient::fetch_utxo(const wallet::payment_address address,
   client.wait();
 }
 
+void LibbClient::fetch_history(const wallet::payment_address& address, vector<chain::history>& history) {
+    std::ostringstream oss;
+    bool is_error = false;
+
+    const auto on_error = [&](const code &ec) {
+        oss << "Fetch history failed with error code: " << ec.message();
+        is_error = true;
+    };
+
+    auto on_reply = [&](const chain::history::list& history_list) {
+        for (auto h: history_list){
+            history.push_back(h);
+        }
+    };
+
+    client.blockchain_fetch_history3(on_error, on_reply, address);
+    client.wait();
+    if (is_error)
+        throw std::invalid_argument(oss.str());
+}
+
+void LibbClient::fetch_tx(std::string tx_id, chain::transaction& transaction) {
+    std::ostringstream oss;
+    bool is_error = false;
+    chain::transaction tr;
+
+    const auto on_error = [&](const code &ec) {
+        oss << "Fetch transaction failed with error code: " << ec.message();
+        is_error = true;
+    };
+
+    auto on_reply = [&](const chain::transaction& transaction_) {
+        transaction = transaction_;
+    };
+
+    hash_digest hash;
+    decode_hash(hash, tx_id);
+    client.blockchain_fetch_transaction2(on_error, on_reply, hash);
+    client.wait();
+    if (is_error)
+        throw std::invalid_argument(oss.str());
+}
+
+
 void LibbClient::send_tx(std::string tx_hex) {
   std::ostringstream oss;
   bool is_error = false;
