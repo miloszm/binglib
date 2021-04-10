@@ -87,19 +87,23 @@ AddressFundsInfo PurseAccessor::look_for_address_with_balance(
   return maxFunds;
 }
 
-void PurseAccessor::find_utxos(LibbClient &libb_client, string address, vector<UtxoInfo>& utxos){
-    chain::points_value points_value;
-    libb_client.fetch_utxo(payment_address(address), 1,
-                           wallet::select_outputs::algorithm::individual,
-                           points_value);
-    for (auto p = begin(points_value.points);
-         p != end(points_value.points); ++p) {
-        UtxoInfo utxo_info {
-            address,
-            encode_hash(p->hash()),
-            p->index(),
-            p->value()
-        };
-        utxos.push_back(utxo_info);
+void PurseAccessor::find_utxos(LibbClient &libb_client, vector<string>& addresses, map<string, uint64_t>& address_to_balance, vector<UtxoInfo>& utxos){
+    for (string& address: addresses) {
+        if (address_to_balance[address] > 0) {
+            chain::points_value points_value;
+            libb_client.fetch_utxo(payment_address(address), 1,
+                                   wallet::select_outputs::algorithm::individual,
+                                   points_value);
+            for (auto p = begin(points_value.points);
+                 p != end(points_value.points); ++p) {
+                UtxoInfo utxo_info{
+                        address,
+                        encode_hash(p->hash()),
+                        p->index(),
+                        p->value()
+                };
+                utxos.push_back(utxo_info);
+            }
+        }
     }
 }

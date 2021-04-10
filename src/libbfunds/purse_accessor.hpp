@@ -50,7 +50,7 @@ public:
                                 std::vector<string> &addresses,
                                 map<string, uint64_t> &address_to_balance);
 
-  static void find_utxos(LibbClient &libb_client, string address, vector<UtxoInfo>& utxos);
+  static void find_utxos(LibbClient &libb_client, vector<string>& addresses, map<string, uint64_t>& address_to_balance, vector<UtxoInfo>& utxos);
 };
 
 #endif
