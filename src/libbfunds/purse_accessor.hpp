@@ -29,10 +29,16 @@ struct UtxoInfo {
     string script;
 };
 
+struct OutputInfo {
+    uint64_t value;
+    string script;
+};
+
 struct HistoryItem {
     string address;
-    UtxoInfo utxo_input;
-    UtxoInfo utxo_output;
+    string txid;
+    UtxoInfo input;
+    OutputInfo output;
 };
 
 class PurseAccessor {
@@ -58,7 +64,7 @@ public:
 
   static void find_utxos(LibbClient &libb_client, vector<string>& addresses, map<string, uint64_t>& address_to_balance, vector<UtxoInfo>& utxos);
 
-  static void find_history(LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items);
+  static void find_history(ElectrumApiClient &electrum_api_client, LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items);
 };
 
 #endif

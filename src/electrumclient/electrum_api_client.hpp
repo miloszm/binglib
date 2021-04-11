@@ -30,7 +30,7 @@ class ElectrumApiClient {
 public:
     ElectrumApiClient(ElectrumClient& client): client_(client){}
 
-    vector<AddressHistory> getHistory(vector<string> addresses);
+    AddressHistory getHistory(string address);
     AddressBalance getBalance(string address);
 private:
     ElectrumClient& client_;

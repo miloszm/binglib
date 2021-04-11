@@ -113,38 +113,37 @@ void PurseAccessor::find_utxos(LibbClient &libb_client, vector<string>& addresse
  * note: fetching transaction for every input is wasteful
  * need to introduce transactions cache
  */
-void PurseAccessor::find_history(LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items){
-    vector<string> addresses_copy(addresses.begin(), addresses.end());
-    for (const string& address: addresses_copy) {
-        vector<chain::history> history;
-        libb_client.fetch_history(payment_address(address), history);
-        cout << "obtained history for " << address << " it has " << history.size() << " elements\n";
-        for (chain::history h: history){
-            HistoryItem item;
-            item.address = address;
-            if (h.output.hash() != null_hash){
-                item.utxo_output = UtxoInfo{address, encode_hash(h.output.hash()), h.output.index(), h.value};
-            }
-            else {
-                item.utxo_output = UtxoInfo{};
-            }
-            if (h.spend.hash() != null_hash){
+void PurseAccessor::find_history(ElectrumApiClient &electrum_api_client,LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items){
+    for (const string& address: addresses) {
+        string address_spkh = AddressConverter::base58_to_spkh_hex(address);
+        AddressHistory history = electrum_api_client.getHistory(address_spkh);
+        for (const AddressHistoryItem& history_item: history){
+            chain::transaction tx;
+            libb_client.fetch_tx(history_item.txid, tx);
+            for (auto& i: tx.inputs()){
+                HistoryItem item;
+                item.address = address;
+                item.txid = history_item.txid;
                 chain::transaction tr;
-                libb_client.fetch_tx(encode_hash(h.spend.hash()), tr);
-                uint64_t spend_value = 0;
-                if (h.spend.index() < tr.outputs().size()){
-                    spend_value = tr.outputs().at(h.spend.index()).value();
-                } else {
-                    cout << "   fetched input tx with number of outputs: " << tr.outputs().size() << "\n";
-                    cout << "   spend index is: " << h.spend.index() << "something is wrong with spend index or outputs in this tx: " << encode_hash(h.spend.hash()) <<"\n";
+                string funding_tx = encode_hash(i.previous_output().hash());
+                int funding_idx = i.previous_output().index();
+                libb_client.fetch_tx(funding_tx, tr);
+                uint64_t value = 0;
+                if ( funding_idx < tr.outputs().size()){
+                    value = tr.outputs().at(funding_idx).value();
                 }
-                item.utxo_input = UtxoInfo{address, encode_hash(h.spend.hash()), h.spend.index(), spend_value};
+                item.input = UtxoInfo{address, funding_tx, static_cast<uint32_t>(funding_idx), value};
+                item.output = OutputInfo{ 0, ""};
+                history_items.push_back(item);
             }
-            else {
-                item.utxo_input = UtxoInfo{};
+            for (auto& o: tx.outputs()){
+                HistoryItem item;
+                item.address = address;
+                item.txid = history_item.txid;
+                item.output = OutputInfo{o.value(), to_string(static_cast<int>(o.script().pattern()))};
+                item.input = UtxoInfo{"", "", 0, 0, ""};
+                history_items.push_back(item);
             }
-            cout << "pushing item: " << item.address << " o=" << item.utxo_output.tx << " i=" << item.utxo_input.tx << "\n";
-            history_items.push_back(item);
         }
     }
 }
