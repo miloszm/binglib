@@ -31,6 +31,7 @@ public:
     ElectrumApiClient(ElectrumClient& client): client_(client){}
 
     AddressHistory getHistory(string address);
+    string getTransaction(string txid);
     AddressBalance getBalance(string address);
 private:
     ElectrumClient& client_;

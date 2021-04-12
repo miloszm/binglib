@@ -29,16 +29,11 @@ struct UtxoInfo {
     string script;
 };
 
-struct OutputInfo {
-    uint64_t value;
-    string script;
-};
-
 struct HistoryItem {
     string address;
     string txid;
-    UtxoInfo input;
-    OutputInfo output;
+    string txhex;
+    int height;
 };
 
 class PurseAccessor {

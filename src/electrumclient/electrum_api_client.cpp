@@ -39,6 +39,17 @@ AddressHistory ElectrumApiClient::getHistory(string address){
 }
 
 
+string ElectrumApiClient::getTransaction(string txid){
+    vector<string> txidv{txid};
+    ElectrumRequest request{"blockchain.transaction.get", ++id_counter, txidv};
+    json json_request;
+    electrum_request_to_json(json_request, request);
+    json json_response = client_.send_request(json_request);
+    return json_response.at("result");
+}
+
+
+
 AddressBalance ElectrumApiClient::getBalance(string address){
     vector<string> av{address};
     ElectrumRequest request{"blockchain.scripthash.get_balance", ++id_counter, av};
