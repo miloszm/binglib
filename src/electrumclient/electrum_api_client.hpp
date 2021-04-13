@@ -33,6 +33,7 @@ public:
     AddressHistory getHistory(string address);
     string getTransaction(string txid);
     AddressBalance getBalance(string address);
+    string getBlockHeader(int height);
 private:
     ElectrumClient& client_;
     std::atomic<int> id_counter;

@@ -20,6 +20,7 @@ public:
                   chain::points_value &points_value);
   void fetch_history(const wallet::payment_address& address, vector<chain::history>& history);
   void fetch_tx(std::string tx_id, chain::transaction& transaction);
+  void fetch_header(int height, chain::header& header);
   void send_tx(std::string tx_hex);
 
 private:

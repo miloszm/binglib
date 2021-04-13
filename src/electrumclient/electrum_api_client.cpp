@@ -11,7 +11,7 @@ void address_history_item_from_json(const nlohmann::json& j, AddressHistoryItem&
 }
 
 
-void address_history_from_json(const nlohmann::json& j, AddressHistory& ah){
+void address_history_from_json(const nlohmann::json& j, AddressHistory& ah) {
     auto items = j.items();
     for (auto i = items.begin(); i != items.end(); ++i){
         AddressHistoryItem ahi;
@@ -49,7 +49,6 @@ string ElectrumApiClient::getTransaction(string txid){
 }
 
 
-
 AddressBalance ElectrumApiClient::getBalance(string address){
     vector<string> av{address};
     ElectrumRequest request{"blockchain.scripthash.get_balance", ++id_counter, av};
@@ -59,4 +58,14 @@ AddressBalance ElectrumApiClient::getBalance(string address){
     AddressBalance address_balance;
     address_balance_from_json(json_response["result"], address_balance);
     return address_balance;
+}
+
+
+string ElectrumApiClient::getBlockHeader(int height){
+    vector<string> av{to_string(height)};
+    ElectrumRequest request{"blockchain.block.header", ++id_counter, av};
+    json json_request;
+    electrum_request_to_json(json_request, request);
+    json json_response = client_.send_request(json_request);
+    return json_response.at("result");
 }

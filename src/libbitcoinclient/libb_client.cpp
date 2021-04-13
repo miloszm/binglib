@@ -90,6 +90,25 @@ void LibbClient::fetch_tx(std::string tx_id, chain::transaction& transaction) {
         throw std::invalid_argument(oss.str());
 }
 
+void LibbClient::fetch_header(int height, chain::header& header) {
+    std::ostringstream oss;
+    bool is_error = false;
+    chain::transaction tr;
+
+    const auto on_error = [&](const code &ec) {
+        oss << "Fetch header failed with error code: " << ec.message();
+        is_error = true;
+    };
+
+    auto on_reply = [&](const chain::header& header_) {
+        header = header_;
+    };
+
+    client.blockchain_fetch_block_header(on_error, on_reply, height);
+    client.wait();
+    if (is_error)
+        throw std::invalid_argument(oss.str());
+}
 
 void LibbClient::send_tx(std::string tx_hex) {
   std::ostringstream oss;
