@@ -41,6 +41,13 @@ uint64_t HistoryInspector::calculate_address_balance(const string &address) {
     return balance;
 }
 
+void HistoryInspector::scan_balances(map<string, uint64_t> &address_to_balance) {
+    for (auto address : wallet_state_.get_addresses()) {
+        address_to_balance[address] = calculate_address_balance(address);
+    }
+}
+
+
 wallet::payment_address::list HistoryInspector::get_addresses(output &o) {
     if (is_testnet_) {
         return o.addresses(wallet::payment_address::testnet_p2kh,

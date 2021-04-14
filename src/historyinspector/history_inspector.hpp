@@ -52,6 +52,7 @@ class HistoryInspector {
     uint64_t calculate_total_balance();
     int64_t calculate_tx_wallet_impact(const string &tx_id);
     void create_history_view_rows(vector<HistoryViewRow> &history_view_rows);
+    void scan_balances(map<string, uint64_t> &address_to_balance);
 
   private:
     bool is_testnet_;
