@@ -12,6 +12,11 @@ install-sh
 Makefile.in
 depcomp
 *.o
+*.lo
+*.la
+*.log
+*.trs
+*.pc
 doc/~*
 bing
 *.tmp
