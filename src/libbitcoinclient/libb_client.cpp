@@ -45,6 +45,8 @@ void LibbClient::fetch_utxo(const wallet::payment_address address,
   client.blockchain_fetch_unspent_outputs(on_error, on_reply, address, satoshis,
                                           algorithm);
   client.wait();
+
+  cout << "LibbClient::fetch_utxo " << address << "\n";
 }
 
 void LibbClient::fetch_history(const wallet::payment_address& address, vector<chain::history>& history) {

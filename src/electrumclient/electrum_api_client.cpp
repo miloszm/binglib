@@ -35,6 +35,7 @@ AddressHistory ElectrumApiClient::getHistory(string address){
     json json_response = client_.send_request(json_request);
     AddressHistory address_history;
     address_history_from_json(json_response["result"], address_history);
+    cout << "getHistory " << address << "\n";
     return address_history;
 }
 
@@ -45,7 +46,14 @@ string ElectrumApiClient::getTransaction(string txid){
     json json_request;
     electrum_request_to_json(json_request, request);
     json json_response = client_.send_request(json_request);
-    return json_response.at("result");
+    cout << "getTransaction " << txid << "\n";
+    string response;
+    try {
+        response =json_response.at("result");
+    } catch(exception& e){
+        throw std::invalid_argument("Electrum blockchain.transaction.get failed: " + json_response.dump() + " " + e.what());
+    }
+    return response;
 }
 
 
@@ -57,6 +65,7 @@ AddressBalance ElectrumApiClient::getBalance(string address){
     json json_response = client_.send_request(json_request);
     AddressBalance address_balance;
     address_balance_from_json(json_response["result"], address_balance);
+    cout << "getBalance " << address << "\n";
     return address_balance;
 }
 
@@ -67,5 +76,6 @@ string ElectrumApiClient::getBlockHeader(int height){
     json json_request;
     electrum_request_to_json(json_request, request);
     json json_response = client_.send_request(json_request);
+    cout << "getBlockHeader " << height << "\n";
     return json_response.at("result");
 }

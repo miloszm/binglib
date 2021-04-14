@@ -49,6 +49,9 @@ WalletState::get_transaction(ElectrumApiClient &electrum_api_client,
 void WalletState::get_history(ElectrumApiClient &electrum_api_client,
                               const string &address,
                               vector<AddressHistoryItem> &history_items) {
+    if (address_2_history_cache_empty_[address]){
+        return;
+    }
     vector<AddressHistoryItem> address_history =
         address_2_history_cache_[address];
     if (address_history.empty()) {
@@ -58,6 +61,9 @@ void WalletState::get_history(ElectrumApiClient &electrum_api_client,
             history_items.push_back(history_item);
         }
         address_2_history_cache_[address] = history_items;
+        if (history_items.empty()){
+            address_2_history_cache_empty_[address] = true;
+        }
     } else {
         for (const AddressHistoryItem &history_item : address_history) {
             history_items.push_back(history_item);
