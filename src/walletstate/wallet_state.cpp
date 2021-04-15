@@ -108,3 +108,11 @@ WalletState::get_all_txs_sorted(ElectrumApiClient &electrum_api_client) {
 
     return txs;
 }
+
+void WalletState::clear_caches() {
+    txid_2_txhex_cache_.clear();
+    address_2_history_cache_.clear();
+    address_2_history_cache_empty_.clear();
+    all_history_.clear();
+}
+

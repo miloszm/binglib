@@ -30,6 +30,7 @@ class WalletState {
                      vector<AddressHistoryItem> &history_items);
     vector<TransactionAndHeight>
     get_all_txs_sorted(ElectrumApiClient &electrum_api_client);
+    void clear_caches();
 
   private:
     vector<string> addresses_;
