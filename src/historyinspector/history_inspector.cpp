@@ -141,15 +141,18 @@ TxWalletImpact HistoryInspector::calculate_tx_wallet_impact(const string &tx_id)
     analyse_tx_balances(tx_id, balance_items);
     uint64_t sum_from_wallet_inputs{0};
     uint64_t sum_to_wallet_outputs{0};
+    uint64_t total_in{0};
+    uint64_t total_out{0};
     bool is_p2sh{false};
-    string input_address;
+    string funding_address;
     for (const TxBalance &balance_item : balance_items) {
         for (const TxBalanceInput &i : balance_item.inputs) {
             bool inside = i.in_wallet;
             if (inside) {
                 sum_from_wallet_inputs += i.value;
-                input_address = i.address;
+                funding_address = i.address;
             }
+            total_in += i.value;
         }
         for (const TxBalanceOutput &o : balance_item.outputs) {
             bool inside = o.in_wallet;
@@ -157,13 +160,17 @@ TxWalletImpact HistoryInspector::calculate_tx_wallet_impact(const string &tx_id)
                 sum_to_wallet_outputs += o.value;
             if (o.script_kind == static_cast<int>(script_pattern::pay_script_hash))
                 is_p2sh = true;
+            total_out += o.value;
         }
     }
+    uint64_t fee = total_in - total_out;
+    int64_t delta = static_cast<int64_t>(sum_to_wallet_outputs - sum_from_wallet_inputs);
+    uint64_t funding_amount = sum_from_wallet_inputs - sum_to_wallet_outputs - fee;
     return TxWalletImpact{
-        static_cast<int64_t>(sum_to_wallet_outputs - sum_from_wallet_inputs),
+        delta,
         is_p2sh,
-        sum_from_wallet_inputs,
-        input_address
+        funding_amount,
+        funding_address
     };
 }
 
