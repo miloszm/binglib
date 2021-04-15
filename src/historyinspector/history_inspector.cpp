@@ -136,11 +136,12 @@ HistoryInspector::calc_address_balance(const string &address,
     return balance;
 }
 
-int64_t HistoryInspector::calculate_tx_wallet_impact(const string &tx_id) {
+TxWalletImpact HistoryInspector::calculate_tx_wallet_impact(const string &tx_id) {
     vector<TxBalance> balance_items;
     analyse_tx_balances(tx_id, balance_items);
     uint64_t sum_from_wallet_inputs{0};
     uint64_t sum_to_wallet_outputs{0};
+    bool is_p2sh{false};
     for (const TxBalance &balance_item : balance_items) {
         for (const TxBalanceInput &i : balance_item.inputs) {
             bool inside = i.in_wallet;
@@ -151,9 +152,11 @@ int64_t HistoryInspector::calculate_tx_wallet_impact(const string &tx_id) {
             bool inside = o.in_wallet;
             if (inside)
                 sum_to_wallet_outputs += o.value;
+            if (o.script_kind == static_cast<int>(script_pattern::pay_script_hash))
+                is_p2sh = true;
         }
     }
-    return sum_to_wallet_outputs - sum_from_wallet_inputs;
+    return TxWalletImpact{static_cast<int64_t>(sum_to_wallet_outputs - sum_from_wallet_inputs), is_p2sh};
 }
 
 void HistoryInspector::create_history_view_rows(
@@ -165,7 +168,7 @@ void HistoryInspector::create_history_view_rows(
     for (auto &tx_and_height : sorted_txs) {
         auto &tx = tx_and_height.tx;
         string tx_id = encode_hash(tx.hash());
-        int64_t impact = calculate_tx_wallet_impact(tx_id);
+        TxWalletImpact impact = calculate_tx_wallet_impact(tx_id);
         // todo: cache it
         // for the time being I skip timestamp as it takes too long
         // let's see if there is some quicker way to obtain it
@@ -173,8 +176,8 @@ void HistoryInspector::create_history_view_rows(
         //        chain::header block_header = hex_2_header(header_hex);
         //        uint32_t timestamp = block_header.timestamp();
         uint32_t timestamp = 0;
-        HistoryViewRow history_view_row{timestamp, tx_and_height.height, impact,
-                                        tx_id, 0};
+        HistoryViewRow history_view_row{timestamp, tx_and_height.height, impact.balance_delta,
+                                        tx_id, 0, impact.is_p2sh};
         history_view_rows.push_back(history_view_row);
     }
     uint64_t balance{0};

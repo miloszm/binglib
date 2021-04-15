@@ -40,6 +40,12 @@ struct HistoryViewRow {
     int64_t balance_delta;
     string tx_id;
     uint64_t balance;
+    bool is_p2sh;
+};
+
+struct TxWalletImpact {
+    int64_t balance_delta;
+    bool is_p2sh;
 };
 
 class HistoryInspector {
@@ -50,7 +56,7 @@ class HistoryInspector {
 
     uint64_t calculate_address_balance(const string &address);
     uint64_t calculate_total_balance();
-    int64_t calculate_tx_wallet_impact(const string &tx_id);
+    TxWalletImpact calculate_tx_wallet_impact(const string &tx_id);
     void create_history_view_rows(vector<HistoryViewRow> &history_view_rows);
     void scan_balances(map<string, uint64_t> &address_to_balance);
     void clear_caches();
