@@ -27,6 +27,7 @@ private:
     boost::asio::io_context* io_context;
     boost::asio::ssl::context* ctx;
     tcp::resolver::results_type endpoints;
+    std::mutex mutex_;
 };
 
 #endif

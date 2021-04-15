@@ -48,6 +48,7 @@ void ElectrumClient::init(string hostname, string service,
  * correlation is not done
  */
 json ElectrumClient::send_request(json json_request) {
+  unique_lock<mutex> lock(mutex_);
   client->send_request(json_request);
   return client->receive_response();
 }
