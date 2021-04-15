@@ -79,3 +79,22 @@ string ElectrumApiClient::getBlockHeader(int height){
     cout << "getBlockHeader " << height << "\n";
     return json_response.at("result");
 }
+
+
+string ElectrumApiClient::broadcastTransaction(string tx_hex){
+    vector<string> tx_hexv{tx_hex};
+    ElectrumRequest request{"blockchain.transaction.broadcast", ++id_counter, tx_hexv};
+    json json_request;
+    electrum_request_to_json(json_request, request);
+    json json_response = client_.send_request(json_request);
+    cout << "broadcastTransaction\n";
+    string response;
+    try {
+        response =json_response.at("result");
+    } catch(exception& e){
+        throw std::invalid_argument("Electrum blockchain.transaction.broadcast failed: " + json_response.dump() + " " + e.what());
+    }
+    return response;
+}
+
+

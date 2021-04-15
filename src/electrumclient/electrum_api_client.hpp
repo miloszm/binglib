@@ -34,6 +34,7 @@ public:
     string getTransaction(string txid);
     AddressBalance getBalance(string address);
     string getBlockHeader(int height);
+    string broadcastTransaction(string txid);
 private:
     ElectrumClient& client_;
     std::atomic<int> id_counter;
