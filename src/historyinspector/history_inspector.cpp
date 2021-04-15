@@ -79,11 +79,11 @@ void HistoryInspector::analyse_tx_balances(string tx_id,
             wallet::payment_address &ax = axx.front();
             bool is_in_wallet = wallet_state_.is_in_wallet(ax.encoded());
             TxBalanceInput balance_input{funding_tx_id, funding_idx,
-                                         previous_output.value(), is_in_wallet};
+                                         previous_output.value(), is_in_wallet, ax.encoded()};
             balance_inputs.push_back(balance_input);
         } else {
             TxBalanceInput balance_input{funding_tx_id, funding_idx,
-                                         previous_output.value(), false};
+                                         previous_output.value(), false, ""};
             balance_inputs.push_back(balance_input);
         }
     };
@@ -142,11 +142,14 @@ TxWalletImpact HistoryInspector::calculate_tx_wallet_impact(const string &tx_id)
     uint64_t sum_from_wallet_inputs{0};
     uint64_t sum_to_wallet_outputs{0};
     bool is_p2sh{false};
+    string input_address;
     for (const TxBalance &balance_item : balance_items) {
         for (const TxBalanceInput &i : balance_item.inputs) {
             bool inside = i.in_wallet;
-            if (inside)
+            if (inside) {
                 sum_from_wallet_inputs += i.value;
+                input_address = i.address;
+            }
         }
         for (const TxBalanceOutput &o : balance_item.outputs) {
             bool inside = o.in_wallet;
@@ -156,7 +159,12 @@ TxWalletImpact HistoryInspector::calculate_tx_wallet_impact(const string &tx_id)
                 is_p2sh = true;
         }
     }
-    return TxWalletImpact{static_cast<int64_t>(sum_to_wallet_outputs - sum_from_wallet_inputs), is_p2sh};
+    return TxWalletImpact{
+        static_cast<int64_t>(sum_to_wallet_outputs - sum_from_wallet_inputs),
+        is_p2sh,
+        sum_from_wallet_inputs,
+        input_address
+    };
 }
 
 void HistoryInspector::create_history_view_rows(
@@ -176,8 +184,15 @@ void HistoryInspector::create_history_view_rows(
         //        chain::header block_header = hex_2_header(header_hex);
         //        uint32_t timestamp = block_header.timestamp();
         uint32_t timestamp = 0;
-        HistoryViewRow history_view_row{timestamp, tx_and_height.height, impact.balance_delta,
-                                        tx_id, 0, impact.is_p2sh};
+        HistoryViewRow history_view_row{
+            timestamp,
+            tx_and_height.height,
+            impact.balance_delta,
+            tx_id,
+            0,
+            impact.is_p2sh,
+            impact.funding_amount,
+            impact.funding_address};
         history_view_rows.push_back(history_view_row);
     }
     uint64_t balance{0};

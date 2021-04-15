@@ -19,6 +19,7 @@ struct TxBalanceInput {
     int funding_idx;
     uint64_t value;
     bool in_wallet;
+    string address;
 };
 
 struct TxBalanceOutput {
@@ -41,11 +42,15 @@ struct HistoryViewRow {
     string tx_id;
     uint64_t balance;
     bool is_p2sh;
+    uint64_t funding_amount;
+    string funding_address;
 };
 
 struct TxWalletImpact {
     int64_t balance_delta;
     bool is_p2sh;
+    uint64_t funding_amount;
+    string funding_address;
 };
 
 class HistoryInspector {
