@@ -90,9 +90,15 @@ string ElectrumApiClient::broadcastTransaction(string tx_hex){
     cout << "broadcastTransaction\n";
     string response;
     try {
-        response =json_response.at("result");
+        response = json_response.at("result");
     } catch(exception& e){
-        throw std::invalid_argument("Electrum blockchain.transaction.broadcast failed: " + json_response.dump() + " " + e.what());
+        string error_message;
+        try {
+            error_message = json_response.at("error").at("message");
+        } catch(exception& e){
+            error_message = "bloackchain broadcast failed: " + json_response.dump() + " " + e.what();
+        }
+        throw std::invalid_argument(error_message);
     }
     return response;
 }
