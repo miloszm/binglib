@@ -34,6 +34,7 @@ public:
     string getTransaction(string txid);
     AddressBalance getBalance(string address);
     string getBlockHeader(int height);
+    double estimateFee(int wait_blocks);
     string broadcastTransaction(string txid);
 private:
     ElectrumClient& client_;

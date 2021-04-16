@@ -77,7 +77,30 @@ string ElectrumApiClient::getBlockHeader(int height){
     electrum_request_to_json(json_request, request);
     json json_response = client_.send_request(json_request);
     cout << "getBlockHeader " << height << "\n";
-    return json_response.at("result");
+    string response;
+    try {
+        response = json_response.at("result");
+    } catch(exception& e){
+        throw std::invalid_argument("Electrum blockchain.block.header failed: " + json_response.dump() + " " + e.what());
+    }
+    return response;
+}
+
+
+double ElectrumApiClient::estimateFee(int wait_blocks){
+    vector<string> av{to_string(wait_blocks)};
+    ElectrumRequest request{"blockchain.estimatefee", ++id_counter, av};
+    json json_request;
+    electrum_request_to_json(json_request, request);
+    json json_response = client_.send_request(json_request);
+    cout << "estimateFee " << "\n";
+    double response;
+    try {
+        response = json_response.at("result");
+    } catch(exception& e){
+        throw std::invalid_argument("Electrum blockchain.estimatefee failed: " + json_response.dump() + " " + e.what());
+    }
+    return response;
 }
 
 
