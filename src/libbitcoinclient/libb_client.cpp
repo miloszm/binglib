@@ -110,6 +110,8 @@ void LibbClient::fetch_header(int height, chain::header& header) {
     client.wait();
     if (is_error)
         throw std::invalid_argument(oss.str());
+
+    cout << "LibbClient::fetch_header " << height << "\n";
 }
 
 void LibbClient::send_tx(std::string tx_hex) {
