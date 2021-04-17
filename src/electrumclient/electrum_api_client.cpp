@@ -71,7 +71,7 @@ AddressBalance ElectrumApiClient::getBalance(string address){
 
 
 string ElectrumApiClient::getBlockHeader(int height){
-    vector<string> av{to_string(height)};
+    vector<string> av{to_string(height), "0"};
     ElectrumRequest request{"blockchain.block.header", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
