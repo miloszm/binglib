@@ -12,6 +12,7 @@ src_libbinglib_la_SOURCES = src/utility/address_converter.cpp \
                             src/electrumclient/json_socket_client.cpp \
                             src/electrumclient/electrum_client.cpp \
                             src/electrumclient/electrum_api_client.cpp \
+                            src/electrumclient/electrum_input_queue.cpp \
                             src/libbitcoinclient/libb_client.cpp \
                             src/libbfunds/purse_accessor.cpp \
                             src/libbfunds/funds_finder.cpp \
@@ -34,6 +35,7 @@ include_binglib_HEADERS = \
     src/electrumclient/json_socket_client.hpp \
     src/electrumclient/electrum_client.hpp \
     src/electrumclient/electrum_api_client.hpp \
+    src/electrumclient/electrum_input_queue.hpp \
     src/libbitcoinclient/libb_client.hpp \
     src/libbfunds/purse_accessor.hpp \
     src/libbfunds/funds_finder.hpp \
