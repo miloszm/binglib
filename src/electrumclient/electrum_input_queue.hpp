@@ -26,12 +26,10 @@ private:
 public:
     void push(const ElectrumMessage& message);
     ElectrumMessage pop_reply(int id);
-    ElectrumMessage pop_subscription_msg(int id);
+    vector<ElectrumMessage> copyAll(){vector<ElectrumMessage> v(queue_.begin(), queue_.end()); return v;}
 private:
     bool contains_msg_with_id(int id);
     std::deque<ElectrumMessage>::const_iterator find_msg_with_id(int id);
-    bool contains_subscription_msg();
-    std::deque<ElectrumMessage>::const_iterator find_subscription_msg();
 };
 
 #endif

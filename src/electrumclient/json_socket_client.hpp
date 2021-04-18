@@ -5,6 +5,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 #include <nlohmann/json.hpp>
+#include "electrum_input_queue.hpp"
 
 class JsonSocketClient {
 public:
@@ -22,6 +23,8 @@ private:
   void handshake();
 
   boost::asio::ssl::stream<boost::asio::ip::tcp::socket> socket_;
+
+  static ElectrumMessage fromJson(nlohmann::json message);
 };
 
 #endif

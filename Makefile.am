@@ -48,7 +48,7 @@ include_binglib_HEADERS = \
 
 
 
-check_PROGRAMS = test_utility test_wallet
+check_PROGRAMS = test_utility test_wallet test_electrumclient
 test_utility_SOURCES = \
     test/utility/address_converter_test.cpp
 test_utility_CPPFLAGS = -I$(top_srcdir)/src
@@ -58,5 +58,10 @@ test_wallet_SOURCES = \
     test/wallet/bing_wallet_test.cpp
 test_wallet_CPPFLAGS = -I$(top_srcdir)/src
 test_wallet_LDADD= src/libbinglib.la
+
+test_electrumclient_SOURCES = \
+    test/electrumclient/electrum_input_queue_test.cpp
+test_electrumclient_CPPFLAGS = -I$(top_srcdir)/src
+test_electrumclient_LDADD= src/libbinglib.la
 
 TESTS = $(check_PROGRAMS)

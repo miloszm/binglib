@@ -102,3 +102,22 @@ json JsonSocketClient::receive_response() {
   }
   return json::parse("{}");
 }
+
+ElectrumMessage JsonSocketClient::fromJson(nlohmann::json message) {
+    string method;
+    int id {0};
+    bool has_correlaton_id;
+    try { message.at("method").get_to(method); } catch (exception& e){}
+    try {
+        message.at("id").get_to(id);
+        has_correlaton_id = true;
+    } catch (exception& e){
+        has_correlaton_id = false;
+    }
+    return ElectrumMessage{
+        message,
+        method,
+        has_correlaton_id,
+        id
+    };
+}
