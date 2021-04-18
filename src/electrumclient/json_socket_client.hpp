@@ -24,7 +24,8 @@ private:
 
   boost::asio::ssl::stream<boost::asio::ip::tcp::socket> socket_;
 
-  static ElectrumMessage fromJson(nlohmann::json message);
+public:
+  static ElectrumMessage from_json(nlohmann::json message);
 };
 
 #endif

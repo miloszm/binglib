@@ -103,7 +103,7 @@ json JsonSocketClient::receive_response() {
   return json::parse("{}");
 }
 
-ElectrumMessage JsonSocketClient::fromJson(nlohmann::json message) {
+ElectrumMessage JsonSocketClient::from_json(nlohmann::json message) {
     string method;
     int id {0};
     bool has_correlaton_id;
