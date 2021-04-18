@@ -78,32 +78,64 @@ void JsonSocketClient::send_request(json json_request) {
 }
 
 json JsonSocketClient::receive_response(int id) {
-  boost::array<char, 512> buf;
-  std::ostringstream oss;
-  for (;;) {
-    boost::system::error_code error;
+  if (!is_loop) {
+    boost::array<char, 512> buf;
+    std::ostringstream oss;
+    for (;;) {
+      boost::system::error_code error;
 
-    size_t len = socket_.read_some(boost::asio::buffer(buf), error);
+      size_t len = socket_.read_some(boost::asio::buffer(buf), error);
 
-    if (error == boost::asio::error::eof)
-      break; // Connection closed cleanly by peer.
-    else if (error)
-      throw boost::system::system_error(error); // Some other error.
+      if (error == boost::asio::error::eof)
+        break; // Connection closed cleanly by peer.
+      else if (error)
+        throw boost::system::system_error(error); // Some other error.
 
-    oss.write(buf.data(), len);
-    std::string candidate_response = oss.str();
-    try {
-      json parsed_response = json::parse(candidate_response);
-      ElectrumMessage message = from_json(parsed_response);
-      queue_.push(message);
-      break;
-    } catch (json::parse_error &e) {
-      // not yet parsable, keep reading
-      continue;
+      oss.write(buf.data(), len);
+      std::string candidate_response = oss.str();
+      try {
+        json parsed_response = json::parse(candidate_response);
+        ElectrumMessage message = from_json(parsed_response);
+        queue_.push(message);
+        break;
+      } catch (json::parse_error &e) {
+        //not yet parsable, keep reading
+        continue;
+      }
     }
   }
   ElectrumMessage reply_message = queue_.pop_reply(id);
   return reply_message.message;
+}
+
+ElectrumMessage JsonSocketClient::run_receiving_loop() {
+    is_loop = true;
+    boost::array<char, 512> buf;
+    std::ostringstream oss;
+    for (;;) {
+        boost::system::error_code error;
+
+        size_t len = socket_.read_some(boost::asio::buffer(buf), error);
+
+        if (error == boost::asio::error::eof)
+            return ElectrumMessage { json::parse("{}"), "", false, 0}; // Connection closed cleanly by peer.
+        else if (error)
+            throw boost::system::system_error(error); // Some other error.
+
+        oss.write(buf.data(), len);
+        std::string candidate_response = oss.str();
+        try {
+            json parsed_response = json::parse(candidate_response);
+            ElectrumMessage message = from_json(parsed_response);
+            if (!message.has_correlation_id){
+                return message;
+            }
+            queue_.push(message);
+        } catch (json::parse_error &e) {
+            // not yet parsable, keep reading
+            continue;
+        }
+    }
 }
 
 ElectrumMessage JsonSocketClient::from_json(nlohmann::json message) {
