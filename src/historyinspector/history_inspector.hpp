@@ -64,6 +64,7 @@ class HistoryInspector {
     TxWalletImpact calculate_tx_wallet_impact(const string &tx_id);
     void create_history_view_rows(vector<HistoryViewRow> &history_view_rows);
     void scan_balances(map<string, uint64_t> &address_to_balance);
+    void do_addresses_subscriptions(map<string, string> &address_to_historyhash);
     void clear_caches();
 
   private:
@@ -78,6 +79,7 @@ class HistoryInspector {
                                          vector<TxBalance> &balance_items);
     static header hex_2_header(string tx_hex);
     wallet::payment_address::list get_addresses(output &o);
+    string subscribe_address(string address);
 };
 
 #endif

@@ -30,6 +30,7 @@ class ElectrumApiClient {
 public:
     ElectrumApiClient(ElectrumClient& client): client_(client){}
 
+    string scripthashSubscribe(string scripthash);
     AddressHistory getHistory(string address);
     string getTransaction(string txid);
     AddressBalance getBalance(string address);
