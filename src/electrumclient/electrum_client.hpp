@@ -21,7 +21,7 @@ public:
     ElectrumClient();
     virtual ~ElectrumClient();
     void init(string hostname, string service, string certificationFilePath);
-    nlohmann::json send_request(nlohmann::json json_request);
+    nlohmann::json send_request(nlohmann::json json_request, int id);
 private:
     JsonSocketClient* client;
     boost::asio::io_context* io_context;

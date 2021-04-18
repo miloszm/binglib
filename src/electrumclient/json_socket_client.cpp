@@ -77,7 +77,7 @@ void JsonSocketClient::send_request(json json_request) {
   boost::asio::write(socket_, boost::asio::buffer(request_, request_length));
 }
 
-json JsonSocketClient::receive_response() {
+json JsonSocketClient::receive_response(int id) {
   boost::array<char, 512> buf;
   std::ostringstream oss;
   for (;;) {
@@ -94,13 +94,16 @@ json JsonSocketClient::receive_response() {
     std::string candidate_response = oss.str();
     try {
       json parsed_response = json::parse(candidate_response);
-      return parsed_response;
+      ElectrumMessage message = from_json(parsed_response);
+      queue_.push(message);
+      break;
     } catch (json::parse_error &e) {
       // not yet parsable, keep reading
       continue;
     }
   }
-  return json::parse("{}");
+  ElectrumMessage reply_message = queue_.pop_reply(id);
+  return reply_message.message;
 }
 
 ElectrumMessage JsonSocketClient::from_json(nlohmann::json message) {

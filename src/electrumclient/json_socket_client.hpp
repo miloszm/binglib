@@ -13,7 +13,7 @@ public:
       boost::asio::io_context &io_context, boost::asio::ssl::context &context,
       const boost::asio::ip::tcp::resolver::results_type &endpoints);
   void send_request(nlohmann::json json_request);
-  nlohmann::json receive_response();
+  nlohmann::json receive_response(int id);
   std::mutex prepare_connection;
 
 private:
@@ -23,6 +23,7 @@ private:
   void handshake();
 
   boost::asio::ssl::stream<boost::asio::ip::tcp::socket> socket_;
+  ElectrumInputQueue queue_;
 
 public:
   static ElectrumMessage from_json(nlohmann::json message);

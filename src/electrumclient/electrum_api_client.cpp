@@ -32,7 +32,7 @@ AddressHistory ElectrumApiClient::getHistory(string address){
     ElectrumRequest request{"blockchain.scripthash.get_history", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request);
+    json json_response = client_.send_request(json_request, id_counter);
     AddressHistory address_history;
     address_history_from_json(json_response["result"], address_history);
     cout << "getHistory " << address << "\n";
@@ -45,7 +45,7 @@ string ElectrumApiClient::getTransaction(string txid){
     ElectrumRequest request{"blockchain.transaction.get", ++id_counter, txidv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request);
+    json json_response = client_.send_request(json_request, id_counter);
     cout << "getTransaction " << txid << "\n";
     string response;
     try {
@@ -62,7 +62,7 @@ AddressBalance ElectrumApiClient::getBalance(string address){
     ElectrumRequest request{"blockchain.scripthash.get_balance", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request);
+    json json_response = client_.send_request(json_request, id_counter);
     AddressBalance address_balance;
     address_balance_from_json(json_response["result"], address_balance);
     cout << "getBalance " << address << "\n";
@@ -75,7 +75,7 @@ string ElectrumApiClient::getBlockHeader(int height){
     ElectrumRequest request{"blockchain.block.header", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request);
+    json json_response = client_.send_request(json_request, id_counter);
     cout << "getBlockHeader " << height << "\n";
     string response;
     try {
@@ -92,7 +92,7 @@ double ElectrumApiClient::estimateFee(int wait_blocks){
     ElectrumRequest request{"blockchain.estimatefee", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request);
+    json json_response = client_.send_request(json_request, id_counter);
     cout << "estimateFee " << "\n";
     double response;
     try {
@@ -109,7 +109,7 @@ string ElectrumApiClient::broadcastTransaction(string tx_hex){
     ElectrumRequest request{"blockchain.transaction.broadcast", ++id_counter, tx_hexv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request);
+    json json_response = client_.send_request(json_request, id_counter);
     cout << "broadcastTransaction\n";
     string response;
     try {
