@@ -9,7 +9,12 @@ using namespace bc::chain;
 using namespace bc::wallet;
 using namespace bc::machine;
 
-WalletState::WalletState(vector<string> &addresses) : addresses_(addresses) {}
+WalletState::WalletState(vector<string> &addresses) : addresses_(addresses) {
+    for (const string& address: addresses){
+        string spkh = AddressConverter::base58_to_spkh_hex(address);
+        spkh_2_address_[spkh] = address;
+    }
+}
 
 WalletState::~WalletState() {}
 
@@ -107,6 +112,10 @@ WalletState::get_all_txs_sorted(ElectrumApiClient &electrum_api_client) {
     }
 
     return txs;
+}
+
+string WalletState::spkh_2_address(string spkh) {
+    return spkh_2_address_[spkh];
 }
 
 void WalletState::clear_caches() {
