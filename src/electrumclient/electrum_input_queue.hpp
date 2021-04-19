@@ -15,6 +15,7 @@ struct ElectrumMessage {
     string method;
     bool has_correlation_id;
     int correlation_id;
+    vector<string> params;
 };
 
 

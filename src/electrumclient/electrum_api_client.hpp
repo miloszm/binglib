@@ -38,6 +38,7 @@ public:
     double estimateFee(int wait_blocks);
     string broadcastTransaction(string txid);
     ElectrumMessage run_receiving_loop(){ return client_.run_receiving_loop(); }
+    static bool is_scripthash_update(const ElectrumMessage& electrum_message);
 private:
     ElectrumClient& client_;
     std::atomic<int> id_counter;

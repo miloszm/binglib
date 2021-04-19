@@ -154,3 +154,7 @@ string ElectrumApiClient::broadcastTransaction(string tx_hex){
 }
 
 
+bool ElectrumApiClient::is_scripthash_update(const ElectrumMessage& electrum_message){
+    return electrum_message.method == "blockchain.scripthash.subscribe";
+}
+

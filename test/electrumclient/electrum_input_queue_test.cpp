@@ -52,4 +52,12 @@ BOOST_AUTO_TEST_CASE(electrum_message_from_json_test)
     ElectrumMessage message3 = JsonSocketClient::from_json(msg_json_3);
     BOOST_TEST(message3.method == "ping2");
     BOOST_TEST(message3.has_correlation_id == false);
+
+    json msg_json_4 = json::parse(R"({"jsonrpc":"2.0","method":"ping2","params": ["p1","p2"]})");
+    ElectrumMessage message4 = JsonSocketClient::from_json(msg_json_4);
+    BOOST_TEST(message4.method == "ping2");
+    BOOST_TEST(message4.has_correlation_id == false);
+    BOOST_TEST(message4.params.size() == 2);
+    BOOST_TEST(message4.params[0] == "p1");
+    BOOST_TEST(message4.params[1] == "p2");
 }

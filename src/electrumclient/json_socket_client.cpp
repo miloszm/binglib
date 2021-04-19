@@ -115,9 +115,7 @@ ElectrumMessage JsonSocketClient::run_receiving_loop() {
     for (;;) {
         boost::system::error_code error;
 
-        cout << "about to read from socket..." << "\n";
         size_t len = socket_.read_some(boost::asio::buffer(buf), error);
-        cout << "read " << len << " bytes \n";
 
         if (error == boost::asio::error::eof)
             return ElectrumMessage { json::parse("{}"), "", false, 0}; // Connection closed cleanly by peer.
@@ -126,22 +124,17 @@ ElectrumMessage JsonSocketClient::run_receiving_loop() {
 
         oss.write(buf.data(), len);
         std::string candidate_response = oss.str();
-        cout << "==========================" << "\n";
-        cout << candidate_response << "\n";
-        cout << "==========================" << "\n";
         try {
             json parsed_response = json::parse(candidate_response);
             ElectrumMessage message = from_json(parsed_response);
             if (!message.has_correlation_id){
                 return message;
             }
-            cout << "pushing message: " << message.method << " id:" << message.correlation_id << "\n";
             queue_.push(message);
             oss.str("");
             oss.clear();
         } catch (json::parse_error &e) {
             // not yet parsable, keep reading
-            cout << "not yet parsable, keep reading" << "\n";
             continue;
         }
     }
@@ -151,6 +144,7 @@ ElectrumMessage JsonSocketClient::from_json(nlohmann::json message) {
     string method;
     int id {0};
     bool has_correlaton_id;
+    vector<string> params;
     try { message.at("method").get_to(method); } catch (exception& e){}
     try {
         message.at("id").get_to(id);
@@ -158,10 +152,12 @@ ElectrumMessage JsonSocketClient::from_json(nlohmann::json message) {
     } catch (exception& e){
         has_correlaton_id = false;
     }
+    try { message.at("params").get_to(params); } catch (exception& e){}
     return ElectrumMessage{
         message,
         method,
         has_correlaton_id,
-        id
+        id,
+        params
     };
 }
