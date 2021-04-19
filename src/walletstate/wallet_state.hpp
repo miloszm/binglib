@@ -33,6 +33,7 @@ class WalletState {
     string spkh_2_address(string spkh);
     string subscribe_address(ElectrumApiClient &electrum_api_client, const string& address);
     void clear_caches();
+    void clear_caches_for_address(const string& address);
 
   private:
     vector<string> addresses_;

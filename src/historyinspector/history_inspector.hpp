@@ -66,6 +66,7 @@ class HistoryInspector {
     void scan_balances(map<string, uint64_t> &address_to_balance);
     void do_addresses_subscriptions(map<string, string> &address_to_historyhash);
     void clear_caches();
+    void clear_caches_for_address(const string& address);
 
   private:
     bool is_testnet_;

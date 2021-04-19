@@ -21,6 +21,11 @@ void HistoryInspector::clear_caches() {
     wallet_state_.clear_caches();
 }
 
+void HistoryInspector::clear_caches_for_address(const string& address) {
+    wallet_state_.clear_caches_for_address(address);
+}
+
+
 uint64_t HistoryInspector::calculate_total_balance() {
     uint64_t balance{0};
     for (const string &address : wallet_state_.get_addresses()) {
