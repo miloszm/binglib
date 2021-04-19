@@ -31,6 +31,7 @@ class WalletState {
     vector<TransactionAndHeight>
     get_all_txs_sorted(ElectrumApiClient &electrum_api_client);
     string spkh_2_address(string spkh);
+    string subscribe_address(ElectrumApiClient &electrum_api_client, const string& address);
     void clear_caches();
 
   private:
@@ -40,6 +41,7 @@ class WalletState {
     map<string, vector<AddressHistoryItem>> address_2_history_cache_;
     map<string, bool> address_2_history_cache_empty_;
     vector<AddressHistoryItem> all_history_;
+    map<string, bool> address_2_subscribed_;
 
   private:
     static transaction hex_2_tx(string tx_hex);

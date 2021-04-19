@@ -118,10 +118,22 @@ string WalletState::spkh_2_address(string spkh) {
     return spkh_2_address_[spkh];
 }
 
+string WalletState::subscribe_address(ElectrumApiClient &electrum_api_client, const string& address) {
+    bool is_subscribed = address_2_subscribed_[address];
+    if (!is_subscribed) {
+        string address_spkh = AddressConverter::base58_to_spkh_hex(address);
+        string history_hash = electrum_api_client.scripthashSubscribe(address_spkh);
+        address_2_subscribed_[address] = true;
+        return history_hash;
+    }
+    else return "";
+}
+
 void WalletState::clear_caches() {
     txid_2_txhex_cache_.clear();
     address_2_history_cache_.clear();
     address_2_history_cache_empty_.clear();
+    address_2_subscribed_.clear();
     all_history_.clear();
 }
 

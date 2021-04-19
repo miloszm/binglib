@@ -79,7 +79,6 @@ class HistoryInspector {
                                          vector<TxBalance> &balance_items);
     static header hex_2_header(string tx_hex);
     wallet::payment_address::list get_addresses(output &o);
-    string subscribe_address(string address);
 };
 
 #endif

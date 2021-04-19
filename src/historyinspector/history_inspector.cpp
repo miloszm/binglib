@@ -51,15 +51,9 @@ void HistoryInspector::scan_balances(map<string, uint64_t> &address_to_balance) 
     }
 }
 
-string HistoryInspector::subscribe_address(string address) {
-    string address_spkh = AddressConverter::base58_to_spkh_hex(address);
-    string history_hash = electrum_api_client_.scripthashSubscribe(address_spkh);
-    return history_hash;
-}
-
 void HistoryInspector::do_addresses_subscriptions(map<string, string> &address_to_historyhash) {
     for (auto address : wallet_state_.get_addresses()) {
-        address_to_historyhash[address] = subscribe_address(address);
+        address_to_historyhash[address] = wallet_state_.subscribe_address(electrum_api_client_, address);
     }
 }
 
