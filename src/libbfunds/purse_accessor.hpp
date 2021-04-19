@@ -57,7 +57,7 @@ public:
                                 std::vector<string> &addresses,
                                 map<string, uint64_t> &address_to_balance);
 
-  static void find_utxos(LibbClient &libb_client, vector<string>& addresses, map<string, uint64_t>& address_to_balance, vector<UtxoInfo>& utxos);
+  static void find_utxos(LibbClient &libb_client, vector<string>& addresses, map<string, uint64_t>& address_to_balance, map<string, vector<UtxoInfo>>& address_to_utxos);
 
   static void find_history(ElectrumApiClient &electrum_api_client, LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items);
 };
