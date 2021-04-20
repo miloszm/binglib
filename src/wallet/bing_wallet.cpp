@@ -12,6 +12,9 @@ void BingWallet::derive_electrum_addresses(
     vector<string> &addresses,
     map<string, AddressDerivationResult> &addresses_to_data) {
 
+  addresses.clear();
+  addresses_to_data.clear();
+
   const word_list mnemonic = split(seed_phrase, " ");
   if (!electrum::validate_mnemonic(mnemonic, language::en))
     throw std::invalid_argument("incorrect mnemonic");

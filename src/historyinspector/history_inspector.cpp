@@ -51,6 +51,7 @@ uint64_t HistoryInspector::calculate_address_balance(const string &address) {
 }
 
 void HistoryInspector::scan_balances(map<string, uint64_t> &address_to_balance) {
+    address_to_balance.clear();
     for (auto address : wallet_state_.get_addresses()) {
         address_to_balance[address] = calculate_address_balance(address);
     }
