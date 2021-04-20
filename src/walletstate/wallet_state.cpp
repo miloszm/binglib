@@ -93,7 +93,12 @@ WalletState::get_all_txs_sorted(ElectrumApiClient &electrum_api_client) {
     std::sort(all_history_.begin(), all_history_.end(),
               [](const AddressHistoryItem &lhs, const AddressHistoryItem &rhs) {
                   if (lhs.height != rhs.height)
-                      return lhs.height > rhs.height;
+                      if (lhs.height == 0)
+                          return true;
+                      else if (rhs.height == 0)
+                          return false;
+                      else
+                        return lhs.height > rhs.height;
                   else
                       return lhs.txid > rhs.txid;
               });
@@ -138,6 +143,7 @@ void WalletState::clear_caches() {
 }
 
 void WalletState::clear_caches_for_address(const string& address) {
+    all_history_.clear();
     address_2_history_cache_[address] = vector<AddressHistoryItem>();
     address_2_history_cache_empty_[address] = false;
 }
