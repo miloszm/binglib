@@ -58,7 +58,9 @@ void HistoryInspector::scan_balances(map<string, uint64_t> &address_to_balance) 
 
 void HistoryInspector::do_addresses_subscriptions(map<string, string> &address_to_historyhash) {
     for (auto address : wallet_state_.get_addresses()) {
-        address_to_historyhash[address] = wallet_state_.subscribe_address(electrum_api_client_, address);
+        string new_history_hash = wallet_state_.subscribe_address(electrum_api_client_, address);
+        if (!new_history_hash.empty())
+            address_to_historyhash[address] = new_history_hash;
     }
 }
 
@@ -186,6 +188,7 @@ TxWalletImpact HistoryInspector::calculate_tx_wallet_impact(const string &tx_id)
 
 void HistoryInspector::create_history_view_rows(
     vector<HistoryViewRow> &history_view_rows) {
+    history_view_rows.clear();
 
     vector<TransactionAndHeight> sorted_txs =
         wallet_state_.get_all_txs_sorted(electrum_api_client_);
