@@ -2,6 +2,7 @@
 #define WALLET_STATE_HPP
 
 #include <binglib/electrum_api_client.hpp>
+#include <binglib/bing_wallet.hpp>
 #include <bitcoin/bitcoin.hpp>
 
 using namespace bc;
@@ -19,9 +20,10 @@ struct TransactionAndHeight {
 
 class WalletState {
   public:
-    WalletState(vector<string> &addresses);
+    WalletState(vector<string> &addresses, map<string,AddressDerivationResult>& address_to_data);
     virtual ~WalletState();
     vector<string> &get_addresses();
+    map<string,AddressDerivationResult> &get_address_to_data();
     bool is_in_wallet(string address);
     transaction get_transaction(ElectrumApiClient &electrum_api_client,
                                 string txid);
@@ -43,6 +45,7 @@ class WalletState {
     map<string, bool> address_2_history_cache_empty_;
     vector<AddressHistoryItem> all_history_;
     map<string, bool> address_2_subscribed_;
+    map<string, AddressDerivationResult> address_to_data_;
 
   private:
     static transaction hex_2_tx(string tx_hex);

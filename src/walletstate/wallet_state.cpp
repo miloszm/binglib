@@ -9,7 +9,8 @@ using namespace bc::chain;
 using namespace bc::wallet;
 using namespace bc::machine;
 
-WalletState::WalletState(vector<string> &addresses) : addresses_(addresses) {
+WalletState::WalletState(vector<string> &addresses, map<string,AddressDerivationResult>& address_to_data)
+    : addresses_(addresses), address_to_data_(address_to_data) {
     for (const string& address: addresses){
         string spkh = AddressConverter::base58_to_spkh_hex(address);
         spkh_2_address_[spkh] = address;
@@ -19,6 +20,8 @@ WalletState::WalletState(vector<string> &addresses) : addresses_(addresses) {
 WalletState::~WalletState() {}
 
 vector<string> &WalletState::get_addresses() { return addresses_; }
+
+map<string,AddressDerivationResult> &WalletState::get_address_to_data(){ return address_to_data_; }
 
 bool WalletState::is_in_wallet(string address) {
     return std::find(addresses_.begin(), addresses_.end(), address) !=
