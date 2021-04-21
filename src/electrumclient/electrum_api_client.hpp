@@ -10,6 +10,7 @@ using namespace std;
 struct AddressHistoryItem {
     string txid;
     int height;
+    bool fresh;
 };
 
 

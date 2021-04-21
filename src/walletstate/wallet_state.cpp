@@ -66,7 +66,8 @@ void WalletState::get_history(ElectrumApiClient &electrum_api_client,
         string address_spkh = AddressConverter::base58_to_spkh_hex(address);
         AddressHistory history = electrum_api_client.getHistory(address_spkh);
         for (const AddressHistoryItem &history_item : history) {
-            history_items.push_back(history_item);
+            AddressHistoryItem ahi{history_item.txid, history_item.height, true};
+            history_items.push_back(ahi);
         }
         address_2_history_cache_[address] = history_items;
         if (history_items.empty()){
@@ -74,7 +75,8 @@ void WalletState::get_history(ElectrumApiClient &electrum_api_client,
         }
     } else {
         for (const AddressHistoryItem &history_item : address_history) {
-            history_items.push_back(history_item);
+            AddressHistoryItem ahi{history_item.txid, history_item.height, false};
+            history_items.push_back(ahi);
         }
     }
 }
@@ -90,7 +92,7 @@ void WalletState::refresh_all_history(ElectrumApiClient &electrum_api_client) {
     }
 }
 
-vector<TransactionAndHeight>
+vector<TransactionInfo>
 WalletState::get_all_txs_sorted(ElectrumApiClient &electrum_api_client) {
     refresh_all_history(electrum_api_client);
     std::sort(all_history_.begin(), all_history_.end(),
@@ -112,11 +114,11 @@ WalletState::get_all_txs_sorted(ElectrumApiClient &electrum_api_client) {
         });
     all_history_.erase(last, all_history_.end());
 
-    vector<TransactionAndHeight> txs;
+    vector<TransactionInfo> txs;
     for (const AddressHistoryItem &item : all_history_) {
         transaction tx = get_transaction(electrum_api_client, item.txid);
-        TransactionAndHeight transaction_and_height{tx, item.height};
-        txs.push_back(transaction_and_height);
+        TransactionInfo transaction_info{tx, item.height, item.fresh};
+        txs.push_back(transaction_info);
     }
 
     return txs;

@@ -44,6 +44,7 @@ struct HistoryViewRow {
     bool is_p2sh;
     uint64_t funding_amount;
     string funding_address;
+    bool fresh;
 };
 
 struct TxWalletImpact {

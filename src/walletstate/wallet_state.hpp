@@ -13,9 +13,10 @@ using namespace bc::machine;
 
 using namespace std;
 
-struct TransactionAndHeight {
+struct TransactionInfo {
     transaction tx;
     int height;
+    bool fresh;
 };
 
 class WalletState {
@@ -30,7 +31,7 @@ class WalletState {
     void get_history(ElectrumApiClient &electrum_api_client,
                      const string &address,
                      vector<AddressHistoryItem> &history_items);
-    vector<TransactionAndHeight>
+    vector<TransactionInfo>
     get_all_txs_sorted(ElectrumApiClient &electrum_api_client);
     string spkh_2_address(string spkh);
     string subscribe_address(ElectrumApiClient &electrum_api_client, const string& address);

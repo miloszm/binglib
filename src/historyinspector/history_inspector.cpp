@@ -191,11 +191,11 @@ void HistoryInspector::create_history_view_rows(
     vector<HistoryViewRow> &history_view_rows) {
     history_view_rows.clear();
 
-    vector<TransactionAndHeight> sorted_txs =
+    vector<TransactionInfo> sorted_txs =
         wallet_state_.get_all_txs_sorted(electrum_api_client_);
 
-    for (auto &tx_and_height : sorted_txs) {
-        auto &tx = tx_and_height.tx;
+    for (auto &tx_info : sorted_txs) {
+        auto &tx = tx_info.tx;
         string tx_id = encode_hash(tx.hash());
         TxWalletImpact impact = calculate_tx_wallet_impact(tx_id);
         // todo: cache it
@@ -207,13 +207,14 @@ void HistoryInspector::create_history_view_rows(
         uint32_t timestamp = 0;
         HistoryViewRow history_view_row{
             timestamp,
-            tx_and_height.height,
+            tx_info.height,
             impact.balance_delta,
             tx_id,
             0,
             impact.is_p2sh,
             impact.funding_amount,
-            impact.funding_address};
+            impact.funding_address,
+            tx_info.fresh};
         history_view_rows.push_back(history_view_row);
     }
     uint64_t balance{0};
