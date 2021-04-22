@@ -4,7 +4,8 @@
 #include <binglib/electrum_api_client.hpp>
 #include <binglib/bing_wallet.hpp>
 #include <bitcoin/bitcoin.hpp>
-#include "src/utility/blocking_queue.hpp"
+#include <binglib/blocking_queue.hpp>
+//#include "src/utility/blocking_queue.hpp"
 
 using namespace bc;
 using namespace bc::chain;

@@ -1,8 +1,8 @@
 #ifndef BINGDIYI_HISTORY_INSPECTOR_HPP
 #define BINGDIYI_HISTORY_INSPECTOR_HPP
 
-//#include <binglib/wallet_state.hpp>
-#include "src/walletstate/wallet_state.hpp"
+#include <binglib/wallet_state.hpp>
+//#include "src/walletstate/wallet_state.hpp"
 #include <binglib/electrum_api_client.hpp>
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
