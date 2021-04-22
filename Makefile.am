@@ -31,6 +31,7 @@ include_binglibdir = ${includedir}/binglib
 include_binglib_HEADERS = \
     src/common/bing_common.hpp \
     src/utility/address_converter.hpp \
+    src/utility/blocking_queue.hpp \
     src/wallet/bing_wallet.hpp \
     src/electrumclient/json_socket_client.hpp \
     src/electrumclient/electrum_client.hpp \
