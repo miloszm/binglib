@@ -20,6 +20,18 @@ struct TransactionInfo {
     bool fresh;
 };
 
+struct HistoryViewRow {
+    uint32_t timestamp;
+    int height;
+    int64_t balance_delta;
+    string tx_id;
+    uint64_t balance;
+    bool is_p2sh;
+    uint64_t funding_amount;
+    string funding_address;
+    bool fresh;
+};
+
 class WalletState {
   public:
     WalletState(vector<string> &addresses, map<string,AddressDerivationResult>& address_to_data);
@@ -48,6 +60,7 @@ class WalletState {
     vector<AddressHistoryItem> all_history_;
     map<string, bool> address_2_subscribed_;
     map<string, AddressDerivationResult> address_to_data_;
+    blocking_queue<vector<HistoryViewRow>> history_rows_;
 
   private:
     static transaction hex_2_tx(string tx_hex);

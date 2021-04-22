@@ -6,7 +6,7 @@
 #include <deque>
 
 template <typename T>
-class queue {
+class blocking_queue {
 private:
     std::mutex mutex_;
     std::condition_variable condition_;

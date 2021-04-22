@@ -2,6 +2,7 @@
 #define BINGDIYI_HISTORY_INSPECTOR_HPP
 
 #include <binglib/wallet_state.hpp>
+//#include "src/walletstate/wallet_state.hpp"
 #include <binglib/electrum_api_client.hpp>
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
@@ -33,18 +34,6 @@ struct TxBalance {
     string tx_id;
     vector<TxBalanceInput> inputs;
     vector<TxBalanceOutput> outputs;
-};
-
-struct HistoryViewRow {
-    uint32_t timestamp;
-    int height;
-    int64_t balance_delta;
-    string tx_id;
-    uint64_t balance;
-    bool is_p2sh;
-    uint64_t funding_amount;
-    string funding_address;
-    bool fresh;
 };
 
 struct TxWalletImpact {
