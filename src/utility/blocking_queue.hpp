@@ -12,7 +12,7 @@ private:
     std::condition_variable condition_;
     std::deque<T> queue_;
 public:
-    void push(T const& value) {
+    void push(T value) {
         {
             std::unique_lock<std::mutex> lock(mutex_);
             queue_.push_front(value);

@@ -1,8 +1,8 @@
 #ifndef BINGDIYI_HISTORY_INSPECTOR_HPP
 #define BINGDIYI_HISTORY_INSPECTOR_HPP
 
-#include <binglib/wallet_state.hpp>
-//#include "src/walletstate/wallet_state.hpp"
+//#include <binglib/wallet_state.hpp>
+#include "src/walletstate/wallet_state.hpp"
 #include <binglib/electrum_api_client.hpp>
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
@@ -52,7 +52,7 @@ class HistoryInspector {
     uint64_t calculate_address_balance(const string &address);
     uint64_t calculate_total_balance();
     TxWalletImpact calculate_tx_wallet_impact(const string &tx_id);
-    void create_history_view_rows(vector<HistoryViewRow> &history_view_rows);
+    void create_history_view_rows();
     void scan_balances(map<string, uint64_t> &address_to_balance);
     void do_addresses_subscriptions(map<string, string> &address_to_historyhash);
     void clear_caches();

@@ -51,6 +51,7 @@ class WalletState {
     void clear_caches();
     void clear_caches_for_address(const string& address);
     vector<HistoryViewRow> get_history_update();
+    void push_history_update(vector<HistoryViewRow>& history_rows);
 
   private:
     vector<string> addresses_;

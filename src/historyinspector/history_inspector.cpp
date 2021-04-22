@@ -187,9 +187,8 @@ TxWalletImpact HistoryInspector::calculate_tx_wallet_impact(const string &tx_id)
     };
 }
 
-void HistoryInspector::create_history_view_rows(
-    vector<HistoryViewRow> &history_view_rows) {
-    history_view_rows.clear();
+void HistoryInspector::create_history_view_rows() {
+    vector<HistoryViewRow> history_view_rows;
 
     vector<TransactionInfo> sorted_txs =
         wallet_state_.get_all_txs_sorted(electrum_api_client_);
@@ -223,6 +222,7 @@ void HistoryInspector::create_history_view_rows(
         balance += p->balance_delta;
         p->balance = balance;
     }
+    wallet_state_.push_history_update(history_view_rows);
 }
 
 chain::header HistoryInspector::hex_2_header(string header_hex) {
