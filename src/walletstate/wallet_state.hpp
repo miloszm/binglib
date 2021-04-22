@@ -50,6 +50,7 @@ class WalletState {
     string subscribe_address(ElectrumApiClient &electrum_api_client, const string& address);
     void clear_caches();
     void clear_caches_for_address(const string& address);
+    vector<HistoryViewRow> get_history_update();
 
   private:
     vector<string> addresses_;
@@ -60,7 +61,7 @@ class WalletState {
     vector<AddressHistoryItem> all_history_;
     map<string, bool> address_2_subscribed_;
     map<string, AddressDerivationResult> address_to_data_;
-    blocking_queue<vector<HistoryViewRow>> history_rows_;
+    blocking_queue<vector<HistoryViewRow>> history_queue_;
 
   private:
     static transaction hex_2_tx(string tx_hex);

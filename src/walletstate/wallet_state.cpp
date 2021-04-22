@@ -152,3 +152,7 @@ void WalletState::clear_caches_for_address(const string& address) {
     address_2_history_cache_[address] = vector<AddressHistoryItem>();
     address_2_history_cache_empty_[address] = false;
 }
+
+vector<HistoryViewRow> WalletState::get_history_update() {
+    history_queue_.pop();
+}
