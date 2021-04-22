@@ -50,11 +50,12 @@ uint64_t HistoryInspector::calculate_address_balance(const string &address) {
     return balance;
 }
 
-void HistoryInspector::scan_balances(map<string, uint64_t> &address_to_balance) {
-    address_to_balance.clear();
+void HistoryInspector::scan_balances() {
+    map<string, uint64_t> address_to_balance;
     for (auto address : wallet_state_.get_addresses()) {
         address_to_balance[address] = calculate_address_balance(address);
     }
+    wallet_state_.push_balance_update(address_to_balance);
 }
 
 void HistoryInspector::do_addresses_subscriptions(map<string, string> &address_to_historyhash) {

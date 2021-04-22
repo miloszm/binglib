@@ -160,3 +160,11 @@ vector<HistoryViewRow> WalletState::get_history_update() {
 void WalletState::push_history_update(vector<HistoryViewRow>& history_rows) {
     history_queue_.push(history_rows);
 }
+
+map<string, uint64_t> WalletState::get_balance_update() {
+    return balance_queue_.pop();
+}
+
+void WalletState::push_balance_update(map<string, uint64_t>& balance_map) {
+    balance_queue_.push(balance_map);
+}

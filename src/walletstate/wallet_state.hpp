@@ -53,6 +53,8 @@ class WalletState {
     void clear_caches_for_address(const string& address);
     vector<HistoryViewRow> get_history_update();
     void push_history_update(vector<HistoryViewRow>& history_rows);
+    map<string, uint64_t> get_balance_update();
+    void push_balance_update(map<string, uint64_t>& balance_map);
 
   private:
     vector<string> addresses_;
@@ -64,6 +66,7 @@ class WalletState {
     map<string, bool> address_2_subscribed_;
     map<string, AddressDerivationResult> address_to_data_;
     blocking_queue<vector<HistoryViewRow>> history_queue_;
+    blocking_queue<map<string, uint64_t>> balance_queue_;
 
   private:
     static transaction hex_2_tx(string tx_hex);
