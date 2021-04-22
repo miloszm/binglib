@@ -154,7 +154,7 @@ void WalletState::clear_caches_for_address(const string& address) {
 }
 
 vector<HistoryViewRow> WalletState::get_history_update() {
-    history_queue_.pop();
+    return history_queue_.pop();
 }
 
 void WalletState::push_history_update(vector<HistoryViewRow>& history_rows) {
