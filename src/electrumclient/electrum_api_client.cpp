@@ -27,6 +27,22 @@ void address_balance_from_json(const nlohmann::json& j, AddressBalance& ab) {
 }
 
 
+void utxo_from_json(const nlohmann::json& j, Utxo& utxo) {
+    j.at("tx_pos").get_to(utxo.tx_pos);
+    j.at("value").get_to(utxo.value);
+    j.at("tx_hash").get_to(utxo.tx_id);
+    j.at("height").get_to(utxo.height);
+}
+
+void utxos_from_json(const nlohmann::json& j, vector<Utxo>& utxos) {
+    auto items = j.items();
+    for (auto i = items.begin(); i != items.end(); ++i){
+        Utxo u;
+        utxo_from_json(i.value(), u);
+        utxos.push_back(u);
+    }
+}
+
 AddressHistory ElectrumApiClient::getHistory(string address){
     vector<string> av{address};
     ElectrumRequest request{"blockchain.scripthash.get_history", ++id_counter, av};
@@ -64,6 +80,33 @@ string ElectrumApiClient::scripthashSubscribe(string scripthash) {
         throw std::invalid_argument(error_message);
     }
     return response;
+}
+
+
+vector<Utxo> ElectrumApiClient::getUtxos(string scripthash) {
+    vector<string> scripthashv{scripthash};
+    ElectrumRequest request{"blockchain.scripthash.listunspent", ++id_counter, scripthashv};
+    json json_request;
+    electrum_request_to_json(json_request, request);
+    json json_response = client_.send_request(json_request, id_counter);
+    cout << "getUtxos " << scripthash << "\n";
+    vector<Utxo> utxos;
+    try {
+        if (json_response["result"].is_null()){
+            utxos = vector<Utxo>();
+        } else {
+            utxos_from_json(json_response.at("result"), utxos);
+        }
+    } catch(exception& e){
+        string error_message;
+        try {
+            error_message = json_response.at("error").at("message");
+        } catch(exception& e){
+            error_message = "blockchain.scripthash.listunspent failed: " + json_response.dump() + " " + e.what();
+        }
+        throw std::invalid_argument(error_message);
+    }
+    return utxos;
 }
 
 

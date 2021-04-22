@@ -27,6 +27,17 @@ struct AddressBalance {
 
 void address_balance_from_json(const nlohmann::json& j, AddressBalance& ab);
 
+struct Utxo {
+    uint32_t tx_pos;
+    string tx_id;
+    uint64_t value;
+    int height;
+};
+
+void utxo_from_json(const nlohmann::json& j, Utxo& utxo);
+
+void utxos_from_json(const nlohmann::json& j, vector<Utxo>& utxos);
+
 class ElectrumApiClient {
 public:
     ElectrumApiClient(ElectrumClient& client): client_(client){}
@@ -36,6 +47,7 @@ public:
     string getTransaction(string txid);
     AddressBalance getBalance(string address);
     string getBlockHeader(int height);
+    vector<Utxo> getUtxos(string scripthash);
     double estimateFee(int wait_blocks);
     string broadcastTransaction(string txid);
     ElectrumMessage run_receiving_loop(){ return client_.run_receiving_loop(); }
