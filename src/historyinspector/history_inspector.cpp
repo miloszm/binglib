@@ -58,12 +58,14 @@ void HistoryInspector::scan_balances() {
     wallet_state_.push_balance_update(address_to_balance);
 }
 
-void HistoryInspector::do_addresses_subscriptions(map<string, string> &address_to_historyhash) {
+void HistoryInspector::do_addresses_subscriptions() {
+    map<string, string> address_to_historyhash;
     for (auto address : wallet_state_.get_addresses()) {
         string new_history_hash = wallet_state_.subscribe_address(electrum_api_client_, address);
         if (!new_history_hash.empty())
             address_to_historyhash[address] = new_history_hash;
     }
+    wallet_state_.push_historyhash_update(address_to_historyhash);
 }
 
 wallet::payment_address::list HistoryInspector::get_addresses(output &o) {

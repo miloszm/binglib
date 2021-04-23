@@ -168,3 +168,11 @@ map<string, uint64_t> WalletState::get_balance_update() {
 void WalletState::push_balance_update(map<string, uint64_t>& balance_map) {
     balance_queue_.push(balance_map);
 }
+
+map<string, string> WalletState::get_historyhash_update() {
+    return historyhash_queue.pop();
+}
+
+void WalletState::push_historyhash_update(map<string, string>& historyhash_map) {
+    historyhash_queue.push(historyhash_map);
+}

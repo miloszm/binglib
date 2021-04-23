@@ -54,7 +54,7 @@ class HistoryInspector {
     TxWalletImpact calculate_tx_wallet_impact(const string &tx_id);
     void create_history_view_rows();
     void scan_balances();
-    void do_addresses_subscriptions(map<string, string> &address_to_historyhash);
+    void do_addresses_subscriptions();
     void clear_caches();
     void clear_caches_for_address(const string& address);
 
