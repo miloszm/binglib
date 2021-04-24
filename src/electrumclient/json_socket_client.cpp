@@ -67,17 +67,19 @@ void JsonSocketClient::handshake() {
 }
 
 void JsonSocketClient::send_request(json json_request) {
-  enum { max_length = 1024 };
+  enum { max_length = 2048 };
   char request_[max_length];
   std::string req0 = json_request.dump();
   std::string req = req0 + "\n";
   strcpy(request_, req.data());
   size_t request_length = std::strlen(req.data());
+  cout << "sending request: " << req << "\n";
 
   boost::asio::write(socket_, boost::asio::buffer(request_, request_length));
 }
 
 json JsonSocketClient::receive_response(int id) {
+  //cout << "receive_response for id=" << id << " is_loop=" << is_loop << "\n";
   if (!is_loop) {
     boost::array<char, 512> buf;
     std::ostringstream oss;
@@ -106,6 +108,10 @@ json JsonSocketClient::receive_response(int id) {
   }
   ElectrumMessage reply_message = queue_.pop_reply(id);
   return reply_message.message;
+}
+
+void JsonSocketClient::eat_response(int id) {
+  queue_.pop_eat_reply(id);
 }
 
 ElectrumMessage JsonSocketClient::run_receiving_loop() {

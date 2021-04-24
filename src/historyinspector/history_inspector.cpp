@@ -61,9 +61,8 @@ void HistoryInspector::scan_balances() {
 void HistoryInspector::do_addresses_subscriptions() {
     map<string, string> address_to_historyhash;
     for (auto address : wallet_state_.get_addresses()) {
-        string new_history_hash = wallet_state_.subscribe_address(electrum_api_client_, address);
-        if (!new_history_hash.empty())
-            address_to_historyhash[address] = new_history_hash;
+        wallet_state_.subscribe_address(electrum_api_client_, address);
+        address_to_historyhash[address] = "";
     }
     wallet_state_.push_historyhash_update(address_to_historyhash);
 }

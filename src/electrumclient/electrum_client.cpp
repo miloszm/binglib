@@ -41,14 +41,13 @@ void ElectrumClient::init(string hostname, string service,
   client->prepare_connection.lock();
 }
 
-/**
- * NOTE
- * To really use this client, it is needed to implement
- * some form of correlation check, currently request id
- * correlation is not done
- */
 json ElectrumClient::send_request(json json_request, int id) {
   unique_lock<mutex> lock(mutex_);
   client->send_request(json_request);
   return client->receive_response(id);
+}
+
+void ElectrumClient::send_request_eat_response(json json_request, int id) {
+  client->send_request(json_request);
+  client->eat_response(id);
 }

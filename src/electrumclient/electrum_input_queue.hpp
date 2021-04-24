@@ -27,6 +27,7 @@ private:
 public:
     void push(const ElectrumMessage& message);
     ElectrumMessage pop_reply(int id);
+    void pop_eat_reply(int id);
     vector<ElectrumMessage> copyAll(){vector<ElectrumMessage> v(queue_.begin(), queue_.end()); return v;}
 private:
     bool contains_msg_with_id(int id);

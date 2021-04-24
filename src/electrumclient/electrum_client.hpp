@@ -22,6 +22,7 @@ public:
     virtual ~ElectrumClient();
     void init(string hostname, string service, string certificationFilePath);
     nlohmann::json send_request(nlohmann::json json_request, int id);
+    void send_request_eat_response(nlohmann::json json_request, int id);
     ElectrumMessage run_receiving_loop(){ return client->run_receiving_loop(); }
 private:
     JsonSocketClient* client;

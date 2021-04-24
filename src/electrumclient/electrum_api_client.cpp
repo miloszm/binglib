@@ -56,30 +56,13 @@ AddressHistory ElectrumApiClient::getHistory(string address){
 }
 
 
-string ElectrumApiClient::scripthashSubscribe(string scripthash) {
+void ElectrumApiClient::scripthashSubscribe(string scripthash) {
     vector<string> scripthashv{scripthash};
     ElectrumRequest request{"blockchain.scripthash.subscribe", ++id_counter, scripthashv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request, id_counter);
-    cout << "scripthashSubscribe " << scripthash << "\n";
-    string response;
-    try {
-        if (json_response["result"].is_null()){
-            response = "";
-        } else {
-            response = json_response.at("result");
-        }
-    } catch(exception& e){
-        string error_message;
-        try {
-            error_message = json_response.at("error").at("message");
-        } catch(exception& e){
-            error_message = "blockchain.scripthash.subscribe failed: " + json_response.dump() + " " + e.what();
-        }
-        throw std::invalid_argument(error_message);
-    }
-    return response;
+    cout << "sending scripthashSubscribe " << scripthash << "with id=" << id_counter << "\n";
+    client_.send_request_eat_response(json_request, id_counter);
 }
 
 

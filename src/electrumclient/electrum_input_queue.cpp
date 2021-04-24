@@ -18,22 +18,43 @@ void ElectrumInputQueue::push(const ElectrumMessage& message) {
 
 ElectrumMessage ElectrumInputQueue::pop_reply(int id) {
     std::unique_lock<std::mutex> lock(mutex_);
-    for(int i = 1; i <= 10; ++i) {
-        if (condition_.wait_for(lock, i*100ms, [=] {
+    int factor = 16;
+    for(int i = 0; i < 9; ++i) {
+        if (condition_.wait_for(lock, factor*5ms, [=] {
             return contains_msg_with_id(id);
             }))
         {
             auto iter = find_msg_with_id(id);
             ElectrumMessage m(std::move(*iter));
             queue_.erase(iter);
-            //cout << "gotten response for corr id " << id << " in try no " << i << "\n";
             return m;
         } else {
+            factor *= 2;
             continue;
         }
     }
     cout << "electrum response missing for correlation id=" << id << "\n";
     // TODO don't know at the moment what is best to do in such case
+}
+
+// TODO refactor common code between pop_reply and pop_eat_reply
+void ElectrumInputQueue::pop_eat_reply(int id) {
+    std::unique_lock<std::mutex> lock(mutex_);
+    int factor = 16;
+    for(int i = 0; i < 5; ++i) {
+        if (condition_.wait_for(lock, factor*5ms, [=] {
+            return contains_msg_with_id(id);
+            }))
+        {
+            auto iter = find_msg_with_id(id);
+            ElectrumMessage m(std::move(*iter));
+            queue_.erase(iter);
+            return;
+        } else {
+            factor *= 2;
+            continue;
+        }
+    }
 }
 
 bool ElectrumInputQueue::contains_msg_with_id(int id) {

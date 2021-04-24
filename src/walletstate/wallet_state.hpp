@@ -2,6 +2,7 @@
 #define WALLET_STATE_HPP
 
 #include <binglib/electrum_api_client.hpp>
+//#include "src/electrumclient/electrum_api_client.hpp"
 #include <binglib/bing_wallet.hpp>
 #include <bitcoin/bitcoin.hpp>
 #include <binglib/blocking_queue.hpp>
@@ -48,7 +49,7 @@ class WalletState {
     vector<TransactionInfo>
     get_all_txs_sorted(ElectrumApiClient &electrum_api_client);
     string spkh_2_address(string spkh);
-    string subscribe_address(ElectrumApiClient &electrum_api_client, const string& address);
+    void subscribe_address(ElectrumApiClient &electrum_api_client, const string& address);
     void clear_caches();
     void clear_caches_for_address(const string& address);
     vector<HistoryViewRow> get_history_update();
@@ -65,7 +66,6 @@ class WalletState {
     map<string, vector<AddressHistoryItem>> address_2_history_cache_;
     map<string, bool> address_2_history_cache_empty_;
     vector<AddressHistoryItem> all_history_;
-    map<string, bool> address_2_subscribed_;
     map<string, AddressDerivationResult> address_to_data_;
     blocking_queue<vector<HistoryViewRow>> history_queue_;
     blocking_queue<map<string, uint64_t>> balance_queue_;
