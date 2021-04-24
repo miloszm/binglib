@@ -48,10 +48,20 @@ AddressHistory ElectrumApiClient::getHistory(string address){
     ElectrumRequest request{"blockchain.scripthash.get_history", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
+    cout << "getHistory " << address << "\n";
     json json_response = client_.send_request(json_request, id_counter);
     AddressHistory address_history;
-    address_history_from_json(json_response["result"], address_history);
-    cout << "getHistory " << address << "\n";
+    try {
+        address_history_from_json(json_response["result"], address_history);
+    } catch(exception& e){
+        string error_message;
+        try {
+            error_message = json_response.at("error").at("message");
+        } catch(exception& e){
+            error_message = "blockchain.scripthash.get_history failed: " + json_response.dump() + " " + e.what();
+        }
+        throw std::invalid_argument(error_message);
+    }
     return address_history;
 }
 
