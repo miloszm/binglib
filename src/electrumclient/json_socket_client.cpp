@@ -114,11 +114,14 @@ void JsonSocketClient::eat_response(int id) {
   queue_.pop_eat_reply(id);
 }
 
-ElectrumMessage JsonSocketClient::run_receiving_loop() {
+ElectrumMessage JsonSocketClient::run_receiving_loop(std::atomic<bool>& interrupt_requested) {
     is_loop = true;
     boost::array<char, 512> buf;
     std::ostringstream oss;
     for (;;) {
+        if (interrupt_requested) {
+            return ElectrumMessage{json::parse("{}"), "", false, 0};;
+        }
         boost::system::error_code error;
 
         size_t len = socket_.read_some(boost::asio::buffer(buf), error);

@@ -50,7 +50,7 @@ public:
     vector<Utxo> getUtxos(string scripthash);
     double estimateFee(int wait_blocks);
     string broadcastTransaction(string txid);
-    ElectrumMessage run_receiving_loop(){ return client_.run_receiving_loop(); }
+    ElectrumMessage run_receiving_loop(std::atomic<bool>& interrupt_requested){ return client_.run_receiving_loop(interrupt_requested); }
     static bool is_scripthash_update(const ElectrumMessage& electrum_message);
 private:
     ElectrumClient& client_;

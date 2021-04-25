@@ -23,7 +23,7 @@ public:
     void init(string hostname, string service, string certificationFilePath);
     nlohmann::json send_request(nlohmann::json json_request, int id);
     void send_request_eat_response(nlohmann::json json_request, int id);
-    ElectrumMessage run_receiving_loop(){ return client->run_receiving_loop(); }
+    ElectrumMessage run_receiving_loop(std::atomic<bool>& interrupt_requested){ return client->run_receiving_loop(interrupt_requested); }
 private:
     JsonSocketClient* client;
     boost::asio::io_context* io_context;
