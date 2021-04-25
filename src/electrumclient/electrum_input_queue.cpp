@@ -48,7 +48,7 @@ void ElectrumInputQueue::pop_eat_reply(int id) {
         {
             auto iter = find_msg_with_id(id);
             ElectrumMessage m(std::move(*iter));
-            cout << "eating response: " << m.message.dump(4) << "\n";
+            //cout << "eating response: " << m.message.dump(4) << "\n";
             queue_.erase(iter);
             return;
         } else {

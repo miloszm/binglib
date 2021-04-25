@@ -71,7 +71,7 @@ void ElectrumApiClient::scripthashSubscribe(string scripthash) {
     ElectrumRequest request{"blockchain.scripthash.subscribe", ++id_counter, scripthashv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    cout << "sending scripthashSubscribe " << scripthash << "with id=" << id_counter << "\n";
+    //cout << "scripthashSubscribe " << scripthash << "with id=" << id_counter << "\n";
     client_.send_request_eat_response(json_request, id_counter);
 }
 
