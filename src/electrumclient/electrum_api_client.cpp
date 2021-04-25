@@ -109,7 +109,7 @@ string ElectrumApiClient::getTransaction(string txid){
     json json_request;
     electrum_request_to_json(json_request, request);
     json json_response = client_.send_request(json_request, id_counter);
-    cout << "getTransaction " << txid << "\n";
+    // cout << "getTransaction " << txid << "\n";
     string response;
     try {
         response =json_response.at("result");
@@ -139,7 +139,7 @@ string ElectrumApiClient::getBlockHeader(int height){
     json json_request;
     electrum_request_to_json(json_request, request);
     json json_response = client_.send_request(json_request, id_counter);
-    cout << "getBlockHeader " << height << "\n";
+    // cout << "getBlockHeader " << height << "\n";
     string response;
     try {
         response = json_response.at("result");

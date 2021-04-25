@@ -67,13 +67,13 @@ void JsonSocketClient::handshake() {
 }
 
 void JsonSocketClient::send_request(json json_request) {
-  enum { max_length = 2048 };
+  enum { max_length = 1536 };
   char request_[max_length];
   std::string req0 = json_request.dump();
   std::string req = req0 + "\n";
   strcpy(request_, req.data());
-  size_t request_length = std::strlen(req.data());
-  cout << "sending request: " << req << "\n";
+  size_t request_length = req.size();
+  //cout << "sending request: " << req << "\n";
 
   boost::asio::write(socket_, boost::asio::buffer(request_, request_length));
 }
