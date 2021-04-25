@@ -126,12 +126,19 @@ ElectrumMessage JsonSocketClient::run_receiving_loop(std::atomic<bool>& interrup
 
         size_t len = socket_.read_some(boost::asio::buffer(buf), error);
 
-        if (error == boost::asio::error::eof)
+        if (error == boost::asio::error::eof) {
             //return ElectrumMessage { json::parse("{}"), "", false, 0}; // Connection closed cleanly by peer.
-            throw std::invalid_argument(string("socket eof error: ") + to_string(error.value()) + " (" + error.message() + ")");
-        else if (error)
+            throw std::invalid_argument(
+                    string("socket eof error: ") + to_string(error.value()) + " (" + error.message() + ")");
+        }
+        else if (error) {
+            if (interrupt_requested){
+                return ElectrumMessage{json::parse("{}"), "", false, 0};;
+            }
             //throw boost::system::system_error(error); // Some other error.
-            throw std::invalid_argument(string("socket reading error: ") + to_string(error.value()) + " (" + error.message() + ")");
+            throw std::invalid_argument(
+                    string("socket reading error: ") + to_string(error.value()) + " (" + error.message() + ")");
+        }
 
         oss.write(buf.data(), len);
         std::string candidate_response = oss.str();
@@ -149,6 +156,10 @@ ElectrumMessage JsonSocketClient::run_receiving_loop(std::atomic<bool>& interrup
             continue;
         }
     }
+}
+
+void JsonSocketClient::shutdown() {
+    socket_.shutdown();
 }
 
 ElectrumMessage JsonSocketClient::from_json(nlohmann::json message) {

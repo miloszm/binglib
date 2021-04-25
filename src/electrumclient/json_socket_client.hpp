@@ -16,6 +16,7 @@ public:
   nlohmann::json receive_response(int id);
   void eat_response(int id);
   ElectrumMessage run_receiving_loop(std::atomic<bool>& interrupt_requested);
+  void shutdown();
   std::mutex prepare_connection;
 
 private:
