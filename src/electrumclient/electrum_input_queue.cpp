@@ -33,8 +33,7 @@ ElectrumMessage ElectrumInputQueue::pop_reply(int id) {
             continue;
         }
     }
-    cout << "electrum response missing for correlation id=" << id << "\n";
-    // TODO don't know at the moment what is best to do in such case
+    throw std::invalid_argument(string("electrum response timeout for correlation id=") + to_string(id));
 }
 
 // TODO refactor common code between pop_reply and pop_eat_reply

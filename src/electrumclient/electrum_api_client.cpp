@@ -43,24 +43,36 @@ void utxos_from_json(const nlohmann::json& j, vector<Utxo>& utxos) {
     }
 }
 
+
+void ElectrumApiClient::process_exception(exception& e, nlohmann::json response, const string& msg) {
+    string error_message;
+    if (response.empty()) {
+        error_message = msg + " failed: " + e.what();
+    }
+    else {
+        try {
+            error_message = response.at("error").at("message");
+        } catch (exception &e) {
+            error_message = msg + " failed: " + response.dump() + " " + e.what();
+        }
+    }
+    throw std::invalid_argument(error_message);
+}
+
+
 AddressHistory ElectrumApiClient::getHistory(string address){
     vector<string> av{address};
     ElectrumRequest request{"blockchain.scripthash.get_history", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
     cout << "getHistory " << address << "\n";
-    json json_response = client_.send_request(json_request, id_counter);
     AddressHistory address_history;
+    json json_response;
     try {
+        json_response = client_.send_request(json_request, id_counter);
         address_history_from_json(json_response["result"], address_history);
     } catch(exception& e){
-        string error_message;
-        try {
-            error_message = json_response.at("error").at("message");
-        } catch(exception& e){
-            error_message = "blockchain.scripthash.get_history failed: " + json_response.dump() + " " + e.what();
-        }
-        throw std::invalid_argument(error_message);
+        process_exception(e, json_response, "blockchain.scripthash.get_history");
     }
     return address_history;
 }
@@ -71,7 +83,6 @@ void ElectrumApiClient::scripthashSubscribe(string scripthash) {
     ElectrumRequest request{"blockchain.scripthash.subscribe", ++id_counter, scripthashv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    //cout << "scripthashSubscribe " << scripthash << "with id=" << id_counter << "\n";
     client_.send_request_eat_response(json_request, id_counter);
 }
 
@@ -81,23 +92,18 @@ vector<Utxo> ElectrumApiClient::getUtxos(string scripthash) {
     ElectrumRequest request{"blockchain.scripthash.listunspent", ++id_counter, scripthashv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request, id_counter);
     cout << "getUtxos " << scripthash << "\n";
     vector<Utxo> utxos;
+    json json_response;
     try {
+        json_response = client_.send_request(json_request, id_counter);
         if (json_response["result"].is_null()){
             utxos = vector<Utxo>();
         } else {
             utxos_from_json(json_response.at("result"), utxos);
         }
     } catch(exception& e){
-        string error_message;
-        try {
-            error_message = json_response.at("error").at("message");
-        } catch(exception& e){
-            error_message = "blockchain.scripthash.listunspent failed: " + json_response.dump() + " " + e.what();
-        }
-        throw std::invalid_argument(error_message);
+        process_exception(e, json_response, "blockchain.scripthash.listunspent");
     }
     return utxos;
 }
@@ -108,13 +114,13 @@ string ElectrumApiClient::getTransaction(string txid){
     ElectrumRequest request{"blockchain.transaction.get", ++id_counter, txidv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request, id_counter);
-    // cout << "getTransaction " << txid << "\n";
     string response;
+    json json_response;
     try {
+        json_response = client_.send_request(json_request, id_counter);
         response =json_response.at("result");
     } catch(exception& e){
-        throw std::invalid_argument("Electrum blockchain.transaction.get failed: " + json_response.dump() + " " + e.what());
+        process_exception(e, json_response, "blockchain.transaction.get");
     }
     return response;
 }
@@ -125,10 +131,14 @@ AddressBalance ElectrumApiClient::getBalance(string address){
     ElectrumRequest request{"blockchain.scripthash.get_balance", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request, id_counter);
     AddressBalance address_balance;
-    address_balance_from_json(json_response["result"], address_balance);
-    cout << "getBalance " << address << "\n";
+    json json_response;
+    try {
+        json_response = client_.send_request(json_request, id_counter);
+        address_balance_from_json(json_response["result"], address_balance);
+    } catch(exception& e){
+        process_exception(e, json_response, "blockchain.scripthash.get_balance");
+    }
     return address_balance;
 }
 
@@ -138,13 +148,13 @@ string ElectrumApiClient::getBlockHeader(int height){
     ElectrumRequest request{"blockchain.block.header", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request, id_counter);
-    // cout << "getBlockHeader " << height << "\n";
     string response;
+    json json_response;
     try {
+        json_response = client_.send_request(json_request, id_counter);
         response = json_response.at("result");
     } catch(exception& e){
-        throw std::invalid_argument("Electrum blockchain.block.header failed: " + json_response.dump() + " " + e.what());
+        process_exception(e, json_response, "blockchain.block.header");
     }
     return response;
 }
@@ -155,13 +165,13 @@ double ElectrumApiClient::estimateFee(int wait_blocks){
     ElectrumRequest request{"blockchain.estimatefee", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request, id_counter);
-    cout << "estimateFee " << "\n";
     double response;
+    json json_response;
     try {
+        json_response = client_.send_request(json_request, id_counter);
         response = json_response.at("result");
     } catch(exception& e){
-        throw std::invalid_argument("Electrum blockchain.estimatefee failed: " + json_response.dump() + " " + e.what());
+        process_exception(e, json_response, "blockchain.estimatefee");
     }
     return response;
 }
@@ -172,19 +182,14 @@ string ElectrumApiClient::broadcastTransaction(string tx_hex){
     ElectrumRequest request{"blockchain.transaction.broadcast", ++id_counter, tx_hexv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    json json_response = client_.send_request(json_request, id_counter);
     cout << "broadcastTransaction\n";
     string response;
+    json json_response;
     try {
+        json_response = client_.send_request(json_request, id_counter);
         response = json_response.at("result");
     } catch(exception& e){
-        string error_message;
-        try {
-            error_message = json_response.at("error").at("message");
-        } catch(exception& e){
-            error_message = "bloackchain broadcast failed: " + json_response.dump() + " " + e.what();
-        }
-        throw std::invalid_argument(error_message);
+        process_exception(e, json_response, "blockchain.transaction.broadcast");
     }
     return response;
 }

@@ -55,6 +55,8 @@ public:
 private:
     ElectrumClient& client_;
     std::atomic<int> id_counter;
+
+    void process_exception(exception& e, nlohmann::json response, const string& msg);
 };
 
 #endif
