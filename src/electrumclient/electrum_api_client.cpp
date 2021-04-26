@@ -44,6 +44,23 @@ void utxos_from_json(const nlohmann::json& j, vector<Utxo>& utxos) {
 }
 
 
+void ElectrumApiClient::init(string hostname, string service, string certification_file_path) {
+    hostname_ = hostname;
+    service_ = service;
+    certification_file_path_ = certification_file_path;
+    re_init();
+}
+
+
+void ElectrumApiClient::re_init() {
+    if (client_){
+        delete client_;
+    }
+    client_ = new ElectrumClient();
+    client_->init(hostname_, service_, certification_file_path_);
+}
+
+
 void ElectrumApiClient::process_exception(exception& e, nlohmann::json response, const string& msg) {
     string error_message;
     if (response.empty()) {
@@ -69,7 +86,7 @@ AddressHistory ElectrumApiClient::getHistory(string address){
     AddressHistory address_history;
     json json_response;
     try {
-        json_response = client_.send_request(json_request, id_counter);
+        json_response = client_->send_request(json_request, id_counter);
         address_history_from_json(json_response["result"], address_history);
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.scripthash.get_history");
@@ -83,7 +100,7 @@ void ElectrumApiClient::scripthashSubscribe(string scripthash) {
     ElectrumRequest request{"blockchain.scripthash.subscribe", ++id_counter, scripthashv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    client_.send_request_eat_response(json_request, id_counter);
+    client_->send_request_eat_response(json_request, id_counter);
 }
 
 
@@ -96,7 +113,7 @@ vector<Utxo> ElectrumApiClient::getUtxos(string scripthash) {
     vector<Utxo> utxos;
     json json_response;
     try {
-        json_response = client_.send_request(json_request, id_counter);
+        json_response = client_->send_request(json_request, id_counter);
         if (json_response["result"].is_null()){
             utxos = vector<Utxo>();
         } else {
@@ -117,7 +134,7 @@ string ElectrumApiClient::getTransaction(string txid){
     string response;
     json json_response;
     try {
-        json_response = client_.send_request(json_request, id_counter);
+        json_response = client_->send_request(json_request, id_counter);
         response =json_response.at("result");
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.transaction.get");
@@ -134,7 +151,7 @@ AddressBalance ElectrumApiClient::getBalance(string address){
     AddressBalance address_balance;
     json json_response;
     try {
-        json_response = client_.send_request(json_request, id_counter);
+        json_response = client_->send_request(json_request, id_counter);
         address_balance_from_json(json_response["result"], address_balance);
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.scripthash.get_balance");
@@ -151,7 +168,7 @@ string ElectrumApiClient::getBlockHeader(int height){
     string response;
     json json_response;
     try {
-        json_response = client_.send_request(json_request, id_counter);
+        json_response = client_->send_request(json_request, id_counter);
         response = json_response.at("result");
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.block.header");
@@ -168,7 +185,7 @@ double ElectrumApiClient::estimateFee(int wait_blocks){
     double response;
     json json_response;
     try {
-        json_response = client_.send_request(json_request, id_counter);
+        json_response = client_->send_request(json_request, id_counter);
         response = json_response.at("result");
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.estimatefee");
@@ -186,7 +203,7 @@ string ElectrumApiClient::broadcastTransaction(string tx_hex){
     string response;
     json json_response;
     try {
-        json_response = client_.send_request(json_request, id_counter);
+        json_response = client_->send_request(json_request, id_counter);
         response = json_response.at("result");
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.transaction.broadcast");

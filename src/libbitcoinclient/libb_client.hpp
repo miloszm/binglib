@@ -11,9 +11,10 @@ using namespace std;
 class LibbClient {
 public:
   LibbClient()
-      : connection{3,8},
-        client{connection} {}
+      : connection_{3,8}, client_(nullptr) {}
+  virtual ~LibbClient(){ if (client_) delete client_; }
   void init(std::string url);
+  void re_init();
   size_t fetch_height();
   void fetch_utxo(const wallet::payment_address address, uint64_t satoshis,
                   wallet::select_outputs::algorithm,
@@ -24,8 +25,9 @@ public:
   void send_tx(std::string tx_hex);
 
 private:
-  client::connection_type connection;
-  client::obelisk_client client;
+  client::connection_type connection_;
+  client::obelisk_client* client_;
+  std::string url_;
   void do_connect(client::obelisk_client &client);
 };
 
