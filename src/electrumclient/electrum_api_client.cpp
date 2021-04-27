@@ -48,18 +48,8 @@ void ElectrumApiClient::init(string hostname, string service, string certificati
     hostname_ = hostname;
     service_ = service;
     certification_file_path_ = certification_file_path;
-    re_init();
-}
-
-
-void ElectrumApiClient::re_init() {
-    if (client_){
-        delete client_;
-    }
-    client_ = new ElectrumClient();
     client_->init(hostname_, service_, certification_file_path_);
 }
-
 
 void ElectrumApiClient::process_exception(exception& e, nlohmann::json response, const string& msg) {
     string error_message;
@@ -75,7 +65,6 @@ void ElectrumApiClient::process_exception(exception& e, nlohmann::json response,
     }
     throw std::invalid_argument(error_message);
 }
-
 
 AddressHistory ElectrumApiClient::getHistory(string address){
     vector<string> av{address};
@@ -94,7 +83,6 @@ AddressHistory ElectrumApiClient::getHistory(string address){
     return address_history;
 }
 
-
 void ElectrumApiClient::scripthashSubscribe(string scripthash) {
     vector<string> scripthashv{scripthash};
     ElectrumRequest request{"blockchain.scripthash.subscribe", ++id_counter, scripthashv};
@@ -102,7 +90,6 @@ void ElectrumApiClient::scripthashSubscribe(string scripthash) {
     electrum_request_to_json(json_request, request);
     client_->send_request_eat_response(json_request, id_counter);
 }
-
 
 vector<Utxo> ElectrumApiClient::getUtxos(string scripthash) {
     vector<string> scripthashv{scripthash};
@@ -125,7 +112,6 @@ vector<Utxo> ElectrumApiClient::getUtxos(string scripthash) {
     return utxos;
 }
 
-
 string ElectrumApiClient::getTransaction(string txid){
     vector<string> txidv{txid};
     ElectrumRequest request{"blockchain.transaction.get", ++id_counter, txidv};
@@ -141,7 +127,6 @@ string ElectrumApiClient::getTransaction(string txid){
     }
     return response;
 }
-
 
 AddressBalance ElectrumApiClient::getBalance(string address){
     vector<string> av{address};
@@ -159,7 +144,6 @@ AddressBalance ElectrumApiClient::getBalance(string address){
     return address_balance;
 }
 
-
 string ElectrumApiClient::getBlockHeader(int height){
     vector<string> av{to_string(height), "0"};
     ElectrumRequest request{"blockchain.block.header", ++id_counter, av};
@@ -176,7 +160,6 @@ string ElectrumApiClient::getBlockHeader(int height){
     return response;
 }
 
-
 double ElectrumApiClient::estimateFee(int wait_blocks){
     vector<string> av{to_string(wait_blocks)};
     ElectrumRequest request{"blockchain.estimatefee", ++id_counter, av};
@@ -192,7 +175,6 @@ double ElectrumApiClient::estimateFee(int wait_blocks){
     }
     return response;
 }
-
 
 string ElectrumApiClient::broadcastTransaction(string tx_hex){
     vector<string> tx_hexv{tx_hex};
@@ -211,8 +193,6 @@ string ElectrumApiClient::broadcastTransaction(string tx_hex){
     return response;
 }
 
-
 bool ElectrumApiClient::is_scripthash_update(const ElectrumMessage& electrum_message){
     return electrum_message.method == "blockchain.scripthash.subscribe";
 }
-

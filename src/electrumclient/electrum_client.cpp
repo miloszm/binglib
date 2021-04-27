@@ -21,33 +21,33 @@ void electrum_request_to_json(nlohmann::json &j, const ElectrumRequest &r) {
                      {"params", r.params}};
 }
 
-ElectrumClient::ElectrumClient() : io_context(new boost::asio::io_context()), ctx(new boost::asio::ssl::context(boost::asio::ssl::context::sslv23)) {}
+ElectrumClient::ElectrumClient() : client_(nullptr), io_context_(new boost::asio::io_context()), ctx_(new boost::asio::ssl::context(boost::asio::ssl::context::sslv23)) {}
 
 ElectrumClient::~ElectrumClient() {
-    delete client;
-    delete io_context;
-    delete ctx;
+    if (client_) delete client_;
+    delete io_context_;
+    delete ctx_;
 }
 
 void ElectrumClient::init(string hostname, string service,
                           string cert_file_path) {
-  tcp::resolver resolver(*io_context);
-  endpoints = resolver.resolve(hostname, service);
+  tcp::resolver resolver(*io_context_);
+  endpoints_ = resolver.resolve(hostname, service);
 
-  ctx->load_verify_file(cert_file_path);
+  ctx_->load_verify_file(cert_file_path);
 
-  client = new JsonSocketClient(*io_context, *ctx, endpoints);
-  io_context->run();
-  client->prepare_connection.lock();
+  client_ = new JsonSocketClient(*io_context_, *ctx_, endpoints_);
+  io_context_->run();
+  client_->prepare_connection.lock();
 }
 
 json ElectrumClient::send_request(json json_request, int id) {
   unique_lock<mutex> lock(mutex_);
-  client->send_request(json_request);
-  return client->receive_response(id);
+  client_->send_request(json_request);
+  return client_->receive_response(id);
 }
 
 void ElectrumClient::send_request_eat_response(json json_request, int id) {
-  client->send_request(json_request);
-  client->eat_response(id);
+  client_->send_request(json_request);
+  client_->eat_response(id);
 }

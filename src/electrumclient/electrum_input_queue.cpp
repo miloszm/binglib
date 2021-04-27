@@ -36,24 +36,11 @@ ElectrumMessage ElectrumInputQueue::pop_reply(int id) {
     throw std::invalid_argument(string("electrum response timeout for correlation id=") + to_string(id));
 }
 
-// TODO refactor common code between pop_reply and pop_eat_reply
 void ElectrumInputQueue::pop_eat_reply(int id) {
-    std::unique_lock<std::mutex> lock(mutex_);
-    int factor = 16;
-    for(int i = 0; i < 5; ++i) {
-        if (condition_.wait_for(lock, factor*5ms, [=] {
-            return contains_msg_with_id(id);
-            }))
-        {
-            auto iter = find_msg_with_id(id);
-            ElectrumMessage m(std::move(*iter));
-            //cout << "eating response: " << m.message.dump(4) << "\n";
-            queue_.erase(iter);
-            return;
-        } else {
-            factor *= 2;
-            continue;
-        }
+    try {
+        pop_reply(id);
+    } catch (exception& e){
+        // suppressing exceptions on purpose here
     }
 }
 

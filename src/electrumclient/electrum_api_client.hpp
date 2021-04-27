@@ -40,10 +40,9 @@ void utxos_from_json(const nlohmann::json& j, vector<Utxo>& utxos);
 
 class ElectrumApiClient {
 public:
-    ElectrumApiClient(): client_(nullptr) {}
+    ElectrumApiClient(): client_(new ElectrumClient()) {}
     virtual ~ElectrumApiClient() { if (client_) delete client_; }
     void init(string hostname, string service, string certification_file_path);
-    void re_init();
     void scripthashSubscribe(string scripthash);
     AddressHistory getHistory(string address);
     string getTransaction(string txid);
