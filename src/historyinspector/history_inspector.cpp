@@ -34,14 +34,6 @@ uint64_t HistoryInspector::calculate_total_balance(bool unconfirmed_only) {
     return balance;
 }
 
-uint64_t HistoryInspector::calculate_unconfirmed_balance() {
-    return calculate_total_balance(true);
-}
-
-uint64_t HistoryInspector::calculate_confirmed_balance() {
-    return calculate_total_balance() - calculate_unconfirmed_balance();
-}
-
 uint64_t HistoryInspector::calculate_address_balance(const string &address, bool unconfirmed_only) {
     vector<AddressHistoryItem> history_items;
 
@@ -50,7 +42,7 @@ uint64_t HistoryInspector::calculate_address_balance(const string &address, bool
     vector<TxBalance> balance_items;
 
     for (AddressHistoryItem &item : history_items) {
-        if (!(unconfirmed_only && item.height != 0))
+        if (!unconfirmed_only || item.height == 0)
             analyse_tx_balances(item.txid, balance_items);
     }
 
@@ -196,6 +188,38 @@ TxWalletImpact HistoryInspector::calculate_tx_wallet_impact(const string &tx_id)
         funding_amount,
         funding_address
     };
+}
+
+int64_t HistoryInspector::unconfirmed_txs_wallet_impact() {
+    vector<TransactionInfo> sorted_txs =
+            wallet_state_.get_all_txs_sorted(electrum_api_client_);
+
+    int64_t balance_impact{0};
+    for (auto &tx_info : sorted_txs) {
+        if (tx_info.height == 0) {
+            auto &tx = tx_info.tx;
+            string tx_id = encode_hash(tx.hash());
+            TxWalletImpact impact = calculate_tx_wallet_impact(tx_id);
+            balance_impact += impact.balance_delta;
+        }
+    }
+    return balance_impact;
+}
+
+uint64_t HistoryInspector::calculate_confirmed_balance() {
+    vector<TransactionInfo> sorted_txs =
+            wallet_state_.get_all_txs_sorted(electrum_api_client_);
+
+    uint64_t balance{0};
+    for (auto &tx_info : sorted_txs) {
+        if (tx_info.height != 0) {
+            auto &tx = tx_info.tx;
+            string tx_id = encode_hash(tx.hash());
+            TxWalletImpact impact = calculate_tx_wallet_impact(tx_id);
+            balance += impact.balance_delta;
+        }
+    }
+    return balance;
 }
 
 void HistoryInspector::create_history_view_rows() {

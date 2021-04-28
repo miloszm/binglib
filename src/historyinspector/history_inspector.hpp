@@ -49,11 +49,10 @@ class HistoryInspector {
                      LibbClient &libb_client, WalletState &wallet_state);
     virtual ~HistoryInspector();
 
-    uint64_t calculate_address_balance(const string &address, bool unconfirmed_only = false);
     uint64_t calculate_total_balance(bool unconfirmed_only = false);
-    uint64_t calculate_unconfirmed_balance();
     uint64_t calculate_confirmed_balance();
     TxWalletImpact calculate_tx_wallet_impact(const string &tx_id);
+    int64_t unconfirmed_txs_wallet_impact();
     void create_history_view_rows();
     void scan_balances();
     void do_addresses_subscriptions();
@@ -72,6 +71,7 @@ class HistoryInspector {
                                          vector<TxBalance> &balance_items);
     static header hex_2_header(string tx_hex);
     wallet::payment_address::list get_addresses(output &o);
+    uint64_t calculate_address_balance(const string &address, bool unconfirmed_only = false);
 };
 
 #endif
