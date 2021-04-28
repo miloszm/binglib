@@ -49,8 +49,10 @@ class HistoryInspector {
                      LibbClient &libb_client, WalletState &wallet_state);
     virtual ~HistoryInspector();
 
-    uint64_t calculate_address_balance(const string &address);
-    uint64_t calculate_total_balance();
+    uint64_t calculate_address_balance(const string &address, bool unconfirmed_only = false);
+    uint64_t calculate_total_balance(bool unconfirmed_only = false);
+    uint64_t calculate_unconfirmed_balance();
+    uint64_t calculate_confirmed_balance();
     TxWalletImpact calculate_tx_wallet_impact(const string &tx_id);
     void create_history_view_rows();
     void scan_balances();

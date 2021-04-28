@@ -26,15 +26,23 @@ void HistoryInspector::clear_caches_for_address(const string& address) {
 }
 
 
-uint64_t HistoryInspector::calculate_total_balance() {
+uint64_t HistoryInspector::calculate_total_balance(bool unconfirmed_only) {
     uint64_t balance{0};
     for (const string &address : wallet_state_.get_addresses()) {
-        balance += calculate_address_balance(address);
+        balance += calculate_address_balance(address, unconfirmed_only);
     }
     return balance;
 }
 
-uint64_t HistoryInspector::calculate_address_balance(const string &address) {
+uint64_t HistoryInspector::calculate_unconfirmed_balance() {
+    return calculate_total_balance(true);
+}
+
+uint64_t HistoryInspector::calculate_confirmed_balance() {
+    return calculate_total_balance() - calculate_unconfirmed_balance();
+}
+
+uint64_t HistoryInspector::calculate_address_balance(const string &address, bool unconfirmed_only) {
     vector<AddressHistoryItem> history_items;
 
     wallet_state_.get_history(electrum_api_client_, address, history_items);
@@ -42,7 +50,8 @@ uint64_t HistoryInspector::calculate_address_balance(const string &address) {
     vector<TxBalance> balance_items;
 
     for (AddressHistoryItem &item : history_items) {
-        analyse_tx_balances(item.txid, balance_items);
+        if (!(unconfirmed_only && item.height != 0))
+            analyse_tx_balances(item.txid, balance_items);
     }
 
     uint64_t balance = calc_address_balance(address, balance_items);
