@@ -30,7 +30,7 @@ public:
     vector<Utxo> getUtxos(string scripthash) override;
     double estimateFee(int wait_blocks) override;
     string broadcastTransaction(string txid) override;
-    ElectrumMessage run_receiving_loop(std::atomic<bool>& interrupt_requested){ return client_->run_receiving_loop(interrupt_requested); }
+    void run_receiving_loop(std::atomic<bool>& interrupt_requested){ return client_->run_receiving_loop(interrupt_requested); }
 
     static bool is_scripthash_update(const ElectrumMessage& electrum_message);
 

@@ -17,6 +17,7 @@ src_libbinglib_la_SOURCES = src/utility/address_converter.cpp \
                             src/libbitcoinclient/libb_client.cpp \
                             src/ronghuaclient/ronghua_client.cpp \
                             src/ronghuaclient/ronghua_socket_client.cpp \
+                            src/ronghuaclient/ronghua_input_queue.cpp \
                             src/libbfunds/purse_accessor.cpp \
                             src/libbfunds/funds_finder.cpp \
                             src/p2pkhtx/online_p2pkh_tx_creator.cpp \
@@ -45,6 +46,7 @@ include_binglib_HEADERS = \
     src/libbitcoinclient/libb_client.hpp \
     src/ronghuaclient/ronghua_client.hpp \
     src/ronghuaclient/ronghua_socket_client.hpp \
+    src/ronghuaclient/ronghua_input_queue.hpp \
     src/libbfunds/purse_accessor.hpp \
     src/libbfunds/funds_finder.hpp \
     src/p2pkhtx/online_p2pkh_tx_creator.hpp \

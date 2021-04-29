@@ -87,47 +87,47 @@ void RonghuaSocketClient::eat_response(int id) {
     queue_.pop_eat_reply(id);
 }
 
-ElectrumMessage RonghuaSocketClient::run_receiving_loop(std::atomic<bool>& interrupt_requested) {
+void RonghuaSocketClient::run_receiving_loop(std::atomic<bool>& interrupt_requested) {
     boost::array<char, 512> buf;
     std::ostringstream oss;
     for (;;) {
         if (interrupt_requested) {
-            return ElectrumMessage{json::parse("{}"), "", false, 0};;
+            return;
         }
-        boost::system::error_code error;
-
-        size_t len = socket_.read_some(boost::asio::buffer(buf), error);
-
-        if (error == boost::asio::error::eof) {
-            //return ElectrumMessage { json::parse("{}"), "", false, 0}; // Connection closed cleanly by peer.
-            throw std::invalid_argument(
-                    string("socket eof error: ") + to_string(error.value()) + " (" + error.message() + ")");
-        }
-        else if (error) {
-            if (interrupt_requested){
-                return ElectrumMessage{json::parse("{}"), "", false, 0};;
-            }
-            //throw boost::system::system_error(error); // Some other error.
-            throw std::invalid_argument(
-                    string("socket reading error: ") + to_string(error.value()) + " (" + error.message() + ")");
-        }
-
-        oss.write(buf.data(), len);
-        std::string candidate_response = oss.str();
-        try {
-            json parsed_response = json::parse(candidate_response);
-            ElectrumMessage message = from_json(parsed_response);
-            if (!message.has_correlation_id){
-                return message;
-            }
-            queue_.push(message);
-            oss.str("");
-            oss.clear();
-        } catch (json::parse_error &e) {
-            // not yet parsable, keep reading
-            continue;
-        }
+        socket_.async_read_some(boost::asio::buffer(buf),
+                                             [&](const boost::system::error_code& ec, std::size_t length)
+        {
+            do_read(ec, length, oss, buf);
+        });
     }
+}
+
+void RonghuaSocketClient::do_read(const boost::system::error_code& error, size_t length, std::ostringstream& oss, boost::array<char, 512>& buf) {
+    unique_lock<mutex> lock(read_mutex_);
+    if (error == boost::asio::error::eof) {
+        throw std::invalid_argument(
+                string("socket eof error: ") + to_string(error.value()) + " (" + error.message() + ")");
+    }
+    else if (error) {
+        throw std::invalid_argument(
+                string("socket reading error: ") + to_string(error.value()) + " (" + error.message() + ")");
+    }
+
+    oss.write(buf.data(), length);
+    std::string candidate_response = oss.str();
+    try {
+        json parsed_response = json::parse(candidate_response);
+        ElectrumMessage message = from_json(parsed_response);
+        queue_.push(message);
+        oss.str("");
+        oss.clear();
+    } catch (json::parse_error &e) {
+        // not yet parsable, keep reading
+    }
+}
+
+ElectrumMessage RonghuaSocketClient::get_subscription_event() {
+    queue_.pop_reply(-1);
 }
 
 ElectrumMessage RonghuaSocketClient::from_json(nlohmann::json message) {
