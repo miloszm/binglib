@@ -5,8 +5,8 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 #include <nlohmann/json.hpp>
-//#include "binglib/electrum_input_queue.hpp"
-#include "src/ronghuaclient/ronghua_input_queue.hpp"
+#include "binglib/ronghua_input_queue.hpp"
+//#include "src/ronghuaclient/ronghua_input_queue.hpp"
 #include "binglib/electrum_model.hpp"
 //#include "src/electrumclient/electrum_model.hpp"
 
