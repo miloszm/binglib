@@ -3,8 +3,6 @@
 
 #include <binglib/wallet_state.hpp>
 //#include "src/walletstate/wallet_state.hpp"
-#include <binglib/electrum_api_client.hpp>
-//#include <src/electrumclient/electrum_api_client.hpp>
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
 #include <binglib/electrum_interface.hpp>

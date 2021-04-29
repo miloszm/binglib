@@ -1,8 +1,6 @@
 #ifndef WALLET_STATE_HPP
 #define WALLET_STATE_HPP
 
-#include <binglib/electrum_api_client.hpp>
-//#include "src/electrumclient/electrum_api_client.hpp"
 #include <binglib/bing_wallet.hpp>
 #include <bitcoin/bitcoin.hpp>
 #include <binglib/blocking_queue.hpp>
