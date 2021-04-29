@@ -2,8 +2,7 @@
 #define PURSE_ACCESSOR_HPP
 
 #include <binglib/bing_common.hpp>
-#include <binglib/electrum_api_client.hpp>
-//#include <src/electrumclient/electrum_api_client.hpp>
+#include <binglib/electrum_interface.hpp>
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
 
@@ -46,11 +45,11 @@ public:
                                      uint64_t requested_funds,
                                      std::vector<string> &addresses);
   static AddressFunds
-  look_for_funds_by_balance(ElectrumApiClient &electrum_client,
+  look_for_funds_by_balance(ElectrumInterface &electrum_client,
                             LibbClient &libb_client, uint64_t requested_funds,
                             std::vector<string> &addresses,
                             map<string, uint64_t> &address_to_balance);
-  static void scan_balances(ElectrumApiClient &electrum_client,
+  static void scan_balances(ElectrumInterface &electrum_client,
                             std::vector<string> &addresses,
                             map<string, uint64_t> &address_to_balance);
   static AddressFundsInfo
@@ -60,7 +59,7 @@ public:
 
   static void find_utxos(LibbClient &libb_client, vector<string>& addresses, map<string, uint64_t>& address_to_balance, map<string, vector<UtxoInfo>>& address_to_utxos);
 
-  static void find_history(ElectrumApiClient &electrum_api_client, LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items);
+  static void find_history(ElectrumInterface &electrum_api_client, LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items);
 };
 
 #endif

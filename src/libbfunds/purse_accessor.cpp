@@ -35,7 +35,7 @@ AddressFunds PurseAccessor::look_for_funds(LibbClient &libb_client,
 }
 
 AddressFunds PurseAccessor::look_for_funds_by_balance(
-    ElectrumApiClient &electrum_api_client, LibbClient &libb_client,
+        ElectrumInterface &electrum_api_client, LibbClient &libb_client,
     uint64_t requested_funds, vector<string> &addresses,
     map<string, uint64_t> &address_to_balance) {
   AddressFunds maxFunds = AddressFunds{"", 0, 0, vector<output_point>()};
@@ -60,7 +60,7 @@ AddressFunds PurseAccessor::look_for_funds_by_balance(
   return maxFunds;
 }
 
-void PurseAccessor::scan_balances(ElectrumApiClient &electrum_api_client,
+void PurseAccessor::scan_balances(ElectrumInterface &electrum_api_client,
                                   vector<string> &addresses,
                                   map<string, uint64_t> &address_to_balance) {
   for (auto a : addresses) {
@@ -148,7 +148,7 @@ void PurseAccessor::find_utxos(LibbClient &libb_client, vector<string>& addresse
 //    }
 //}
 
-void PurseAccessor::find_history(ElectrumApiClient &electrum_api_client,LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items){
+void PurseAccessor::find_history(ElectrumInterface &electrum_api_client,LibbClient &libb_client, vector<string>& addresses, vector<HistoryItem>& history_items){
     for (const string& address: addresses) {
         string address_spkh = AddressConverter::base58_to_spkh_hex(address);
         AddressHistory history = electrum_api_client.getHistory(address_spkh);
