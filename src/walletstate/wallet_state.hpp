@@ -7,6 +7,8 @@
 #include <bitcoin/bitcoin.hpp>
 #include <binglib/blocking_queue.hpp>
 //#include "src/utility/blocking_queue.hpp"
+#include <binglib/electrum_interface.hpp>
+//#include "src/electrumclient/electrum_interface.hpp"
 
 using namespace bc;
 using namespace bc::chain;
@@ -41,15 +43,15 @@ class WalletState {
     vector<string> &get_addresses();
     map<string,AddressDerivationResult> &get_address_to_data();
     bool is_in_wallet(string address);
-    transaction get_transaction(ElectrumApiClient &electrum_api_client,
+    transaction get_transaction(ElectrumInterface &electrum_api_client,
                                 string txid);
-    void get_history(ElectrumApiClient &electrum_api_client,
+    void get_history(ElectrumInterface &electrum_api_client,
                      const string &address,
                      vector<AddressHistoryItem> &history_items);
     vector<TransactionInfo>
-    get_all_txs_sorted(ElectrumApiClient &electrum_api_client);
+    get_all_txs_sorted(ElectrumInterface &electrum_api_client);
     string spkh_2_address(string spkh);
-    void subscribe_address(ElectrumApiClient &electrum_api_client, const string& address);
+    void subscribe_address(ElectrumInterface &electrum_api_client, const string& address);
     void clear_caches();
     void clear_caches_for_address(const string& address);
     vector<HistoryViewRow> get_history_update();
@@ -73,7 +75,7 @@ class WalletState {
 
   private:
     static transaction hex_2_tx(string tx_hex);
-    void refresh_all_history(ElectrumApiClient &electrum_api_client);
+    void refresh_all_history(ElectrumInterface &electrum_api_client);
 };
 
 #endif

@@ -41,6 +41,7 @@ include_binglib_HEADERS = \
     src/electrumclient/electrum_api_client.hpp \
     src/electrumclient/electrum_input_queue.hpp \
     src/electrumclient/electrum_model.hpp \
+    src/electrumclient/electrum_interface.hpp \
     src/libbitcoinclient/libb_client.hpp \
     src/ronghuaclient/ronghua_client.hpp \
     src/ronghuaclient/ronghua_socket_client.hpp \

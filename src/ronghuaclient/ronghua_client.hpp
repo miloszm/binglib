@@ -1,33 +1,35 @@
 #ifndef RONGHUA_CLIENT_HPP
 #define RONGHUA_CLIENT_HPP
 
-#include "binglib/ronghua_socket_client.hpp"
+#include <binglib/ronghua_socket_client.hpp>
 //#include "src/ronghuaclient/ronghua_socket_client.hpp"
-#include "binglib/electrum_model.hpp"
+#include <binglib/electrum_model.hpp>
 //#include "src/electrumclient/electrum_model.hpp"
 #include <string>
+#include <binglib/electrum_interface.hpp>
+//#include "src/electrumclient/electrum_interface.hpp"
 
 using namespace std;
 using boost::asio::ip::tcp;
 
 
-class RonghuaClient {
+class RonghuaClient : public ElectrumInterface {
 public:
     RonghuaClient();
     virtual ~RonghuaClient();
-    void init(string hostname, string service, string certificationFilePath);
+    void init(string hostname, string service, string certificationFilePath) override;
     nlohmann::json send_request(nlohmann::json json_request, int id);
     void send_request_eat_response(nlohmann::json json_request, int id);
 
 
-    void scripthashSubscribe(string scripthash);
-    AddressHistory getHistory(string address);
-    string getTransaction(string txid);
-    AddressBalance getBalance(string address);
-    string getBlockHeader(int height);
-    vector<Utxo> getUtxos(string scripthash);
-    double estimateFee(int wait_blocks);
-    string broadcastTransaction(string txid);
+    void scripthashSubscribe(string scripthash) override;
+    AddressHistory getHistory(string address) override;
+    string getTransaction(string txid) override;
+    AddressBalance getBalance(string address) override;
+    string getBlockHeader(int height) override;
+    vector<Utxo> getUtxos(string scripthash) override;
+    double estimateFee(int wait_blocks) override;
+    string broadcastTransaction(string txid) override;
     ElectrumMessage run_receiving_loop(std::atomic<bool>& interrupt_requested){ return client_->run_receiving_loop(interrupt_requested); }
 
     static bool is_scripthash_update(const ElectrumMessage& electrum_message);

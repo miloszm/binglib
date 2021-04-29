@@ -44,7 +44,7 @@ chain::transaction WalletState::hex_2_tx(string tx_hex) {
 }
 
 chain::transaction
-WalletState::get_transaction(ElectrumApiClient &electrum_api_client,
+WalletState::get_transaction(ElectrumInterface &electrum_api_client,
                              string txid) {
     string tx_hex = txid_2_txhex_cache_[txid];
     if (tx_hex.empty()) {
@@ -54,7 +54,7 @@ WalletState::get_transaction(ElectrumApiClient &electrum_api_client,
     return hex_2_tx(tx_hex);
 }
 
-void WalletState::get_history(ElectrumApiClient &electrum_api_client,
+void WalletState::get_history(ElectrumInterface &electrum_api_client,
                               const string &address,
                               vector<AddressHistoryItem> &history_items) {
     if (address_2_history_cache_empty_[address]){
@@ -81,7 +81,7 @@ void WalletState::get_history(ElectrumApiClient &electrum_api_client,
     }
 }
 
-void WalletState::refresh_all_history(ElectrumApiClient &electrum_api_client) {
+void WalletState::refresh_all_history(ElectrumInterface &electrum_api_client) {
     all_history_.clear();
     for (auto &address : addresses_) {
         vector<AddressHistoryItem> history_items;
@@ -93,7 +93,7 @@ void WalletState::refresh_all_history(ElectrumApiClient &electrum_api_client) {
 }
 
 vector<TransactionInfo>
-WalletState::get_all_txs_sorted(ElectrumApiClient &electrum_api_client) {
+WalletState::get_all_txs_sorted(ElectrumInterface &electrum_api_client) {
     refresh_all_history(electrum_api_client);
     std::sort(all_history_.begin(), all_history_.end(),
               [](const AddressHistoryItem &lhs, const AddressHistoryItem &rhs) {
@@ -128,7 +128,7 @@ string WalletState::spkh_2_address(string spkh) {
     return spkh_2_address_[spkh];
 }
 
-void WalletState::subscribe_address(ElectrumApiClient &electrum_api_client, const string& address) {
+void WalletState::subscribe_address(ElectrumInterface &electrum_api_client, const string& address) {
     string address_spkh = AddressConverter::base58_to_spkh_hex(address);
     electrum_api_client.scripthashSubscribe(address_spkh);
 }

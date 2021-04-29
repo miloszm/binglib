@@ -9,7 +9,7 @@ using namespace bc::wallet;
 using namespace bc::machine;
 
 HistoryInspector::HistoryInspector(bool is_testnet,
-                                   ElectrumApiClient &electrum_api_client,
+                                   ElectrumInterface &electrum_api_client,
                                    LibbClient &libb_client,
                                    WalletState &wallet_state)
     : is_testnet_(is_testnet), electrum_api_client_(electrum_api_client),

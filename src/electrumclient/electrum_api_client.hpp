@@ -5,22 +5,25 @@
 #include "electrum_client.hpp"
 #include "binglib/electrum_model.hpp"
 //#include "src/electrumclient/electrum_model.hpp"
+#include "binglib/electrum_interface.hpp"
+//#include "src/electrumclient/electrum_interface.hpp"
 
 using namespace std;
 
-class ElectrumApiClient {
+
+class ElectrumApiClient : public ElectrumInterface {
 public:
     ElectrumApiClient(): client_(new ElectrumClient()) {}
     virtual ~ElectrumApiClient() { if (client_) delete client_; }
-    void init(string hostname, string service, string certification_file_path);
-    void scripthashSubscribe(string scripthash);
-    AddressHistory getHistory(string address);
-    string getTransaction(string txid);
-    AddressBalance getBalance(string address);
-    string getBlockHeader(int height);
-    vector<Utxo> getUtxos(string scripthash);
-    double estimateFee(int wait_blocks);
-    string broadcastTransaction(string txid);
+    void init(string hostname, string service, string certification_file_path) override;
+    void scripthashSubscribe(string scripthash) override;
+    AddressHistory getHistory(string address) override;
+    string getTransaction(string txid) override;
+    AddressBalance getBalance(string address) override;
+    string getBlockHeader(int height) override;
+    vector<Utxo> getUtxos(string scripthash) override;
+    double estimateFee(int wait_blocks) override;
+    string broadcastTransaction(string txid) override;
     ElectrumMessage run_receiving_loop(std::atomic<bool>& interrupt_requested){ return client_->run_receiving_loop(interrupt_requested); }
     void shutdown(){ client_->shutdown(); };
 
