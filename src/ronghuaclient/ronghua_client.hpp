@@ -31,6 +31,7 @@ public:
     double estimateFee(int wait_blocks) override;
     string broadcastTransaction(string txid) override;
     void run_receiving_loop(std::atomic<bool>& interrupt_requested){ return client_->run_receiving_loop(interrupt_requested); }
+    ElectrumMessage get_subscription_event(){ return client_->get_subscription_event(); }
 
     static bool is_scripthash_update(const ElectrumMessage& electrum_message);
 
