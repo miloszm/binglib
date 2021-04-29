@@ -3,6 +3,7 @@
 
 #include <binglib/bing_common.hpp>
 #include <binglib/electrum_api_client.hpp>
+//#include <src/electrumclient/electrum_api_client.hpp>
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
 

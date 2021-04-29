@@ -4,6 +4,7 @@
 #include <binglib/wallet_state.hpp>
 //#include "src/walletstate/wallet_state.hpp"
 #include <binglib/electrum_api_client.hpp>
+//#include <src/electrumclient/electrum_api_client.hpp>
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
 
@@ -51,6 +52,7 @@ class HistoryInspector {
 
     uint64_t calculate_total_balance(bool unconfirmed_only = false);
     uint64_t calculate_confirmed_balance();
+    uint64_t calculate_address_balance(const string &address, bool unconfirmed_only = false);
     TxWalletImpact calculate_tx_wallet_impact(const string &tx_id);
     int64_t unconfirmed_txs_wallet_impact();
     void create_history_view_rows();
@@ -71,7 +73,6 @@ class HistoryInspector {
                                          vector<TxBalance> &balance_items);
     static header hex_2_header(string tx_hex);
     wallet::payment_address::list get_addresses(output &o);
-    uint64_t calculate_address_balance(const string &address, bool unconfirmed_only = false);
 };
 
 #endif

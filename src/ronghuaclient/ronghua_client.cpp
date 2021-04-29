@@ -1,18 +1,52 @@
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
+#include <boost/asio/ssl.hpp>
+#include <cstdlib>
+#include <cstring>
+#include <functional>
 #include <iostream>
-#include "electrum_api_client.hpp"
+#include <nlohmann/json.hpp>
 
+using boost::asio::ip::tcp;
+using std::placeholders::_1;
+using std::placeholders::_2;
 using json = nlohmann::json;
 using namespace std;
+using json = nlohmann::json;
+#include "src/ronghuaclient/ronghua_client.hpp"
 
+RonghuaClient::RonghuaClient() : client_(nullptr), io_context_(new boost::asio::io_context()), ctx_(new boost::asio::ssl::context(boost::asio::ssl::context::sslv23)) {}
 
-void ElectrumApiClient::init(string hostname, string service, string certification_file_path) {
-    hostname_ = hostname;
-    service_ = service;
-    certification_file_path_ = certification_file_path;
-    client_->init(hostname_, service_, certification_file_path_);
+RonghuaClient::~RonghuaClient() {
+    if (client_) delete client_;
+    delete io_context_;
+    delete ctx_;
 }
 
-void ElectrumApiClient::process_exception(exception& e, nlohmann::json response, const string& msg) {
+void RonghuaClient::init(string hostname, string service,
+                          string cert_file_path) {
+    tcp::resolver resolver(*io_context_);
+    endpoints_ = resolver.resolve(hostname, service);
+
+    ctx_->load_verify_file(cert_file_path);
+
+    client_ = new RonghuaSocketClient(*io_context_, *ctx_, endpoints_);
+    io_context_->run();
+    client_->prepare_connection.lock();
+}
+
+json RonghuaClient::send_request(json json_request, int id) {
+    unique_lock<mutex> lock(mutex_);
+    client_->send_request(json_request);
+    return client_->receive_response(id);
+}
+
+void RonghuaClient::send_request_eat_response(json json_request, int id) {
+    client_->send_request(json_request);
+    client_->eat_response(id);
+}
+
+void RonghuaClient::process_exception(exception& e, nlohmann::json response, const string& msg) {
     string error_message;
     if (response.empty()) {
         error_message = msg + " failed: " + e.what();
@@ -27,7 +61,7 @@ void ElectrumApiClient::process_exception(exception& e, nlohmann::json response,
     throw std::invalid_argument(error_message);
 }
 
-AddressHistory ElectrumApiClient::getHistory(string address){
+AddressHistory RonghuaClient::getHistory(string address){
     vector<string> av{address};
     ElectrumRequest request{"blockchain.scripthash.get_history", ++id_counter, av};
     json json_request;
@@ -36,7 +70,7 @@ AddressHistory ElectrumApiClient::getHistory(string address){
     AddressHistory address_history;
     json json_response;
     try {
-        json_response = client_->send_request(json_request, id_counter);
+        json_response = send_request(json_request, id_counter);
         address_history_from_json(json_response["result"], address_history);
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.scripthash.get_history");
@@ -44,15 +78,15 @@ AddressHistory ElectrumApiClient::getHistory(string address){
     return address_history;
 }
 
-void ElectrumApiClient::scripthashSubscribe(string scripthash) {
+void RonghuaClient::scripthashSubscribe(string scripthash) {
     vector<string> scripthashv{scripthash};
     ElectrumRequest request{"blockchain.scripthash.subscribe", ++id_counter, scripthashv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    client_->send_request_eat_response(json_request, id_counter);
+    send_request_eat_response(json_request, id_counter);
 }
 
-vector<Utxo> ElectrumApiClient::getUtxos(string scripthash) {
+vector<Utxo> RonghuaClient::getUtxos(string scripthash) {
     vector<string> scripthashv{scripthash};
     ElectrumRequest request{"blockchain.scripthash.listunspent", ++id_counter, scripthashv};
     json json_request;
@@ -61,7 +95,7 @@ vector<Utxo> ElectrumApiClient::getUtxos(string scripthash) {
     vector<Utxo> utxos;
     json json_response;
     try {
-        json_response = client_->send_request(json_request, id_counter);
+        json_response = send_request(json_request, id_counter);
         if (json_response["result"].is_null()){
             utxos = vector<Utxo>();
         } else {
@@ -73,7 +107,7 @@ vector<Utxo> ElectrumApiClient::getUtxos(string scripthash) {
     return utxos;
 }
 
-string ElectrumApiClient::getTransaction(string txid){
+string RonghuaClient::getTransaction(string txid){
     vector<string> txidv{txid};
     ElectrumRequest request{"blockchain.transaction.get", ++id_counter, txidv};
     json json_request;
@@ -81,7 +115,7 @@ string ElectrumApiClient::getTransaction(string txid){
     string response;
     json json_response;
     try {
-        json_response = client_->send_request(json_request, id_counter);
+        json_response = send_request(json_request, id_counter);
         response =json_response.at("result");
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.transaction.get");
@@ -89,7 +123,7 @@ string ElectrumApiClient::getTransaction(string txid){
     return response;
 }
 
-AddressBalance ElectrumApiClient::getBalance(string address){
+AddressBalance RonghuaClient::getBalance(string address){
     vector<string> av{address};
     ElectrumRequest request{"blockchain.scripthash.get_balance", ++id_counter, av};
     json json_request;
@@ -97,7 +131,7 @@ AddressBalance ElectrumApiClient::getBalance(string address){
     AddressBalance address_balance;
     json json_response;
     try {
-        json_response = client_->send_request(json_request, id_counter);
+        json_response = send_request(json_request, id_counter);
         address_balance_from_json(json_response["result"], address_balance);
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.scripthash.get_balance");
@@ -105,7 +139,7 @@ AddressBalance ElectrumApiClient::getBalance(string address){
     return address_balance;
 }
 
-string ElectrumApiClient::getBlockHeader(int height){
+string RonghuaClient::getBlockHeader(int height){
     vector<string> av{to_string(height), "0"};
     ElectrumRequest request{"blockchain.block.header", ++id_counter, av};
     json json_request;
@@ -113,7 +147,7 @@ string ElectrumApiClient::getBlockHeader(int height){
     string response;
     json json_response;
     try {
-        json_response = client_->send_request(json_request, id_counter);
+        json_response = send_request(json_request, id_counter);
         response = json_response.at("result");
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.block.header");
@@ -121,7 +155,7 @@ string ElectrumApiClient::getBlockHeader(int height){
     return response;
 }
 
-double ElectrumApiClient::estimateFee(int wait_blocks){
+double RonghuaClient::estimateFee(int wait_blocks){
     vector<string> av{to_string(wait_blocks)};
     ElectrumRequest request{"blockchain.estimatefee", ++id_counter, av};
     json json_request;
@@ -129,7 +163,7 @@ double ElectrumApiClient::estimateFee(int wait_blocks){
     double response;
     json json_response;
     try {
-        json_response = client_->send_request(json_request, id_counter);
+        json_response = send_request(json_request, id_counter);
         response = json_response.at("result");
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.estimatefee");
@@ -137,7 +171,7 @@ double ElectrumApiClient::estimateFee(int wait_blocks){
     return response;
 }
 
-string ElectrumApiClient::broadcastTransaction(string tx_hex){
+string RonghuaClient::broadcastTransaction(string tx_hex){
     vector<string> tx_hexv{tx_hex};
     ElectrumRequest request{"blockchain.transaction.broadcast", ++id_counter, tx_hexv};
     json json_request;
@@ -146,7 +180,7 @@ string ElectrumApiClient::broadcastTransaction(string tx_hex){
     string response;
     json json_response;
     try {
-        json_response = client_->send_request(json_request, id_counter);
+        json_response = send_request(json_request, id_counter);
         response = json_response.at("result");
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.transaction.broadcast");
@@ -154,6 +188,7 @@ string ElectrumApiClient::broadcastTransaction(string tx_hex){
     return response;
 }
 
-bool ElectrumApiClient::is_scripthash_update(const ElectrumMessage& electrum_message){
+bool RonghuaClient::is_scripthash_update(const ElectrumMessage& electrum_message){
     return electrum_message.method == "blockchain.scripthash.subscribe";
 }
+

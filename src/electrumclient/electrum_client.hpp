@@ -2,18 +2,12 @@
 #define ELECTRUM_CLIENT_HPP
 
 #include "json_socket_client.hpp"
+#include "binglib/electrum_model.hpp"
+//#include "src/electrumclient/electrum_model.hpp"
 #include <string>
 
 using namespace std;
 using boost::asio::ip::tcp;
-
-struct ElectrumRequest {
-    string method;
-    int id;
-    vector<string> params;
-};
-
-void electrum_request_to_json(nlohmann::json& j, const ElectrumRequest& r);
 
 
 class ElectrumClient {

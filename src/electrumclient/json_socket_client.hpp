@@ -6,6 +6,9 @@
 #include <boost/asio/ssl.hpp>
 #include <nlohmann/json.hpp>
 #include "electrum_input_queue.hpp"
+#include "binglib/electrum_model.hpp"
+//#include "src/electrumclient/electrum_model.hpp"
+
 
 class JsonSocketClient {
 public:

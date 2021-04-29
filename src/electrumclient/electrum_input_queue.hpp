@@ -5,18 +5,12 @@
 #include <condition_variable>
 #include <deque>
 #include <nlohmann/json.hpp>
+#include "binglib/electrum_model.hpp"
+//#include "src/electrumclient/electrum_model.hpp"
 
 using json = nlohmann::json;
 using namespace std;
 
-
-struct ElectrumMessage {
-    json message;
-    string method;
-    bool has_correlation_id;
-    int correlation_id;
-    vector<string> params;
-};
 
 
 class ElectrumInputQueue {

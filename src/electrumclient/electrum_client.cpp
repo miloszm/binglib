@@ -14,13 +14,6 @@ using json = nlohmann::json;
 using namespace std;
 #include "electrum_client.hpp"
 
-void electrum_request_to_json(nlohmann::json &j, const ElectrumRequest &r) {
-  j = nlohmann::json{{"jsonrpc", "2.0"},
-                     {"method", r.method},
-                     {"id", r.id},
-                     {"params", r.params}};
-}
-
 ElectrumClient::ElectrumClient() : client_(nullptr), io_context_(new boost::asio::io_context()), ctx_(new boost::asio::ssl::context(boost::asio::ssl::context::sslv23)) {}
 
 ElectrumClient::~ElectrumClient() {
