@@ -33,7 +33,7 @@ private:
     boost::asio::ssl::stream<boost::asio::ip::tcp::socket> socket_;
     boost::asio::io_context* io_context_;
     RonghuaInputQueue queue_;
-    //std::mutex read_mutex_;
+    std::mutex read_mutex_;
     std::atomic<bool>* interrupt_requested_;
     boost::array<char, 512> buf;
     std::ostringstream oss;

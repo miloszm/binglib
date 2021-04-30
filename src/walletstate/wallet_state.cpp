@@ -116,9 +116,13 @@ WalletState::get_all_txs_sorted(ElectrumInterface &electrum_api_client) {
 
     vector<TransactionInfo> txs;
     for (const AddressHistoryItem &item : all_history_) {
-        transaction tx = get_transaction(electrum_api_client, item.txid);
-        TransactionInfo transaction_info{tx, item.height, item.fresh};
-        txs.push_back(transaction_info);
+        if (item.txid.empty()){
+            cout << "empty transaction id in get_all_txs_sorted\n";
+        } else {
+            transaction tx = get_transaction(electrum_api_client, item.txid);
+            TransactionInfo transaction_info{tx, item.height, item.fresh};
+            txs.push_back(transaction_info);
+        }
     }
 
     return txs;

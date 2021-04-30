@@ -117,6 +117,9 @@ vector<Utxo> RonghuaClient::getUtxos(string scripthash) {
 }
 
 string RonghuaClient::getTransaction(string txid){
+    if (txid.empty()){
+        throw std::invalid_argument("getTransaction txid is empty");
+    }
     vector<string> txidv{txid};
     ElectrumRequest request{"blockchain.transaction.get", ++id_counter, txidv};
     json json_request;
