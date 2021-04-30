@@ -1,6 +1,8 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
+#include <boost/bind.hpp>
+#include <boost/thread.hpp>
 #include <cstdlib>
 #include <cstring>
 #include <functional>
@@ -15,7 +17,12 @@ using namespace std;
 using json = nlohmann::json;
 #include "src/ronghuaclient/ronghua_client.hpp"
 
-RonghuaClient::RonghuaClient() : client_(nullptr), io_context_(new boost::asio::io_context()), ctx_(new boost::asio::ssl::context(boost::asio::ssl::context::sslv23)) {}
+RonghuaClient::RonghuaClient()
+:   client_(nullptr),
+    io_context_(new boost::asio::io_context()),
+    ctx_(new boost::asio::ssl::context(boost::asio::ssl::context::sslv23)),
+    id_counter(0)
+    {}
 
 RonghuaClient::~RonghuaClient() {
     if (client_) delete client_;
@@ -32,6 +39,8 @@ void RonghuaClient::init(string hostname, string service,
 
     client_ = new RonghuaSocketClient(*io_context_, *ctx_, endpoints_);
     io_context_->run();
+    //boost::thread t(boost::bind(&boost::asio::io_context::run, io_context_));
+    client_->run_receiving_loop(interrupt_requested_, io_context_);
     client_->prepare_connection.lock();
 }
 
@@ -192,3 +201,6 @@ bool RonghuaClient::is_scripthash_update(const ElectrumMessage& electrum_message
     return electrum_message.method == "blockchain.scripthash.subscribe";
 }
 
+void RonghuaClient::run_receiving_loop(std::atomic<bool>& interrupt_requested){
+    client_->run_receiving_loop(interrupt_requested, io_context_);
+}

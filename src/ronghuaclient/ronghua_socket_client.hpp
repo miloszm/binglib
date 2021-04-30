@@ -18,7 +18,7 @@ public:
     void send_request(nlohmann::json json_request);
     nlohmann::json receive_response(int id);
     void eat_response(int id);
-    void run_receiving_loop(std::atomic<bool>& interrupt_requested);
+    void run_receiving_loop(std::atomic<bool>& interrupt_requested, boost::asio::io_context* io_context);
     ElectrumMessage get_subscription_event();
     std::mutex prepare_connection;
 
@@ -27,14 +27,20 @@ private:
                             boost::asio::ssl::verify_context &ctx);
     void connect(const boost::asio::ip::tcp::resolver::results_type &endpoints);
     void handshake();
-    void do_read(const boost::system::error_code& error, size_t length, std::ostringstream& oss, boost::array<char, 512>& buf);
+    void do_read(const boost::system::error_code& error, size_t length);
+    void async_read();
 
     boost::asio::ssl::stream<boost::asio::ip::tcp::socket> socket_;
+    boost::asio::io_context* io_context_;
     RonghuaInputQueue queue_;
-    std::mutex read_mutex_;
+    //std::mutex read_mutex_;
+    std::atomic<bool>* interrupt_requested_;
+    boost::array<char, 512> buf;
+    std::ostringstream oss;
 
 public:
     static ElectrumMessage from_json(nlohmann::json message);
 };
 
 #endif
+
