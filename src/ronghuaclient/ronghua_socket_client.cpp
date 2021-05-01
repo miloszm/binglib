@@ -17,8 +17,9 @@ using namespace std::chrono_literals;
 
 RonghuaSocketClient::RonghuaSocketClient(boost::asio::io_context &io_context,
                                    boost::asio::ssl::context &context,
-                                   const tcp::resolver::results_type &endpoints)
-        : socket_(io_context, context) {
+                                   const tcp::resolver::results_type &endpoints,
+                                   std::atomic<bool>& interrupt_requested)
+        : socket_(io_context, context), interrupt_requested_(interrupt_requested) {
     prepare_connection.lock();
     socket_.set_verify_mode(boost::asio::ssl::verify_none);
     socket_.set_verify_callback(
@@ -87,8 +88,7 @@ void RonghuaSocketClient::eat_response(int id) {
     queue_.pop_eat_reply(id);
 }
 
-void RonghuaSocketClient::run_receiving_loop(std::atomic<bool>& interrupt_requested, boost::asio::io_context* io_context) {
-    interrupt_requested_ = &interrupt_requested;
+void RonghuaSocketClient::run_receiving_loop(boost::asio::io_context* io_context) {
     io_context_ = io_context;
     async_read();
     if (io_context_->stopped()){
@@ -98,12 +98,12 @@ void RonghuaSocketClient::run_receiving_loop(std::atomic<bool>& interrupt_reques
 }
 
 void RonghuaSocketClient::async_read() {
-//    if (!*interrupt_requested_) {
+    if (!interrupt_requested_) {
         socket_.async_read_some(boost::asio::buffer(buf, 512),
                                 boost::bind(&RonghuaSocketClient::do_read, this,
                                             boost::asio::placeholders::error,
                                             boost::asio::placeholders::bytes_transferred));
-//    }
+    }
 }
 
 void RonghuaSocketClient::do_read(const boost::system::error_code& error, size_t length) {

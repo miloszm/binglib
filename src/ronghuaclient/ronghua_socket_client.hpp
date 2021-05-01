@@ -14,11 +14,11 @@ class RonghuaSocketClient {
 public:
     RonghuaSocketClient(
             boost::asio::io_context &io_context, boost::asio::ssl::context &context,
-            const boost::asio::ip::tcp::resolver::results_type &endpoints);
+            const boost::asio::ip::tcp::resolver::results_type &endpoints, std::atomic<bool>& interrupt_requested);
     void send_request(nlohmann::json json_request);
     nlohmann::json receive_response(int id);
     void eat_response(int id);
-    void run_receiving_loop(std::atomic<bool>& interrupt_requested, boost::asio::io_context* io_context);
+    void run_receiving_loop(boost::asio::io_context* io_context);
     ElectrumMessage get_subscription_event();
     std::mutex prepare_connection;
 
@@ -34,7 +34,7 @@ private:
     boost::asio::io_context* io_context_;
     RonghuaInputQueue queue_;
     std::mutex read_mutex_;
-    std::atomic<bool>* interrupt_requested_;
+    std::atomic<bool>& interrupt_requested_;
     boost::array<char, 512> buf;
     std::ostringstream oss;
 

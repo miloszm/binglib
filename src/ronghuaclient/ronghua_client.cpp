@@ -21,7 +21,8 @@ RonghuaClient::RonghuaClient()
 :   client_(nullptr),
     io_context_(new boost::asio::io_context()),
     ctx_(new boost::asio::ssl::context(boost::asio::ssl::context::sslv23)),
-    id_counter(0)
+    id_counter(0),
+    interrupt_requested_(false)
     {}
 
 RonghuaClient::~RonghuaClient() {
@@ -37,10 +38,9 @@ void RonghuaClient::init(string hostname, string service,
 
     ctx_->load_verify_file(cert_file_path);
 
-    client_ = new RonghuaSocketClient(*io_context_, *ctx_, endpoints_);
+    client_ = new RonghuaSocketClient(*io_context_, *ctx_, endpoints_, interrupt_requested_);
     io_context_->run();
-    //boost::thread t(boost::bind(&boost::asio::io_context::run, io_context_));
-    client_->run_receiving_loop(interrupt_requested_, io_context_);
+    client_->run_receiving_loop(io_context_);
     client_->prepare_connection.lock();
 }
 
@@ -204,6 +204,6 @@ bool RonghuaClient::is_scripthash_update(const ElectrumMessage& electrum_message
     return electrum_message.method == "blockchain.scripthash.subscribe";
 }
 
-void RonghuaClient::run_receiving_loop(std::atomic<bool>& interrupt_requested){
-    client_->run_receiving_loop(interrupt_requested, io_context_);
+void RonghuaClient::do_interrupt() {
+    interrupt_requested_ = true;
 }
