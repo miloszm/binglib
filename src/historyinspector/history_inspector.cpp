@@ -42,7 +42,7 @@ uint64_t HistoryInspector::calculate_address_balance(const string &address, bool
     vector<TxBalance> balance_items;
 
     for (AddressHistoryItem &item : history_items) {
-        if (!unconfirmed_only || item.height == 0)
+        if (!unconfirmed_only || item.height <= 0)
             analyse_tx_balances(item.txid, balance_items);
     }
 
