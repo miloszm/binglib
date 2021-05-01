@@ -118,6 +118,11 @@ void RonghuaSocketClient::do_read(const boost::system::error_code& error, size_t
         throw std::invalid_argument(
                 string("socket eof error: ") + to_string(error.value()) + " (" + error.message() + ")");
     }
+    else if (error.value() == 60 || error.value() == 1) {
+        // not throwing exception in case of timeout
+        cout << string("socket reading error: ") + to_string(error.value()) + " (" + error.message() + ")";
+        std::this_thread::sleep_for(5000ms);
+    }
     else if (error) {
         throw std::invalid_argument(
                 string("socket reading error: ") + to_string(error.value()) + " (" + error.message() + ")");
