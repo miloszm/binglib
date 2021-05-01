@@ -27,6 +27,11 @@ RonghuaSocketClient::RonghuaSocketClient(boost::asio::io_context &io_context,
     connect(endpoints);
 }
 
+RonghuaSocketClient::~RonghuaSocketClient() {
+    oss.str("");
+    oss.clear();
+}
+
 bool RonghuaSocketClient::verify_certificate(
         bool preverified, boost::asio::ssl::verify_context &ctx) {
     // The verify callback can be used to check whether the certificate that is
@@ -107,7 +112,7 @@ void RonghuaSocketClient::async_read() {
 }
 
 void RonghuaSocketClient::do_read(const boost::system::error_code& error, size_t length) {
-    unique_lock<mutex> lock(read_mutex_);
+    //unique_lock<mutex> lock(read_mutex_);
 
     if (error == boost::asio::error::eof) {
         throw std::invalid_argument(
@@ -158,4 +163,11 @@ ElectrumMessage RonghuaSocketClient::from_json(nlohmann::json message) {
             id,
             params
     };
+}
+
+void RonghuaSocketClient::do_interrupt() {
+    cout << "entering RonghuaSocketClient::do_interrupt\n";
+    ElectrumMessage poison_message{json::parse("{}"), "", false, 0};
+    queue_.push(poison_message);
+    io_context_->stop();
 }

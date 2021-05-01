@@ -117,6 +117,7 @@ vector<Utxo> RonghuaClient::getUtxos(string scripthash) {
 }
 
 string RonghuaClient::getTransaction(string txid){
+    cout << "getTransaction " << txid << "\n";
     if (txid.empty()){
         throw std::invalid_argument("getTransaction txid is empty");
     }
@@ -206,4 +207,5 @@ bool RonghuaClient::is_scripthash_update(const ElectrumMessage& electrum_message
 
 void RonghuaClient::do_interrupt() {
     interrupt_requested_ = true;
+    client_->do_interrupt();
 }

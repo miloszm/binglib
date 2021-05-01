@@ -17,11 +17,8 @@ class RonghuaClient : public ElectrumInterface {
 public:
     RonghuaClient();
     virtual ~RonghuaClient();
+
     void init(string hostname, string service, string certificationFilePath) override;
-    nlohmann::json send_request(nlohmann::json json_request, int id);
-    void send_request_eat_response(nlohmann::json json_request, int id);
-
-
     void scripthashSubscribe(string scripthash) override;
     AddressHistory getHistory(string address) override;
     string getTransaction(string txid) override;
@@ -30,10 +27,12 @@ public:
     vector<Utxo> getUtxos(string scripthash) override;
     double estimateFee(int wait_blocks) override;
     string broadcastTransaction(string txid) override;
+
+    nlohmann::json send_request(nlohmann::json json_request, int id);
+    void send_request_eat_response(nlohmann::json json_request, int id);
     ElectrumMessage get_subscription_event(){ return client_->get_subscription_event(); }
     void do_interrupt();
     static bool is_scripthash_update(const ElectrumMessage& electrum_message);
-
 
 private:
     RonghuaSocketClient* client_;
@@ -48,7 +47,6 @@ private:
     std::atomic<bool> interrupt_requested_;
 
     void process_exception(exception& e, nlohmann::json response, const string& msg);
-
 };
 
 #endif

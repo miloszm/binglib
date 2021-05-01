@@ -15,11 +15,13 @@ public:
     RonghuaSocketClient(
             boost::asio::io_context &io_context, boost::asio::ssl::context &context,
             const boost::asio::ip::tcp::resolver::results_type &endpoints, std::atomic<bool>& interrupt_requested);
+    virtual ~RonghuaSocketClient();
     void send_request(nlohmann::json json_request);
     nlohmann::json receive_response(int id);
     void eat_response(int id);
     void run_receiving_loop(boost::asio::io_context* io_context);
     ElectrumMessage get_subscription_event();
+    void do_interrupt();
     std::mutex prepare_connection;
 
 private:
