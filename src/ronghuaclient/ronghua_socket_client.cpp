@@ -78,7 +78,7 @@ void RonghuaSocketClient::send_request(json json_request) {
     std::string req0 = json_request.dump();
     std::string req = req0 + "\n";
     strcpy(request_, req.data());
-    size_t request_length = req.size();
+    size_t request_length = strlen(req.data());
     //cout << "sending request: " << req << "\n";
 
     boost::asio::write(socket_, boost::asio::buffer(request_, request_length));

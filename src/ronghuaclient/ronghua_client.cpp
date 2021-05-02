@@ -168,6 +168,14 @@ string RonghuaClient::getBlockHeader(int height){
     return response;
 }
 
+void RonghuaClient::ping(){
+    vector<string> av;
+    ElectrumRequest request{"server.ping", ++id_counter, av};
+    json json_request;
+    electrum_request_to_json(json_request, request);
+    send_request_eat_response(json_request, id_counter);
+}
+
 double RonghuaClient::estimateFee(int wait_blocks){
     vector<string> av{to_string(wait_blocks)};
     ElectrumRequest request{"blockchain.estimatefee", ++id_counter, av};

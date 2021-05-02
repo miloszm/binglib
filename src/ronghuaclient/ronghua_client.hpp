@@ -24,6 +24,7 @@ public:
     string getTransaction(string txid) override;
     AddressBalance getBalance(string address) override;
     string getBlockHeader(int height) override;
+    void ping();
     vector<Utxo> getUtxos(string scripthash) override;
     double estimateFee(int wait_blocks) override;
     string broadcastTransaction(string txid) override;
