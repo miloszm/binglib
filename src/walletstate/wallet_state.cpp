@@ -50,6 +50,8 @@ WalletState::get_transaction(ElectrumInterface &electrum_api_client,
     if (tx_hex.empty()) {
         tx_hex = electrum_api_client.getTransaction(txid);
         txid_2_txhex_cache_[txid] = tx_hex;
+        ProgressEvent progress_event {0, 0, 1};
+        push_progress_event(progress_event);
     }
     return hex_2_tx(tx_hex);
 }
@@ -65,6 +67,8 @@ void WalletState::get_history(ElectrumInterface &electrum_api_client,
     if (address_history.empty()) {
         string address_spkh = AddressConverter::base58_to_spkh_hex(address);
         AddressHistory history = electrum_api_client.getHistory(address_spkh);
+        ProgressEvent progress_event {1, static_cast<int>(history.size()), 0};
+        push_progress_event(progress_event);
         for (const AddressHistoryItem &history_item : history) {
             AddressHistoryItem ahi{history_item.txid, history_item.height, true};
             history_items.push_back(ahi);
@@ -82,13 +86,18 @@ void WalletState::get_history(ElectrumInterface &electrum_api_client,
 }
 
 void WalletState::refresh_all_history(ElectrumInterface &electrum_api_client) {
-    all_history_.clear();
+    auto cmp = [](const AddressHistoryItem& a, const AddressHistoryItem& b) { return a.txid < b.txid; };
+    std::set<AddressHistoryItem, decltype(cmp)> ahi_set(cmp);
     for (auto &address : addresses_) {
         vector<AddressHistoryItem> history_items;
         get_history(electrum_api_client, address, history_items);
         for (auto &history_item : history_items) {
-            all_history_.push_back(history_item);
+            ahi_set.insert(history_item);
         }
+    }
+    all_history_.clear();
+    for (auto ahi: ahi_set) {
+        all_history_.push_back(ahi);
     }
 }
 
@@ -107,17 +116,11 @@ WalletState::get_all_txs_sorted(ElectrumInterface &electrum_api_client) {
                   else
                       return lhs.txid > rhs.txid;
               });
-    auto last = std::unique(
-        all_history_.begin(), all_history_.end(),
-        [](const AddressHistoryItem &lhs, const AddressHistoryItem &rhs) {
-            return lhs.txid == rhs.txid;
-        });
-    all_history_.erase(last, all_history_.end());
 
     vector<TransactionInfo> txs;
     for (const AddressHistoryItem &item : all_history_) {
         if (item.txid.empty()){
-            cout << "empty transaction id in get_all_txs_sorted\n";
+            throw std::invalid_argument("empty transaction id in get_all_txs_sorted"); // should never happen
         } else {
             transaction tx = get_transaction(electrum_api_client, item.txid);
             TransactionInfo transaction_info{tx, item.height, item.fresh};
@@ -172,4 +175,14 @@ map<string, string> WalletState::get_historyhash_update() {
 
 void WalletState::push_historyhash_update(map<string, string>& historyhash_map) {
     historyhash_queue.push(historyhash_map);
+}
+
+void WalletState::subscribe_to_progress_events(ProgressCallback progress_callback) {
+    progress_callbacks_.push_back(progress_callback);
+}
+
+void WalletState::push_progress_event(ProgressEvent progress_event) {
+    for (auto c: progress_callbacks_) {
+        c(progress_event);
+    }
 }

@@ -13,6 +13,8 @@ using namespace bc::chain;
 using namespace bc::wallet;
 using namespace bc::machine;
 #include <string>
+#include <functional>
+using namespace std::placeholders;
 
 using namespace std;
 
@@ -33,6 +35,14 @@ struct HistoryViewRow {
     string funding_address;
     bool fresh;
 };
+
+struct ProgressEvent {
+    int history_read_count;
+    int tx_pending_count;
+    int tx_read_count;
+};
+
+typedef std::function<void(ProgressEvent)> ProgressCallback;
 
 class WalletState {
   public:
@@ -58,6 +68,7 @@ class WalletState {
     void push_balance_update(map<string, uint64_t>& balance_map);
     map<string, string> get_historyhash_update();
     void push_historyhash_update(map<string, string>& historyhash_map);
+    void subscribe_to_progress_events(ProgressCallback progress_callback);
 
   private:
     vector<string> addresses_;
@@ -70,10 +81,12 @@ class WalletState {
     blocking_queue<vector<HistoryViewRow>> history_queue_;
     blocking_queue<map<string, uint64_t>> balance_queue_;
     blocking_queue<map<string, string>> historyhash_queue;
+    vector<ProgressCallback> progress_callbacks_;
 
   private:
     static transaction hex_2_tx(string tx_hex);
     void refresh_all_history(ElectrumInterface &electrum_api_client);
+    void push_progress_event(ProgressEvent progress_event);
 };
 
 #endif
