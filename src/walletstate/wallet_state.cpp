@@ -247,3 +247,12 @@ void WalletState::push_progress_event(ProgressEvent progress_event) {
         c(progress_event);
     }
 }
+
+void WalletState::load_txs_bulk(ElectrumInterface &electrum_api_client, const vector<string>& txids) {
+    vector<string> funding_tx_hexes = electrum_api_client.getTransactionBulk(txids);
+    int i = 0;
+    for (auto txid: txids){
+        txid_2_txhex_cache_[txid] = funding_tx_hexes.at(i);
+        ++i;
+    }
+}

@@ -71,6 +71,7 @@ class WalletState {
     map<string, string> get_historyhash_update();
     void push_historyhash_update(map<string, string>& historyhash_map);
     void subscribe_to_progress_events(ProgressCallback progress_callback);
+    void load_txs_bulk(ElectrumInterface &electrum_api_client, const vector<string>& txids);
 
   private:
     vector<string> addresses_;

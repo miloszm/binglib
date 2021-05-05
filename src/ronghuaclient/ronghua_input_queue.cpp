@@ -53,6 +53,7 @@ bool RonghuaInputQueue::contains_msg_with_id(int id) {
 bool RonghuaInputQueue::contains_msg_with_id_bulk(vector<int> ids) {
     for (int id: ids) {
         if(find_msg_with_id(id) == queue_.end()) {
+            cout << "contains_msg_with_id_bulk id not found in queue: " << id << "\n";
             return false;
         }
     }

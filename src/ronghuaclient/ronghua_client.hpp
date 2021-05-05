@@ -51,6 +51,8 @@ private:
     std::atomic<bool> interrupt_requested_;
 
     void process_exception(exception& e, nlohmann::json response, const string& msg);
+    void doGetHistoryBulk(const vector<string>& addresses, vector<AddressHistory>& histories);
+    void doGetTransactionBulk(const vector<string>& txids, vector<string>& txhexes);
 };
 
 #endif

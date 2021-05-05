@@ -95,6 +95,21 @@ AddressHistory RonghuaClient::getHistory(string address) {
 
 vector<AddressHistory> RonghuaClient::getHistoryBulk(vector<string> addresses) {
     cout << "getHistoryBulk " << addresses.size() << "\n";
+    vector<AddressHistory> histories;
+    vector<string> chunk;
+    const int chunk_factor = 25;
+    for (int i = 0; i < addresses.size(); ++i) {
+        chunk.push_back(addresses[i]);
+        if (chunk.size() % chunk_factor == 0 || i == (addresses.size()-1)){
+            doGetHistoryBulk(chunk, histories);
+            chunk.clear();
+        }
+    }
+    return histories;
+}
+
+void RonghuaClient::doGetHistoryBulk(const vector<string>& addresses, vector<AddressHistory>& histories) {
+    cout << "doGetHistoryBulk " << addresses.size() << "\n";
     vector<int> ids;
     for (string address: addresses) {
         vector<string> av{address};
@@ -105,7 +120,6 @@ vector<AddressHistory> RonghuaClient::getHistoryBulk(vector<string> addresses) {
         ids.push_back(id);
     }
     vector<json> responses = client_->receive_response_bulk(ids);
-    vector<AddressHistory> histories;
     int i = 0;
     for (auto r: responses) {
         try {
@@ -118,8 +132,8 @@ vector<AddressHistory> RonghuaClient::getHistoryBulk(vector<string> addresses) {
         }
         ++i;
     }
-    return histories;
 }
+
 
 void RonghuaClient::scripthashSubscribe(string scripthash) {
     vector<string> scripthashv{scripthash};
@@ -172,6 +186,21 @@ string RonghuaClient::getTransaction(string txid){
 
 vector<string> RonghuaClient::getTransactionBulk(vector<string> txids){
     cout << "getTransactionBulk " << txids.size() << "\n";
+    vector<string> txhexes;
+    vector<string> chunk;
+    const int chunk_factor = 100;
+    for (int i = 0; i < txids.size(); ++i) {
+        chunk.push_back(txids[i]);
+        if (chunk.size() % chunk_factor == 0 || i == (txids.size()-1)){
+            doGetTransactionBulk(chunk, txhexes);
+            chunk.clear();
+        }
+    }
+    return txhexes;
+}
+
+void RonghuaClient::doGetTransactionBulk(const vector<string>& txids, vector<string>& txhexes){
+    cout << "doGetTransactionBulk " << txids.size() << "\n";
     vector<int> ids;
     for (string txid: txids){
         vector<string> txidv{txid};
@@ -182,18 +211,18 @@ vector<string> RonghuaClient::getTransactionBulk(vector<string> txids){
         ids.push_back(id);
     }
     vector<json> responses = client_->receive_response_bulk(ids);
-    vector<string> tx_hexes;
+    int i = 0;
     for (auto r: responses) {
         try {
             string response = r.at("result");
-            tx_hexes.push_back(response);
+            txhexes.push_back(response);
+            cout << "doGetTransactionBulk " << txids.at(i) << "\n";
         } catch(exception& e){
             process_exception(e, r, "blockchain.transaction.get");
         }
+        ++i;
     }
-    return tx_hexes;
 }
-
 
 AddressBalance RonghuaClient::getBalance(string address){
     vector<string> av{address};
