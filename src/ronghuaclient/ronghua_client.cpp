@@ -50,6 +50,12 @@ json RonghuaClient::send_request(json json_request, int id) {
     return client_->receive_response(id);
 }
 
+int RonghuaClient::send_request_no_response(json json_request, int id) {
+    unique_lock<mutex> lock(mutex_);
+    client_->send_request(json_request);
+    return id;
+}
+
 void RonghuaClient::send_request_eat_response(json json_request, int id) {
     client_->send_request(json_request);
     client_->eat_response(id);
@@ -135,6 +141,31 @@ string RonghuaClient::getTransaction(string txid){
     }
     return response;
 }
+
+vector<string> RonghuaClient::getTransactionBulk(vector<string> txids){
+    cout << "getTransactionBulk " << txids.size() << "\n";
+    vector<int> ids;
+    for (string txid: txids){
+        vector<string> txidv{txid};
+        ElectrumRequest request{"blockchain.transaction.get", ++id_counter, txidv};
+        json json_request;
+        electrum_request_to_json(json_request, request);
+        int id = send_request_no_response(json_request, id_counter);
+        ids.push_back(id);
+    }
+    vector<json> responses = client_->receive_response_bulk(ids);
+    vector<string> tx_hexes;
+    for (auto r: responses) {
+        try {
+            string response = r.at("result");
+            tx_hexes.push_back(response);
+        } catch(exception& e){
+            process_exception(e, r, "blockchain.transaction.get");
+        }
+    }
+    return tx_hexes;
+}
+
 
 AddressBalance RonghuaClient::getBalance(string address){
     vector<string> av{address};

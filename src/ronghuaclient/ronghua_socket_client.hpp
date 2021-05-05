@@ -18,6 +18,7 @@ public:
     virtual ~RonghuaSocketClient();
     void send_request(nlohmann::json json_request);
     nlohmann::json receive_response(int id);
+    vector<nlohmann::json> receive_response_bulk(vector<int> ids);
     void eat_response(int id);
     void run_receiving_loop(boost::asio::io_context* io_context);
     ElectrumMessage get_subscription_event();

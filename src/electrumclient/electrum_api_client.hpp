@@ -19,6 +19,7 @@ public:
     void scripthashSubscribe(string scripthash) override;
     AddressHistory getHistory(string address) override;
     string getTransaction(string txid) override;
+    vector<string> getTransactionBulk(vector<string> txids) override;
     AddressBalance getBalance(string address) override;
     string getBlockHeader(int height) override;
     vector<Utxo> getUtxos(string scripthash) override;

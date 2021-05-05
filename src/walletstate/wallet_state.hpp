@@ -58,6 +58,8 @@ class WalletState {
                      vector<AddressHistoryItem> &history_items);
     vector<TransactionInfo>
     get_all_txs_sorted(ElectrumInterface &electrum_api_client);
+    vector<TransactionInfo>
+    get_all_txs_sorted_bulk(ElectrumInterface &electrum_api_client);
     string spkh_2_address(string spkh);
     void subscribe_address(ElectrumInterface &electrum_api_client, const string& address);
     void clear_caches();

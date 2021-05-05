@@ -131,6 +131,42 @@ WalletState::get_all_txs_sorted(ElectrumInterface &electrum_api_client) {
     return txs;
 }
 
+vector<TransactionInfo>
+WalletState::get_all_txs_sorted_bulk(ElectrumInterface &electrum_api_client) {
+    refresh_all_history(electrum_api_client);
+    std::sort(all_history_.begin(), all_history_.end(),
+              [](const AddressHistoryItem &lhs, const AddressHistoryItem &rhs) {
+                  if (lhs.height != rhs.height)
+                      if (lhs.height == 0)
+                          return true;
+                      else if (rhs.height == 0)
+                          return false;
+                      else
+                        return lhs.height > rhs.height;
+                  else
+                      return lhs.txid > rhs.txid;
+              });
+
+    vector<TransactionInfo> txs;
+    vector<string> txids;
+    for (const AddressHistoryItem &item : all_history_) {
+        txids.push_back(item.txid);
+    }
+    // we assume getTransactionBulk does not change the order !!
+    vector<string> tx_hexes = electrum_api_client.getTransactionBulk(txids);
+    int i = 0;
+    for (const AddressHistoryItem &item : all_history_) {
+        string tx_hex = tx_hexes.at(i);
+        txid_2_txhex_cache_[item.txid] = tx_hex;
+        TransactionInfo transaction_info{hex_2_tx(tx_hex), item.height, item.fresh};
+        txs.push_back(transaction_info);
+        ++i;
+        cout << "getTransactionBulk finished: " << item.txid << "\n";
+    }
+    cout << "get_all_txs_sorted_bulk finished successfully: " << txs.size() << "\n";
+    return txs;
+}
+
 string WalletState::spkh_2_address(string spkh) {
     return spkh_2_address_[spkh];
 }

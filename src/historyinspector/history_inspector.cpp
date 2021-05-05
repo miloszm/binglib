@@ -232,7 +232,7 @@ void HistoryInspector::create_history_view_rows() {
     vector<HistoryViewRow> history_view_rows;
 
     vector<TransactionInfo> sorted_txs =
-        wallet_state_.get_all_txs_sorted(electrum_api_client_);
+        wallet_state_.get_all_txs_sorted_bulk(electrum_api_client_);
 
     for (auto &tx_info : sorted_txs) {
         auto &tx = tx_info.tx;

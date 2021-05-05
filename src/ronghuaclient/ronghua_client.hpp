@@ -22,6 +22,7 @@ public:
     void scripthashSubscribe(string scripthash) override;
     AddressHistory getHistory(string address) override;
     string getTransaction(string txid) override;
+    vector<string> getTransactionBulk(vector<string> txids) override;
     AddressBalance getBalance(string address) override;
     string getBlockHeader(int height) override;
     void ping();
@@ -30,6 +31,7 @@ public:
     string broadcastTransaction(string txid) override;
 
     nlohmann::json send_request(nlohmann::json json_request, int id);
+    int send_request_no_response(json json_request, int id);
     void send_request_eat_response(nlohmann::json json_request, int id);
     ElectrumMessage get_subscription_event(){ return client_->get_subscription_event(); }
     void do_interrupt();

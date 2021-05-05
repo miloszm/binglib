@@ -89,6 +89,15 @@ json RonghuaSocketClient::receive_response(int id) {
     return reply_message.message;
 }
 
+vector<json> RonghuaSocketClient::receive_response_bulk(vector<int> ids) {
+    vector<ElectrumMessage> reply_messages = queue_.pop_reply_bulk(ids);
+    vector<json> r;
+    for (auto reply_message: reply_messages){
+        r.push_back(reply_message.message);
+    }
+    return r;
+}
+
 void RonghuaSocketClient::eat_response(int id) {
     queue_.pop_eat_reply(id);
 }

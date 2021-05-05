@@ -89,6 +89,10 @@ string ElectrumApiClient::getTransaction(string txid){
     return response;
 }
 
+vector<string> ElectrumApiClient::getTransactionBulk(vector<string> txids){
+    throw std::invalid_argument("getTransactionBulk not implemented in ElectrumApiClient");
+}
+
 AddressBalance ElectrumApiClient::getBalance(string address){
     vector<string> av{address};
     ElectrumRequest request{"blockchain.scripthash.get_balance", ++id_counter, av};
