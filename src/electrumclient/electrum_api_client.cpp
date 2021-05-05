@@ -44,6 +44,10 @@ AddressHistory ElectrumApiClient::getHistory(string address){
     return address_history;
 }
 
+vector<AddressHistory> ElectrumApiClient::getHistoryBulk(vector<string> addresses) {
+    throw std::invalid_argument("getHistoryBulk not implemented in ElectrumApiClient");
+}
+
 void ElectrumApiClient::scripthashSubscribe(string scripthash) {
     vector<string> scripthashv{scripthash};
     ElectrumRequest request{"blockchain.scripthash.subscribe", ++id_counter, scripthashv};

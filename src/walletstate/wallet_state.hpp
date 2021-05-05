@@ -88,6 +88,8 @@ class WalletState {
   private:
     static transaction hex_2_tx(string tx_hex);
     void refresh_all_history(ElectrumInterface &electrum_api_client);
+    void refresh_all_history_bulk(ElectrumInterface &electrum_api_client);
+    void sort_all_history();
     void push_progress_event(ProgressEvent progress_event);
 };
 

@@ -76,7 +76,7 @@ void RonghuaClient::process_exception(exception& e, nlohmann::json response, con
     throw std::invalid_argument(error_message);
 }
 
-AddressHistory RonghuaClient::getHistory(string address){
+AddressHistory RonghuaClient::getHistory(string address) {
     vector<string> av{address};
     ElectrumRequest request{"blockchain.scripthash.get_history", ++id_counter, av};
     json json_request;
@@ -91,6 +91,34 @@ AddressHistory RonghuaClient::getHistory(string address){
         process_exception(e, json_response, "blockchain.scripthash.get_history");
     }
     return address_history;
+}
+
+vector<AddressHistory> RonghuaClient::getHistoryBulk(vector<string> addresses) {
+    cout << "getHistoryBulk " << addresses.size() << "\n";
+    vector<int> ids;
+    for (string address: addresses) {
+        vector<string> av{address};
+        ElectrumRequest request{"blockchain.scripthash.get_history", ++id_counter, av};
+        json json_request;
+        electrum_request_to_json(json_request, request);
+        int id = send_request_no_response(json_request, id_counter);
+        ids.push_back(id);
+    }
+    vector<json> responses = client_->receive_response_bulk(ids);
+    vector<AddressHistory> histories;
+    int i = 0;
+    for (auto r: responses) {
+        try {
+            AddressHistory ah;
+            address_history_from_json(r["result"], ah);
+            histories.push_back(ah);
+            cout << "getHistoryBulk " << addresses.at(i) << "\n";
+        } catch(exception& e){
+            process_exception(e, r, "blockchain.scripthash.get_history");
+        }
+        ++i;
+    }
+    return histories;
 }
 
 void RonghuaClient::scripthashSubscribe(string scripthash) {

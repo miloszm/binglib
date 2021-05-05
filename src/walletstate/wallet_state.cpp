@@ -101,21 +101,41 @@ void WalletState::refresh_all_history(ElectrumInterface &electrum_api_client) {
     }
 }
 
+void WalletState::refresh_all_history_bulk(ElectrumInterface &electrum_api_client) {
+    auto cmp = [](const AddressHistoryItem& a, const AddressHistoryItem& b) { return a.txid < b.txid; };
+    std::set<AddressHistoryItem, decltype(cmp)> ahi_set(cmp);
+
+    vector<string> addresses_spkh;
+    for (auto a: addresses_){
+        string address_spkh = AddressConverter::base58_to_spkh_hex(a);
+        addresses_spkh.push_back(address_spkh);
+    }
+
+    auto histories = electrum_api_client.getHistoryBulk(addresses_spkh);
+
+    // note, we assume get-history-bulk does not change the 1-1 of addresses and returned histories
+    int i = 0;
+    for (auto history: histories) {
+        vector<AddressHistoryItem> history_items = history;
+        for (auto &history_item : history_items) {
+            ahi_set.insert(history_item);
+        }
+        address_2_history_cache_[addresses_.at(i)] = history_items;
+        if (history_items.empty()){
+            address_2_history_cache_empty_[addresses_.at(i)] = true;
+        }
+        ++i;
+    }
+    all_history_.clear();
+    for (auto ahi: ahi_set) {
+        all_history_.push_back(ahi);
+    }
+}
+
 vector<TransactionInfo>
 WalletState::get_all_txs_sorted(ElectrumInterface &electrum_api_client) {
     refresh_all_history(electrum_api_client);
-    std::sort(all_history_.begin(), all_history_.end(),
-              [](const AddressHistoryItem &lhs, const AddressHistoryItem &rhs) {
-                  if (lhs.height != rhs.height)
-                      if (lhs.height == 0)
-                          return true;
-                      else if (rhs.height == 0)
-                          return false;
-                      else
-                        return lhs.height > rhs.height;
-                  else
-                      return lhs.txid > rhs.txid;
-              });
+    sort_all_history();
 
     vector<TransactionInfo> txs;
     for (const AddressHistoryItem &item : all_history_) {
@@ -131,9 +151,7 @@ WalletState::get_all_txs_sorted(ElectrumInterface &electrum_api_client) {
     return txs;
 }
 
-vector<TransactionInfo>
-WalletState::get_all_txs_sorted_bulk(ElectrumInterface &electrum_api_client) {
-    refresh_all_history(electrum_api_client);
+void WalletState::sort_all_history() {
     std::sort(all_history_.begin(), all_history_.end(),
               [](const AddressHistoryItem &lhs, const AddressHistoryItem &rhs) {
                   if (lhs.height != rhs.height)
@@ -146,6 +164,13 @@ WalletState::get_all_txs_sorted_bulk(ElectrumInterface &electrum_api_client) {
                   else
                       return lhs.txid > rhs.txid;
               });
+}
+
+
+vector<TransactionInfo>
+WalletState::get_all_txs_sorted_bulk(ElectrumInterface &electrum_api_client) {
+    refresh_all_history_bulk(electrum_api_client);
+    sort_all_history();
 
     vector<TransactionInfo> txs;
     vector<string> txids;

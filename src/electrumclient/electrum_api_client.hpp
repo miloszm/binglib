@@ -18,6 +18,7 @@ public:
     void init(string hostname, string service, string certification_file_path) override;
     void scripthashSubscribe(string scripthash) override;
     AddressHistory getHistory(string address) override;
+    vector<AddressHistory> getHistoryBulk(vector<string> addresses) override;
     string getTransaction(string txid) override;
     vector<string> getTransactionBulk(vector<string> txids) override;
     AddressBalance getBalance(string address) override;
