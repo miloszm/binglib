@@ -15,6 +15,7 @@ using std::placeholders::_2;
 using json = nlohmann::json;
 using namespace std;
 using json = nlohmann::json;
+#include "src/electrumclient/electrum_model.hpp"
 #include "src/ronghuaclient/ronghua_client.hpp"
 
 RonghuaClient::RonghuaClient()
@@ -164,7 +165,7 @@ vector<Utxo> RonghuaClient::getUtxos(string scripthash) {
     return utxos;
 }
 
-string RonghuaClient::getTransaction(string txid){
+string RonghuaClient::getTransaction(string txid) {
     cout << "getTransaction " << txid << "\n";
     if (txid.empty()){
         throw std::invalid_argument("getTransaction txid is empty");
@@ -184,7 +185,7 @@ string RonghuaClient::getTransaction(string txid){
     return response;
 }
 
-vector<string> RonghuaClient::getTransactionBulk(vector<string> txids){
+vector<string> RonghuaClient::getTransactionBulk(vector<string> txids) {
     cout << "getTransactionBulk " << txids.size() << "\n";
     vector<string> txhexes;
     vector<string> chunk;
@@ -199,7 +200,7 @@ vector<string> RonghuaClient::getTransactionBulk(vector<string> txids){
     return txhexes;
 }
 
-void RonghuaClient::doGetTransactionBulk(const vector<string>& txids, vector<string>& txhexes){
+void RonghuaClient::doGetTransactionBulk(const vector<string>& txids, vector<string>& txhexes) {
     cout << "doGetTransactionBulk " << txids.size() << "\n";
     vector<int> ids;
     for (string txid: txids){
@@ -224,7 +225,7 @@ void RonghuaClient::doGetTransactionBulk(const vector<string>& txids, vector<str
     }
 }
 
-AddressBalance RonghuaClient::getBalance(string address){
+AddressBalance RonghuaClient::getBalance(string address) {
     vector<string> av{address};
     ElectrumRequest request{"blockchain.scripthash.get_balance", ++id_counter, av};
     json json_request;
@@ -240,7 +241,7 @@ AddressBalance RonghuaClient::getBalance(string address){
     return address_balance;
 }
 
-string RonghuaClient::getBlockHeader(int height){
+string RonghuaClient::getBlockHeader(int height) {
     vector<string> av{to_string(height), "0"};
     ElectrumRequest request{"blockchain.block.header", ++id_counter, av};
     json json_request;
@@ -264,7 +265,7 @@ void RonghuaClient::ping(){
     send_request_eat_response(json_request, id_counter);
 }
 
-double RonghuaClient::estimateFee(int wait_blocks){
+double RonghuaClient::estimateFee(int wait_blocks) {
     vector<string> av{to_string(wait_blocks)};
     ElectrumRequest request{"blockchain.estimatefee", ++id_counter, av};
     json json_request;
@@ -280,7 +281,7 @@ double RonghuaClient::estimateFee(int wait_blocks){
     return response;
 }
 
-string RonghuaClient::broadcastTransaction(string tx_hex){
+string RonghuaClient::broadcastTransaction(string tx_hex) {
     vector<string> tx_hexv{tx_hex};
     ElectrumRequest request{"blockchain.transaction.broadcast", ++id_counter, tx_hexv};
     json json_request;
@@ -291,6 +292,24 @@ string RonghuaClient::broadcastTransaction(string tx_hex){
     try {
         json_response = send_request(json_request, id_counter);
         response = json_response.at("result");
+    } catch(exception& e){
+        process_exception(e, json_response, "blockchain.transaction.broadcast");
+    }
+    return response;
+}
+
+vector<string> RonghuaClient::getVersion(string client_name, vector<string> protocol_min_max) {
+    ElectrumVersionRequest request{"server.version", ++id_counter, client_name, protocol_min_max};
+    json json_request;
+    electrum_request_to_json(json_request, request);
+    cout << "getVersion\n";
+    cout << json_request.dump(4) << "\n";
+    vector<string> response;
+    json json_response;
+    try {
+        json_response = send_request(json_request, id_counter);
+        cout << json_response.dump(4) << "\n";
+        json_response.at("result").get_to(response);
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.transaction.broadcast");
     }

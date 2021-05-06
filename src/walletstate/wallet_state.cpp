@@ -130,6 +130,8 @@ void WalletState::refresh_all_history_bulk(ElectrumInterface &electrum_api_clien
     for (auto ahi: ahi_set) {
         all_history_.push_back(ahi);
     }
+    ProgressEvent progress_event {static_cast<int>(addresses_.size()), static_cast<int>(all_history_.size()), 0};
+    push_progress_event(progress_event);
 }
 
 vector<TransactionInfo>
@@ -189,6 +191,8 @@ WalletState::get_all_txs_sorted_bulk(ElectrumInterface &electrum_api_client) {
         cout << "getTransactionBulk finished: " << item.txid << "\n";
     }
     cout << "get_all_txs_sorted_bulk finished successfully: " << txs.size() << "\n";
+    ProgressEvent progress_event { 0, 0, static_cast<int>(txs.size())};
+    push_progress_event(progress_event);
     return txs;
 }
 
@@ -255,4 +259,6 @@ void WalletState::load_txs_bulk(ElectrumInterface &electrum_api_client, const ve
         txid_2_txhex_cache_[txid] = funding_tx_hexes.at(i);
         ++i;
     }
+    ProgressEvent progress_event { 0, 0, static_cast<int>(funding_tx_hexes.size())};
+    push_progress_event(progress_event);
 }

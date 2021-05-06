@@ -13,7 +13,16 @@ struct ElectrumRequest {
     vector<string> params;
 };
 
+struct ElectrumVersionRequest {
+    string method;
+    int id;
+    string param1;
+    vector<string> param2;
+};
+
 void electrum_request_to_json(nlohmann::json& j, const ElectrumRequest& r);
+
+void electrum_request_to_json(nlohmann::json& j, const ElectrumVersionRequest& r);
 
 struct ElectrumMessage {
     json message;

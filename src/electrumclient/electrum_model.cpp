@@ -7,6 +7,13 @@ void electrum_request_to_json(nlohmann::json &j, const ElectrumRequest &r) {
                        {"params", r.params}};
 }
 
+void electrum_request_to_json(nlohmann::json &j, const ElectrumVersionRequest &r) {
+    j = nlohmann::json{{"jsonrpc", "2.0"},
+                       {"method", r.method},
+                       {"id", r.id},
+                       {"params", {r.param1, r.param2}}};
+}
+
 void address_history_item_from_json(const nlohmann::json& j, AddressHistoryItem& ahi) {
     j.at("tx_hash").get_to(ahi.txid);
     j.at("height").get_to(ahi.height);

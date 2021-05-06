@@ -30,6 +30,7 @@ public:
     vector<Utxo> getUtxos(string scripthash) override;
     double estimateFee(int wait_blocks) override;
     string broadcastTransaction(string txid) override;
+    vector<string> getVersion(string client_name, vector<string> protocol_min_max);
 
     nlohmann::json send_request(nlohmann::json json_request, int id);
     int send_request_no_response(json json_request, int id);
