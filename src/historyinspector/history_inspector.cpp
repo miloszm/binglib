@@ -243,20 +243,24 @@ uint64_t HistoryInspector::calculate_confirmed_balance() {
     return balance;
 }
 
-void HistoryInspector::create_history_view_rows() {
-    cout << "entering create_history_view_rows\n";
+void HistoryInspector::create_history_view_rows(bool bulk) {
+    cout << "entering create_history_view_rows, bulk=" << bulk << "\n";
     vector<HistoryViewRow> history_view_rows;
 
-    vector<TransactionInfo> sorted_txs =
-        wallet_state_.get_all_txs_sorted_bulk(electrum_api_client_);
+    vector<TransactionInfo> sorted_txs;
+    if (bulk) {
+        sorted_txs = wallet_state_.get_all_txs_sorted_bulk(electrum_api_client_);
 
-    vector<string> funding_txids;
-    for (auto &tx_info : sorted_txs) {
-        auto &tx = tx_info.tx;
-        string txid = encode_hash(tx.hash());
-        append_funding_txs(txid, funding_txids);
+        vector<string> funding_txids;
+        for (auto &tx_info : sorted_txs) {
+            auto &tx = tx_info.tx;
+            string txid = encode_hash(tx.hash());
+            append_funding_txs(txid, funding_txids);
+        }
+        wallet_state_.load_txs_bulk(electrum_api_client_, funding_txids);
+    } else {
+        sorted_txs = wallet_state_.get_all_txs_sorted(electrum_api_client_);
     }
-    wallet_state_.load_txs_bulk(electrum_api_client_, funding_txids);
 
     for (auto &tx_info : sorted_txs) {
         auto &tx = tx_info.tx;

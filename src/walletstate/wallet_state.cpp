@@ -246,6 +246,10 @@ void WalletState::subscribe_to_progress_events(ProgressCallback progress_callbac
     progress_callbacks_.push_back(progress_callback);
 }
 
+void WalletState::clear_progress_events_subscriptions() {
+    progress_callbacks_.clear();
+}
+
 void WalletState::push_progress_event(ProgressEvent progress_event) {
     for (auto c: progress_callbacks_) {
         c(progress_event);

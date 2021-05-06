@@ -56,7 +56,7 @@ class HistoryInspector {
     uint64_t calculate_address_balance(const string &address, bool unconfirmed_only = false);
     TxWalletImpact calculate_tx_wallet_impact(const string &tx_id);
     int64_t unconfirmed_txs_wallet_impact();
-    void create_history_view_rows();
+    void create_history_view_rows(bool bulk);
     void scan_balances();
     void do_addresses_subscriptions();
     void clear_caches();
