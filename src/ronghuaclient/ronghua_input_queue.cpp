@@ -29,7 +29,7 @@ ElectrumMessage RonghuaInputQueue::pop_reply(int id) {
 
 vector<ElectrumMessage> RonghuaInputQueue::pop_reply_bulk(vector<int> ids) {
     std::unique_lock<std::mutex> lock(mutex_);
-    condition_.wait(lock, [=] {
+    condition_.wait_for(lock, 1500ms, [=] {
         return contains_msg_with_id_bulk(ids);
     });
     vector<ElectrumMessage> messages;

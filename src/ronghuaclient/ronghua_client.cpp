@@ -97,14 +97,13 @@ AddressHistory RonghuaClient::getHistory(string address) {
 vector<AddressHistory> RonghuaClient::getHistoryBulk(vector<string> addresses) {
     cout << "getHistoryBulk " << addresses.size() << "\n";
     vector<AddressHistory> histories;
-    vector<string> chunk;
+    const int target_count = addresses.size();
     const int chunk_factor = 25;
-    for (int i = 0; i < addresses.size(); ++i) {
-        chunk.push_back(addresses[i]);
-        if (chunk.size() % chunk_factor == 0 || i == (addresses.size()-1)){
-            doGetHistoryBulk(chunk, histories);
-            chunk.clear();
-        }
+    int cur_pos = 0;
+    while (cur_pos < target_count) {
+        vector<string> chunk_ids(addresses.begin() + cur_pos, addresses.begin() + min(cur_pos + chunk_factor, target_count));
+        doGetHistoryBulk(chunk_ids, histories);
+        cur_pos = histories.size();
     }
     return histories;
 }
