@@ -187,14 +187,13 @@ string RonghuaClient::getTransaction(string txid) {
 vector<string> RonghuaClient::getTransactionBulk(vector<string> txids) {
     cout << "getTransactionBulk " << txids.size() << "\n";
     vector<string> txhexes;
-    vector<string> chunk;
+    const int target_count = txids.size();
     const int chunk_factor = 100;
-    for (int i = 0; i < txids.size(); ++i) {
-        chunk.push_back(txids[i]);
-        if (chunk.size() % chunk_factor == 0 || i == (txids.size()-1)){
-            doGetTransactionBulk(chunk, txhexes);
-            chunk.clear();
-        }
+    int cur_pos = 0;
+    while (cur_pos < target_count) {
+        vector<string> chunk_ids(txids.begin() + cur_pos, txids.begin() + min(cur_pos + chunk_factor, target_count));
+        doGetTransactionBulk(chunk_ids, txhexes);
+        cur_pos = txhexes.size();
     }
     return txhexes;
 }
