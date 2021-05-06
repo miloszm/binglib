@@ -199,7 +199,6 @@ vector<string> RonghuaClient::getTransactionBulk(vector<string> txids) {
 }
 
 void RonghuaClient::doGetTransactionBulk(const vector<string>& txids, vector<string>& txhexes) {
-    cout << "doGetTransactionBulk " << txids.size() << "\n";
     vector<int> ids;
     for (string txid: txids){
         vector<string> txidv{txid};
@@ -215,7 +214,7 @@ void RonghuaClient::doGetTransactionBulk(const vector<string>& txids, vector<str
         try {
             string response = r.at("result");
             txhexes.push_back(response);
-            cout << "doGetTransactionBulk " << txids.at(i) << "\n";
+            //cout << "doGetTransactionBulk " << txids.at(i) << "\n";
         } catch(exception& e){
             process_exception(e, r, "blockchain.transaction.get");
         }

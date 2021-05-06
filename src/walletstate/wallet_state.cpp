@@ -188,7 +188,6 @@ WalletState::get_all_txs_sorted_bulk(ElectrumInterface &electrum_api_client) {
         TransactionInfo transaction_info{hex_2_tx(tx_hex), item.height, item.fresh};
         txs.push_back(transaction_info);
         ++i;
-        cout << "getTransactionBulk finished: " << item.txid << "\n";
     }
     cout << "get_all_txs_sorted_bulk finished successfully: " << txs.size() << "\n";
     ProgressEvent progress_event { 0, 0, static_cast<int>(txs.size())};
