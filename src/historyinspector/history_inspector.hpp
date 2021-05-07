@@ -5,8 +5,6 @@
 //#include "src/walletstate/wallet_state.hpp"
 #include <binglib/libb_client.hpp>
 #include <bitcoin/bitcoin.hpp>
-#include <binglib/electrum_interface.hpp>
-//#include "src/electrumclient/electrum_interface.hpp"
 
 
 using namespace bc;
@@ -47,7 +45,7 @@ struct TxWalletImpact {
 
 class HistoryInspector {
   public:
-    HistoryInspector(bool is_testnet, ElectrumInterface &electrum_api_client,
+    HistoryInspector(bool is_testnet, XElectrumInterface &electrum_api_client,
                      LibbClient &libb_client, WalletState &wallet_state);
     virtual ~HistoryInspector();
 
@@ -65,7 +63,7 @@ class HistoryInspector {
   private:
     bool is_testnet_;
     WalletState &wallet_state_;
-    ElectrumInterface &electrum_api_client_;
+    XElectrumInterface &electrum_api_client_;
     LibbClient &libb_client_;
 
   private:

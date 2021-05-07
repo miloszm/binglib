@@ -7,7 +7,6 @@
 
 using namespace std;
 
-
 class ElectrumInterface {
 public:
     virtual void init(string hostname, string service, string certification_file_path) = 0;
@@ -25,6 +24,11 @@ public:
     virtual vector<string> getVersion(string client_name, vector<string> protocol_min_max) = 0;
     virtual ElectrumMessage get_subscription_event() = 0;
     virtual void do_interrupt() = 0;
+};
+
+class XElectrumInterface {
+public:
+    virtual ElectrumInterface& client() = 0;
 };
 
 #endif

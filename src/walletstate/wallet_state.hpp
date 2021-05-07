@@ -51,17 +51,17 @@ class WalletState {
     vector<string> &get_addresses();
     map<string,AddressDerivationResult> &get_address_to_data();
     bool is_in_wallet(string address);
-    transaction get_transaction(ElectrumInterface &electrum_api_client,
+    transaction get_transaction(XElectrumInterface &electrum_api_client,
                                 string txid);
-    void get_history(ElectrumInterface &electrum_api_client,
+    void get_history(XElectrumInterface &electrum_api_client,
                      const string &address,
                      vector<AddressHistoryItem> &history_items);
     vector<TransactionInfo>
-    get_all_txs_sorted(ElectrumInterface &electrum_api_client);
+    get_all_txs_sorted(XElectrumInterface &electrum_api_client);
     vector<TransactionInfo>
-    get_all_txs_sorted_bulk(ElectrumInterface &electrum_api_client);
+    get_all_txs_sorted_bulk(XElectrumInterface &electrum_api_client);
     string spkh_2_address(string spkh);
-    void subscribe_address(ElectrumInterface &electrum_api_client, const string& address);
+    void subscribe_address(XElectrumInterface &electrum_api_client, const string& address);
     void clear_caches();
     void clear_caches_for_address(const string& address);
     vector<HistoryViewRow> get_history_update();
@@ -72,7 +72,7 @@ class WalletState {
     void push_historyhash_update(map<string, string>& historyhash_map);
     void subscribe_to_progress_events(ProgressCallback progress_callback);
     void clear_progress_events_subscriptions();
-    void load_txs_bulk(ElectrumInterface &electrum_api_client, const vector<string>& txids);
+    void load_txs_bulk(XElectrumInterface &electrum_api_client, const vector<string>& txids);
 
   private:
     vector<string> addresses_;
@@ -89,8 +89,8 @@ class WalletState {
 
   private:
     static transaction hex_2_tx(string tx_hex);
-    void refresh_all_history(ElectrumInterface &electrum_api_client);
-    void refresh_all_history_bulk(ElectrumInterface &electrum_api_client);
+    void refresh_all_history(XElectrumInterface &electrum_api_client);
+    void refresh_all_history_bulk(XElectrumInterface &electrum_api_client);
     void sort_all_history();
     void push_progress_event(ProgressEvent progress_event);
 };
