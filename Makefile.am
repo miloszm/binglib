@@ -9,10 +9,6 @@ lib_LTLIBRARIES = src/libbinglib.la
 
 src_libbinglib_la_SOURCES = src/utility/address_converter.cpp \
                             src/wallet/bing_wallet.cpp \
-                            src/electrumclient/json_socket_client.cpp \
-                            src/electrumclient/electrum_client.cpp \
-                            src/electrumclient/electrum_api_client.cpp \
-                            src/electrumclient/electrum_input_queue.cpp \
                             src/electrumclient/electrum_model.cpp \
                             src/libbitcoinclient/libb_client.cpp \
                             src/ronghuaclient/ronghua_client.cpp \
@@ -37,10 +33,6 @@ include_binglib_HEADERS = \
     src/utility/address_converter.hpp \
     src/utility/blocking_queue.hpp \
     src/wallet/bing_wallet.hpp \
-    src/electrumclient/json_socket_client.hpp \
-    src/electrumclient/electrum_client.hpp \
-    src/electrumclient/electrum_api_client.hpp \
-    src/electrumclient/electrum_input_queue.hpp \
     src/electrumclient/electrum_model.hpp \
     src/electrumclient/electrum_interface.hpp \
     src/libbitcoinclient/libb_client.hpp \

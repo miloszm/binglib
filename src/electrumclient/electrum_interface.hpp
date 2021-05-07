@@ -21,6 +21,10 @@ public:
     virtual vector<Utxo> getUtxos(string scripthash) = 0;
     virtual double estimateFee(int wait_blocks) = 0;
     virtual string broadcastTransaction(string txid) = 0;
+    virtual void ping() = 0;
+    virtual vector<string> getVersion(string client_name, vector<string> protocol_min_max) = 0;
+    virtual ElectrumMessage get_subscription_event() = 0;
+    virtual void do_interrupt() = 0;
 };
 
 #endif

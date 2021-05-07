@@ -26,18 +26,13 @@ public:
     vector<string> getTransactionBulk(vector<string> txids) override;
     AddressBalance getBalance(string address) override;
     string getBlockHeader(int height) override;
-    void ping();
     vector<Utxo> getUtxos(string scripthash) override;
     double estimateFee(int wait_blocks) override;
     string broadcastTransaction(string txid) override;
+    void ping();
     vector<string> getVersion(string client_name, vector<string> protocol_min_max);
-
-    nlohmann::json send_request(nlohmann::json json_request, int id);
-    int send_request_no_response(json json_request, int id);
-    void send_request_eat_response(nlohmann::json json_request, int id);
-    ElectrumMessage get_subscription_event(){ return client_->get_subscription_event(); }
+    ElectrumMessage get_subscription_event() override;
     void do_interrupt();
-    static bool is_scripthash_update(const ElectrumMessage& electrum_message);
 
 private:
     RonghuaSocketClient* client_;
@@ -51,6 +46,9 @@ private:
     string certification_file_path_;
     std::atomic<bool> interrupt_requested_;
 
+    nlohmann::json send_request(nlohmann::json json_request, int id);
+    int send_request_no_response(json json_request, int id);
+    void send_request_eat_response(nlohmann::json json_request, int id);
     void process_exception(exception& e, nlohmann::json response, const string& msg);
     void doGetHistoryBulk(const vector<string>& addresses, vector<AddressHistory>& histories);
     void doGetTransactionBulk(const vector<string>& txids, vector<string>& txhexes);

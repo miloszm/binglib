@@ -32,6 +32,8 @@ struct ElectrumMessage {
     vector<string> params;
 };
 
+bool is_scripthash_update(const ElectrumMessage& electrum_message);
+
 struct AddressHistoryItem {
     string txid;
     int height;

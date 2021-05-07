@@ -14,6 +14,10 @@ void electrum_request_to_json(nlohmann::json &j, const ElectrumVersionRequest &r
                        {"params", {r.param1, r.param2}}};
 }
 
+bool is_scripthash_update(const ElectrumMessage& electrum_message){
+    return electrum_message.method == "blockchain.scripthash.subscribe";
+}
+
 void address_history_item_from_json(const nlohmann::json& j, AddressHistoryItem& ahi) {
     j.at("tx_hash").get_to(ahi.txid);
     j.at("height").get_to(ahi.height);

@@ -313,11 +313,11 @@ vector<string> RonghuaClient::getVersion(string client_name, vector<string> prot
     return response;
 }
 
-bool RonghuaClient::is_scripthash_update(const ElectrumMessage& electrum_message){
-    return electrum_message.method == "blockchain.scripthash.subscribe";
-}
-
 void RonghuaClient::do_interrupt() {
     interrupt_requested_ = true;
     client_->do_interrupt();
+}
+
+ElectrumMessage RonghuaClient::get_subscription_event(){
+    return client_->get_subscription_event();
 }
