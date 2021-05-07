@@ -35,6 +35,9 @@ vector<ElectrumMessage> RonghuaInputQueue::pop_reply_bulk(vector<int> ids) {
     vector<ElectrumMessage> messages;
     for (int id: ids) {
         auto iter = find_msg_with_id(id);
+        if (iter == queue_.end()){
+            break;
+        }
         ElectrumMessage m(std::move(*iter));
         queue_.erase(iter);
         messages.push_back(m);

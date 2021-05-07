@@ -39,7 +39,7 @@ void RonghuaClient::init(string hostname, string service,
 
     ctx_->load_verify_file(cert_file_path);
 
-    client_ = new RonghuaSocketClient(*io_context_, *ctx_, endpoints_, interrupt_requested_);
+    client_ = new RonghuaSocketClient(*io_context_, *ctx_, endpoints_, interrupt_requested_, electrum_error_callbacks_);
     io_context_->run();
     client_->run_receiving_loop(io_context_);
     client_->prepare_connection.lock();
@@ -318,6 +318,14 @@ void RonghuaClient::do_interrupt() {
     client_->do_interrupt();
 }
 
-ElectrumMessage RonghuaClient::get_subscription_event(){
+ElectrumMessage RonghuaClient::get_subscription_event() {
     return client_->get_subscription_event();
+}
+
+void RonghuaClient::subscribe_to_error_events(ElectrumErrorCallback error_callback) {
+    electrum_error_callbacks_.push_back(error_callback);
+}
+
+void RonghuaClient::clear_error_events_subscriptions() {
+    electrum_error_callbacks_.clear();
 }

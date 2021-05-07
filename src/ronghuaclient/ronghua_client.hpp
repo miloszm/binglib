@@ -33,6 +33,8 @@ public:
     vector<string> getVersion(string client_name, vector<string> protocol_min_max) override;
     ElectrumMessage get_subscription_event() override;
     void do_interrupt() override;
+    void subscribe_to_error_events(ElectrumErrorCallback error_callback) override;
+    void clear_error_events_subscriptions() override;
 
 private:
     RonghuaSocketClient* client_;
@@ -45,6 +47,7 @@ private:
     string service_;
     string certification_file_path_;
     std::atomic<bool> interrupt_requested_;
+    vector<ElectrumErrorCallback> electrum_error_callbacks_;
 
     nlohmann::json send_request(nlohmann::json json_request, int id);
     int send_request_no_response(json json_request, int id);

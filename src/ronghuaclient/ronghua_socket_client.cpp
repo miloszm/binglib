@@ -18,8 +18,10 @@ using namespace std::chrono_literals;
 RonghuaSocketClient::RonghuaSocketClient(boost::asio::io_context &io_context,
                                    boost::asio::ssl::context &context,
                                    const tcp::resolver::results_type &endpoints,
-                                   std::atomic<bool>& interrupt_requested)
-        : socket_(io_context, context), interrupt_requested_(interrupt_requested) {
+                                   std::atomic<bool>& interrupt_requested,
+                                   vector<ElectrumErrorCallback>& electrum_error_callbacks
+                                   )
+        : socket_(io_context, context), interrupt_requested_(interrupt_requested), electrum_error_callbacks_(electrum_error_callbacks) {
     prepare_connection.lock();
     socket_.set_verify_mode(boost::asio::ssl::verify_none);
     socket_.set_verify_callback(
@@ -56,6 +58,7 @@ void RonghuaSocketClient::connect(const tcp::resolver::results_type &endpoints) 
                                    if (!error) {
                                        handshake();
                                    } else {
+                                       push_error(error.value(), error.message());
                                        throw std::runtime_error(error.message());
                                    }
                                });
@@ -67,6 +70,7 @@ void RonghuaSocketClient::handshake() {
                                 if (!error) {
                                     prepare_connection.unlock();
                                 } else {
+                                    push_error(error.value(), error.message());
                                     throw std::runtime_error(error.message());
                                 }
                             });
@@ -123,18 +127,11 @@ void RonghuaSocketClient::async_read() {
 void RonghuaSocketClient::do_read(const boost::system::error_code& error, size_t length) {
     //unique_lock<mutex> lock(read_mutex_);
 
-    if (error == boost::asio::error::eof) {
-        throw std::invalid_argument(
-                string("socket eof error: ") + to_string(error.value()) + " (" + error.message() + ")");
-    }
-    else if (error.value() == 60 || error.value() == 1) {
-        // not throwing exception in case of timeout
-        cout << string("socket reading error: ") + to_string(error.value()) + " (" + error.message() + ")";
-        std::this_thread::sleep_for(5000ms);
-    }
-    else if (error) {
-        throw std::invalid_argument(
-                string("socket reading error: ") + to_string(error.value()) + " (" + error.message() + ")");
+    if (error) {
+        push_error(error.value(), error.message());
+        if (error.value() != 60) {
+            throw std::runtime_error(error.message());
+        }
     }
 
     if (length > 0) {
@@ -184,4 +181,11 @@ void RonghuaSocketClient::do_interrupt() {
     ElectrumMessage poison_message{json::parse("{}"), "", false, 0};
     queue_.push(poison_message);
     io_context_->stop();
+}
+
+void RonghuaSocketClient::push_error(int error_code, std::string error_message) {
+    ElectrumErrorEvent event{error_code, error_message};
+    for (auto f: electrum_error_callbacks_) {
+        f(event);
+    }
 }

@@ -7,6 +7,13 @@
 
 using namespace std;
 
+struct ElectrumErrorEvent {
+    int error_code;
+    string error_message;
+};
+
+typedef std::function<void(ElectrumErrorEvent)> ElectrumErrorCallback;
+
 class ElectrumInterface {
 public:
     virtual void init(string hostname, string service, string certification_file_path) = 0;
@@ -24,6 +31,8 @@ public:
     virtual vector<string> getVersion(string client_name, vector<string> protocol_min_max) = 0;
     virtual ElectrumMessage get_subscription_event() = 0;
     virtual void do_interrupt() = 0;
+    virtual void subscribe_to_error_events(ElectrumErrorCallback error_callback) = 0;
+    virtual void clear_error_events_subscriptions() = 0;
 };
 
 class XElectrumInterface {
