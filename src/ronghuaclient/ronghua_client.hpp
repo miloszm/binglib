@@ -29,10 +29,10 @@ public:
     vector<Utxo> getUtxos(string scripthash) override;
     double estimateFee(int wait_blocks) override;
     string broadcastTransaction(string txid) override;
-    void ping();
-    vector<string> getVersion(string client_name, vector<string> protocol_min_max);
+    void ping() override;
+    vector<string> getVersion(string client_name, vector<string> protocol_min_max) override;
     ElectrumMessage get_subscription_event() override;
-    void do_interrupt();
+    void do_interrupt() override;
 
 private:
     RonghuaSocketClient* client_;
