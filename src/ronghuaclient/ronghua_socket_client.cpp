@@ -129,9 +129,9 @@ void RonghuaSocketClient::do_read(const boost::system::error_code& error, size_t
 
     if (error) {
         push_error(error.value(), error.message());
-        if (error.value() != 60) {
-            throw std::runtime_error(error.message());
-        }
+//        if (error.value() != 60) {
+//            throw std::runtime_error(error.message());
+//        }
     }
 
     if (length > 0) {
