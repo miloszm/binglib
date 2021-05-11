@@ -45,8 +45,7 @@ struct TxWalletImpact {
 
 class HistoryInspector {
   public:
-    HistoryInspector(bool is_testnet, XElectrumInterface &electrum_api_client,
-                     LibbClient &libb_client, WalletState &wallet_state);
+    HistoryInspector(bool is_testnet, XElectrumInterface &electrum_api_client, WalletState &wallet_state);
     virtual ~HistoryInspector();
 
     uint64_t calculate_total_balance(bool unconfirmed_only = false);
@@ -64,7 +63,6 @@ class HistoryInspector {
     bool is_testnet_;
     WalletState &wallet_state_;
     XElectrumInterface &electrum_api_client_;
-    LibbClient &libb_client_;
 
   private:
     void analyse_tx_balances(string tx_id, vector<TxBalance> &balance_items);

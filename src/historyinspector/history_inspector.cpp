@@ -10,10 +10,9 @@ using namespace bc::machine;
 
 HistoryInspector::HistoryInspector(bool is_testnet,
                                    XElectrumInterface &electrum_api_client,
-                                   LibbClient &libb_client,
                                    WalletState &wallet_state)
     : is_testnet_(is_testnet), electrum_api_client_(electrum_api_client),
-      libb_client_(libb_client), wallet_state_(wallet_state) {}
+      wallet_state_(wallet_state) {}
 
 HistoryInspector::~HistoryInspector() {}
 

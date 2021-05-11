@@ -44,7 +44,7 @@ string OnlineP2pkhTxCreator::construct_p2pkh_tx_from_address(
     auto utxos_funds = FundsFinder::find_funds(satoshis_needed, points_value);
     auto utxos = utxos_funds.first;
     auto available_funds = utxos_funds.second;
-    if (utxos_funds.first.empty()){
+    if (utxos.empty()){
         ostringstream oss;
         oss << "Insufficient funds, required " << satoshis_needed << ", maximum available " << available_funds;
         throw std::invalid_argument(oss.str());
@@ -74,16 +74,15 @@ string OnlineP2pkhTxCreator::construct_p2pkh_tx_from_address(
     // set unlocking script in inputs
     for (unsigned int i = 0; i < utxos.size(); ++i) {
         // sig
-        script previousLockingScript = script().to_pay_key_hash_pattern(bitcoin_short_hash(pub_key_data_chunk));
+        script previous_locking_script = script().to_pay_key_hash_pattern(bitcoin_short_hash(pub_key_data_chunk));
         endorsement sig;
-        previousLockingScript.create_endorsement(sig, priv_key_ec.secret(), previousLockingScript, tx, i, all);
+        previous_locking_script.create_endorsement(sig, priv_key_ec.secret(), previous_locking_script, tx, i, all);
         // unlocking previous
         operation::list sigScript;
         sigScript.push_back(operation(sig));
         sigScript.push_back(operation(pub_key_data_chunk));
-        script scriptUnlockingPreviousLockingScript(sigScript);
-
-        tx.inputs()[i].set_script(scriptUnlockingPreviousLockingScript);
+        script script_unlocking_previous_locking_script(sigScript);
+        tx.inputs()[i].set_script(script_unlocking_previous_locking_script);
     }
 
     return encode_base16(tx.to_data());
