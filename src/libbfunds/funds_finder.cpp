@@ -23,3 +23,22 @@ FundsFinder::find_funds(uint64_t satoshis_needed, chain::points_value &points) {
     else
         return {utxos, gathered_funds};
 }
+
+std::pair<std::vector<libbitcoin::chain::output_point>, uint64_t>
+FundsFinder::find_funds(uint64_t satoshis_needed, std::vector<Utxo> input_utxos) {
+    vector<output_point> utxos;
+    uint64_t gathered_funds{0};
+    for (auto p : input_utxos) {
+        if (p.value > 0) {
+            hash_digest tx_hash;
+            decode_hash(tx_hash, p.tx_id);
+            output_point utxo(tx_hash, p.tx_pos);
+            utxos.push_back(utxo);
+            gathered_funds += p.value;
+        }
+    }
+    if (gathered_funds < satoshis_needed)
+        return {vector<output_point>(), gathered_funds};
+    else
+        return {utxos, gathered_funds};
+}
