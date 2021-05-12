@@ -1,5 +1,6 @@
 #include "online_lock_tx_creator.hpp"
 #include "src/libbscript/redeem_script.hpp"
+#include <binglib/address_converter.hpp>
 #include <binglib/funds_finder.hpp>
 
 
@@ -22,7 +23,6 @@ LockTxInfo OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
     return construct_p2sh_time_locking_tx_from_address(libb_client, src_addr, priv_key_ec, amount_to_transfer, satoshis_fee, lock_until);
 }
 
-
 LockTxInfo OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
         LibbClient &libb_client,
         const string src_addr,
@@ -30,19 +30,61 @@ LockTxInfo OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
         const uint64_t amount_to_transfer,
         const uint64_t satoshis_fee,
         const uint32_t lock_until
-){
-    const wallet::ec_public pub_key = priv_key_ec.to_public();
-    const libbitcoin::config::base16 priv_key = libbitcoin::config::base16(priv_key_ec.secret());
-    data_chunk pub_key_data_chunk;
-    pub_key.to_data(pub_key_data_chunk);
-
+) {
     chain::points_value points_value;
     libb_client.fetch_utxo(payment_address(src_addr), 1, wallet::select_outputs::algorithm::individual, points_value);
     auto satoshis_needed = amount_to_transfer + satoshis_fee;
     auto utxos_funds = FundsFinder::find_funds(satoshis_needed, points_value);
     auto utxos = utxos_funds.first;
     auto available_funds = utxos_funds.second;
-    if (utxos_funds.first.empty()){
+    return do_construct_p2sh_time_locking_tx_from_address(utxos, available_funds, src_addr, priv_key_ec,
+                                                          amount_to_transfer, satoshis_fee, lock_until);
+}
+
+LockTxInfo OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
+        ElectrumInterface &electrum_interface,
+        const string src_addr,
+        const string priv_key_wif,
+        const uint64_t amount_to_transfer,
+        const uint64_t satoshis_fee,
+        const uint32_t lock_until
+){
+    const wallet::ec_private priv_key_ec(priv_key_wif);
+    return construct_p2sh_time_locking_tx_from_address(electrum_interface, src_addr, priv_key_ec, amount_to_transfer, satoshis_fee, lock_until);
+}
+
+LockTxInfo OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
+        ElectrumInterface &electrum_interface,
+        const string src_addr,
+        const ec_private priv_key_ec,
+        const uint64_t amount_to_transfer,
+        const uint64_t satoshis_fee,
+        const uint32_t lock_until
+) {
+    vector<Utxo> input_utxos = electrum_interface.getUtxos(AddressConverter::base58_to_spkh_hex(src_addr));
+    auto satoshis_needed = amount_to_transfer + satoshis_fee;
+    auto utxos_funds = FundsFinder::find_funds(satoshis_needed, input_utxos);
+    auto utxos = utxos_funds.first;
+    auto available_funds = utxos_funds.second;
+    return do_construct_p2sh_time_locking_tx_from_address(utxos, available_funds, src_addr, priv_key_ec,
+                                                          amount_to_transfer, satoshis_fee, lock_until);
+}
+
+LockTxInfo OnlineLockTxCreator::do_construct_p2sh_time_locking_tx_from_address(
+    const std::vector<libbitcoin::chain::output_point>& utxos,
+    uint64_t available_funds,
+    const string src_addr,
+    const ec_private priv_key_ec,
+    const uint64_t amount_to_transfer,
+    const uint64_t satoshis_fee,
+    const uint32_t lock_until
+) {
+    const wallet::ec_public pub_key = priv_key_ec.to_public();
+    const libbitcoin::config::base16 priv_key = libbitcoin::config::base16(priv_key_ec.secret());
+    data_chunk pub_key_data_chunk;
+    pub_key.to_data(pub_key_data_chunk);
+    auto satoshis_needed = amount_to_transfer + satoshis_fee;
+    if (utxos.empty()){
         ostringstream oss;
         oss << "Insufficient funds, required " << satoshis_needed << ", maximum at one address available " << available_funds << "\n";
         throw std::invalid_argument(oss.str());
@@ -100,10 +142,11 @@ LockTxInfo OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
 
     string tx_to_unlock = encode_hash(tx.hash());
 
+    std::time_t t{lock_until};
     ostringstream infoss;
     infoss << "==========================" << "\n";
     infoss << "===== data that will be needed to unlock the funds: ====" << "\n";
-    infoss << "1) lock time: " << lock_until << "\n";
+    infoss << "1) lock time: " << lock_until << " <=> " << std::put_time(std::localtime(&t), "%c %Z") << "\n";
     infoss << "2) private key of address: " << src_addr << "\n";
     infoss << "3) available amount: " << amount_to_transfer << "\n";
     infoss << "   from ^^ please subtract fee" << "\n";
