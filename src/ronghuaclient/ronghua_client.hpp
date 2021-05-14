@@ -6,8 +6,6 @@
 #include <binglib/electrum_model.hpp>
 //#include "src/electrumclient/electrum_model.hpp"
 #include <string>
-#include <binglib/electrum_interface.hpp>
-//#include "src/electrumclient/electrum_interface.hpp"
 
 using namespace std;
 using boost::asio::ip::tcp;
@@ -18,7 +16,7 @@ public:
     RonghuaClient();
     virtual ~RonghuaClient();
 
-    void init(string hostname, string service, string certificationFilePath) override;
+    bool init(string hostname, string service, string certificationFilePath) override;
     void scripthashSubscribe(string scripthash) override;
     AddressHistory getHistory(string address) override;
     vector<AddressHistory> getHistoryBulk(vector<string> addresses) override;
@@ -33,11 +31,12 @@ public:
     vector<string> getVersion(string client_name, vector<string> protocol_min_max) override;
     ElectrumMessage get_subscription_event() override;
     void do_interrupt() override;
+    void stop() override;
     void subscribe_to_error_events(ElectrumErrorCallback error_callback) override;
     void clear_error_events_subscriptions() override;
 
 private:
-    RonghuaSocketClient* client_;
+    unique_ptr<RonghuaSocketClient> client_;
     boost::asio::io_context* io_context_;
     boost::asio::ssl::context* ctx_;
     tcp::resolver::results_type endpoints_;

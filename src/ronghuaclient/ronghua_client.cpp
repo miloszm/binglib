@@ -27,22 +27,32 @@ RonghuaClient::RonghuaClient()
     {}
 
 RonghuaClient::~RonghuaClient() {
-    if (client_) delete client_;
     delete io_context_;
     delete ctx_;
 }
 
-void RonghuaClient::init(string hostname, string service,
+bool RonghuaClient::init(string hostname, string service,
                           string cert_file_path) {
     tcp::resolver resolver(*io_context_);
-    endpoints_ = resolver.resolve(hostname, service);
+    boost::system::error_code ec;
+    endpoints_ = resolver.resolve(hostname, service, ec);
+    if (ec.failed()){
+        cout << "resolver error: " << ec.value() << " " << ec.message() << "\n";
+        return false;
+    }
 
     ctx_->load_verify_file(cert_file_path);
-
-    client_ = new RonghuaSocketClient(*io_context_, *ctx_, endpoints_, interrupt_requested_, electrum_error_callbacks_);
+    client_.reset(new RonghuaSocketClient(*io_context_, *ctx_, endpoints_, interrupt_requested_, electrum_error_callbacks_));
     io_context_->run();
-    client_->run_receiving_loop(io_context_);
-    client_->prepare_connection.lock();
+    client_.get()->run_receiving_loop();
+//    client_.get()->prepare_connection.lock();
+    return true;
+}
+
+void RonghuaClient::stop() {
+//    client_.get()->prepare_connection.unlock();
+    client_.get()->stop();
+    io_context_->stop();
 }
 
 json RonghuaClient::send_request(json json_request, int id) {
