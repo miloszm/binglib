@@ -332,6 +332,10 @@ ElectrumMessage RonghuaClient::get_subscription_event() {
     return client_->get_subscription_event();
 }
 
+bool RonghuaClient::poll_subscription_event() {
+    return client_->poll_subscription_event();
+}
+
 void RonghuaClient::subscribe_to_error_events(ElectrumErrorCallback error_callback) {
     electrum_error_callbacks_.push_back(error_callback);
 }

@@ -30,6 +30,7 @@ public:
     virtual void ping() = 0;
     virtual vector<string> getVersion(string client_name, vector<string> protocol_min_max) = 0;
     virtual ElectrumMessage get_subscription_event() = 0;
+    virtual bool poll_subscription_event() = 0;
     virtual void do_interrupt() = 0;
     virtual void stop() = 0;
     virtual void subscribe_to_error_events(ElectrumErrorCallback error_callback) = 0;

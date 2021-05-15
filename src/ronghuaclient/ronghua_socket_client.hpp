@@ -24,6 +24,7 @@ public:
     void eat_response(int id);
     void run_receiving_loop();
     ElectrumMessage get_subscription_event();
+    bool poll_subscription_event();
     void do_interrupt();
     void stop();
 //    std::mutex prepare_connection;
