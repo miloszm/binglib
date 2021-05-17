@@ -30,6 +30,7 @@ struct ElectrumMessage {
     bool has_correlation_id;
     int correlation_id;
     vector<string> params;
+    bool isNone() { return correlation_id == -1; }
 };
 
 bool is_scripthash_update(const ElectrumMessage& electrum_message);

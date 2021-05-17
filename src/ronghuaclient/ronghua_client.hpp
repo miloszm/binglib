@@ -30,7 +30,6 @@ public:
     void ping() override;
     vector<string> getVersion(string client_name, vector<string> protocol_min_max) override;
     ElectrumMessage get_subscription_event() override;
-    bool poll_subscription_event() override;
     void do_interrupt() override;
     void stop() override;
     void subscribe_to_error_events(ElectrumErrorCallback error_callback) override;

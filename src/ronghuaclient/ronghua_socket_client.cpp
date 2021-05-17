@@ -163,10 +163,6 @@ ElectrumMessage RonghuaSocketClient::get_subscription_event() {
     return queue_.pop_reply(-1);
 }
 
-bool RonghuaSocketClient::poll_subscription_event() {
-    return queue_.poll_reply(-1);
-}
-
 ElectrumMessage RonghuaSocketClient::from_json(nlohmann::json message) {
     string method;
     int id {0};

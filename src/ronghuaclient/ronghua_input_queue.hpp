@@ -21,7 +21,6 @@ private:
 public:
     void push(const ElectrumMessage& message);
     ElectrumMessage pop_reply(int id);
-    bool poll_reply(int id);
     vector<ElectrumMessage> pop_reply_bulk(vector<int> ids);
     void pop_eat_reply(int id);
     vector<ElectrumMessage> copyAll(){vector<ElectrumMessage> v(queue_.begin(), queue_.end()); return v;}

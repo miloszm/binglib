@@ -27,11 +27,6 @@ ElectrumMessage RonghuaInputQueue::pop_reply(int id) {
     return m;
 }
 
-bool RonghuaInputQueue::poll_reply(int id) {
-    std::unique_lock<std::mutex> lock(mutex_);
-    return contains_msg_with_id(id);
-}
-
 vector<ElectrumMessage> RonghuaInputQueue::pop_reply_bulk(vector<int> ids) {
     std::unique_lock<std::mutex> lock(mutex_);
     condition_.wait_for(lock, 1500ms, [=] {
