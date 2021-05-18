@@ -204,6 +204,14 @@ void WalletState::subscribe_address(XElectrumInterface &electrum_api_client, con
     electrum_api_client.client().scripthashSubscribe(address_spkh);
 }
 
+void WalletState::subscribe_address_bulk(XElectrumInterface &electrum_api_client, vector<string>& addresses) {
+    vector<string> addresses_spkh;
+    for (string address: addresses) {
+        addresses_spkh.push_back(AddressConverter::base58_to_spkh_hex(address));
+    }
+    electrum_api_client.client().scripthashSubscribeBulk(addresses_spkh);
+}
+
 void WalletState::clear_caches() {
     txid_2_txhex_cache_.clear();
     address_2_history_cache_.clear();

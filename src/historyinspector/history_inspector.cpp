@@ -67,6 +67,15 @@ void HistoryInspector::do_addresses_subscriptions() {
     wallet_state_.push_historyhash_update(address_to_historyhash);
 }
 
+void HistoryInspector::do_addresses_subscriptions_bulk() {
+    map<string, string> address_to_historyhash;
+    for (auto address : wallet_state_.get_addresses()) {
+        address_to_historyhash[address] = "";
+    }
+    wallet_state_.subscribe_address_bulk(electrum_api_client_, wallet_state_.get_addresses());
+    wallet_state_.push_historyhash_update(address_to_historyhash);
+}
+
 wallet::payment_address::list HistoryInspector::get_addresses(output &o) {
     if (is_testnet_) {
         return o.addresses(wallet::payment_address::testnet_p2kh,

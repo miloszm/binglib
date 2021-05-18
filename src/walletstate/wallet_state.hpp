@@ -62,6 +62,7 @@ class WalletState {
     get_all_txs_sorted_bulk(XElectrumInterface &electrum_api_client);
     string spkh_2_address(string spkh);
     void subscribe_address(XElectrumInterface &electrum_api_client, const string& address);
+    void subscribe_address_bulk(XElectrumInterface &electrum_api_client, vector<string>& addresses);
     void clear_caches();
     void clear_caches_for_address(const string& address);
     vector<HistoryViewRow> get_history_update();

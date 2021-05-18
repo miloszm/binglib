@@ -56,6 +56,7 @@ class HistoryInspector {
     void create_history_view_rows(bool bulk);
     void scan_balances();
     void do_addresses_subscriptions();
+    void do_addresses_subscriptions_bulk();
     void clear_caches();
     void clear_caches_for_address(const string& address);
 

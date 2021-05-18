@@ -18,6 +18,7 @@ class ElectrumInterface {
 public:
     virtual bool init(string hostname, string service, string certification_file_path) = 0;
     virtual void scripthashSubscribe(string scripthash) = 0;
+    virtual void scripthashSubscribeBulk(vector<string> scripthashes) = 0;
     virtual AddressHistory getHistory(string address) = 0;
     virtual vector<AddressHistory> getHistoryBulk(vector<string> addresses) = 0;
     virtual string getTransaction(string txid) = 0;

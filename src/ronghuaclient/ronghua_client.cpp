@@ -153,6 +153,10 @@ void RonghuaClient::scripthashSubscribe(string scripthash) {
     send_request_eat_response(json_request, id_counter);
 }
 
+void RonghuaClient::scripthashSubscribeBulk(vector<string> scripthashes) {
+    throw std::invalid_argument("scripthashSubscribeBulk not implemented");
+}
+
 vector<Utxo> RonghuaClient::getUtxos(string scripthash) {
     vector<string> scripthashv{scripthash};
     ElectrumRequest request{"blockchain.scripthash.listunspent", ++id_counter, scripthashv};
