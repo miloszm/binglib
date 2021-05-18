@@ -216,7 +216,6 @@ TxWalletImpact HistoryInspector::calculate_tx_wallet_impact(const string &tx_id)
 }
 
 int64_t HistoryInspector::unconfirmed_txs_wallet_impact() {
-    cout << "entering unconfirmed_txs_wallet_impact \n";
     vector<TransactionInfo> sorted_txs =
             wallet_state_.get_all_txs_sorted(electrum_api_client_);
 
@@ -229,12 +228,10 @@ int64_t HistoryInspector::unconfirmed_txs_wallet_impact() {
             balance_impact += impact.balance_delta;
         }
     }
-    cout << "exiting unconfirmed_txs_wallet_impact \n";
     return balance_impact;
 }
 
 uint64_t HistoryInspector::calculate_confirmed_balance() {
-    cout << "entering calculate_confirmed_balance \n";
     vector<TransactionInfo> sorted_txs =
             wallet_state_.get_all_txs_sorted(electrum_api_client_);
 
@@ -247,12 +244,10 @@ uint64_t HistoryInspector::calculate_confirmed_balance() {
             balance += impact.balance_delta;
         }
     }
-    cout << "exiting calculate_confirmed_balance \n";
     return balance;
 }
 
 void HistoryInspector::create_history_view_rows(bool bulk) {
-    cout << "entering create_history_view_rows, bulk=" << bulk << "\n";
     vector<HistoryViewRow> history_view_rows;
 
     vector<TransactionInfo> sorted_txs;
@@ -300,7 +295,6 @@ void HistoryInspector::create_history_view_rows(bool bulk) {
         p->balance = balance;
     }
     wallet_state_.push_history_update(history_view_rows);
-    cout << "exiting create_history_view_rows\n";
 }
 
 chain::header HistoryInspector::hex_2_header(string header_hex) {
