@@ -52,3 +52,41 @@ void utxos_from_json(const nlohmann::json& j, vector<Utxo>& utxos) {
         utxos.push_back(u);
     }
 }
+
+
+// ["107.150.45.210",
+// "e.anonyhost.org",
+// ["v1.0", "p10000", "t", "s995"]]
+void server_info_from_json(const nlohmann::json& j, ServerInfo& server_info) {
+    auto items = j.items();
+    int i = 0;
+    for (auto p = items.begin(); p != items.end(); ++p, ++i) {
+        if (i == 1){
+            server_info.host = p.value();
+        } else if (i == 2){
+            auto elem_3_items = p.value().items();
+            int j = 0;
+            for (auto r = elem_3_items.begin(); r != elem_3_items.end(); ++r, ++j) {
+                if (j == 0){
+                    server_info.version = r.value();
+                } else if (j == 1){
+                    server_info.pruning = r.value();
+                } else if (j == 3){
+                    string service = r.value();
+                    if (!service.empty()) {
+                        server_info.service = service.substr(1);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void server_infos_from_json(const nlohmann::json& j, vector<ServerInfo>& server_infos) {
+    auto items = j.items();
+    for (auto i = items.begin(); i != items.end(); ++i){
+        ServerInfo si;
+        server_info_from_json(i.value(), si);
+        server_infos.push_back(si);
+    }
+}

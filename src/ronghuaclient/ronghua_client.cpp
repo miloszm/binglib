@@ -144,7 +144,6 @@ void RonghuaClient::doGetHistoryBulk(const vector<string>& addresses, vector<Add
     }
 }
 
-
 void RonghuaClient::scripthashSubscribe(string scripthash) {
     vector<string> scripthashv{scripthash};
     ElectrumRequest request{"blockchain.scripthash.subscribe", ++id_counter, scripthashv};
@@ -155,6 +154,10 @@ void RonghuaClient::scripthashSubscribe(string scripthash) {
 
 void RonghuaClient::scripthashSubscribeBulk(vector<string> scripthashes) {
     throw std::invalid_argument("scripthashSubscribeBulk not implemented");
+}
+
+vector<ServerInfo> RonghuaClient::getServerPeers() {
+    throw std::invalid_argument("getServerPeers not implemented");
 }
 
 vector<Utxo> RonghuaClient::getUtxos(string scripthash) {

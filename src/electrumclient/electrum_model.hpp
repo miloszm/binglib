@@ -65,4 +65,16 @@ void utxo_from_json(const nlohmann::json& j, Utxo& utxo);
 
 void utxos_from_json(const nlohmann::json& j, vector<Utxo>& utxos);
 
+struct ServerInfo {
+    string host;
+    string service;
+    string version;
+    string pruning;
+};
+
+void server_info_from_json(const nlohmann::json& j, ServerInfo& server_info);
+
+void server_infos_from_json(const nlohmann::json& j, vector<ServerInfo>& server_infos);
+
+
 #endif

@@ -26,6 +26,7 @@ public:
     virtual AddressBalance getBalance(string address) = 0;
     virtual string getBlockHeader(int height) = 0;
     virtual vector<Utxo> getUtxos(string scripthash) = 0;
+    virtual vector<ServerInfo> getServerPeers() = 0;
     virtual double estimateFee(int wait_blocks) = 0;
     virtual string broadcastTransaction(string txid) = 0;
     virtual void ping() = 0;

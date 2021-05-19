@@ -26,6 +26,7 @@ public:
     AddressBalance getBalance(string address) override;
     string getBlockHeader(int height) override;
     vector<Utxo> getUtxos(string scripthash) override;
+    vector<ServerInfo> getServerPeers() override;
     double estimateFee(int wait_blocks) override;
     string broadcastTransaction(string txid) override;
     void ping() override;
