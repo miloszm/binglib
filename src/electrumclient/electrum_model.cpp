@@ -70,8 +70,6 @@ void server_info_from_json(const nlohmann::json& j, ServerInfo& server_info) {
                 if (j == 0){
                     server_info.version = r.value();
                 } else if (j == 1){
-                    server_info.pruning = r.value();
-                } else if (j == 3){
                     string service = r.value();
                     if (!service.empty()) {
                         server_info.service = service.substr(1);
