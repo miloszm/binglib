@@ -1,10 +1,10 @@
 #ifndef RONGHUA_CLIENT_HPP
 #define RONGHUA_CLIENT_HPP
 
-//#include <binglib/ronghua_socket_client.hpp>
-#include "src/ronghuaclient/ronghua_socket_client.hpp"
-//#include <binglib/electrum_model.hpp>
-#include "src/electrumclient/electrum_model.hpp"
+#include <binglib/ronghua_socket_client.hpp>
+//#include "src/ronghuaclient/ronghua_socket_client.hpp"
+#include <binglib/electrum_model.hpp>
+//#include "src/electrumclient/electrum_model.hpp"
 #include <string>
 
 using namespace std;

@@ -2,8 +2,8 @@
 #define ELECTRUM_INTERFACE_HPP
 
 #include <string>
-//#include "binglib/electrum_model.hpp"
-#include "src/electrumclient/electrum_model.hpp"
+#include "binglib/electrum_model.hpp"
+//#include "src/electrumclient/electrum_model.hpp"
 
 using namespace std;
 

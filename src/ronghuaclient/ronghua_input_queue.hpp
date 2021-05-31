@@ -5,8 +5,8 @@
 #include <condition_variable>
 #include <deque>
 #include <nlohmann/json.hpp>
-//#include "binglib/electrum_model.hpp"
-#include "src/electrumclient/electrum_model.hpp"
+#include "binglib/electrum_model.hpp"
+//#include "src/electrumclient/electrum_model.hpp"
 
 using json = nlohmann::json;
 using namespace std;

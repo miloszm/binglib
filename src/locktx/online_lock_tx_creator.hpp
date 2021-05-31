@@ -1,12 +1,12 @@
 #ifndef ONLINE_LOCK_TX_CREATOR_HPP
 #define ONLINE_LOCK_TX_CREATOR_HPP
 
-//#include <binglib/bing_common.hpp>
-#include "src/common/bing_common.hpp"
-//#include <binglib/libb_client.hpp>
-#include <src/libbitcoinclient/libb_client.hpp>
-//#include <binglib/electrum_interface.hpp>
-#include "src/electrumclient/electrum_interface.hpp"
+#include <binglib/bing_common.hpp>
+//#include "src/common/bing_common.hpp"
+#include <binglib/libb_client.hpp>
+//#include <src/libbitcoinclient/libb_client.hpp>
+#include <binglib/electrum_interface.hpp>
+//#include "src/electrumclient/electrum_interface.hpp"
 #include <bitcoin/system.hpp>
 #include <string>
 

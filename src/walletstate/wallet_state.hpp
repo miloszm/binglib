@@ -1,13 +1,13 @@
 #ifndef WALLET_STATE_HPP
 #define WALLET_STATE_HPP
 
-//#include <binglib/bing_wallet.hpp>
-#include <src/wallet/bing_wallet.hpp>
+#include <binglib/bing_wallet.hpp>
+//#include <src/wallet/bing_wallet.hpp>
 #include <bitcoin/system.hpp>
-//#include <binglib/blocking_queue.hpp>
-#include "src/utility/blocking_queue.hpp"
-//#include <binglib/electrum_interface.hpp>
-#include "src/electrumclient/electrum_interface.hpp"
+#include <binglib/blocking_queue.hpp>
+//#include "src/utility/blocking_queue.hpp"
+#include <binglib/electrum_interface.hpp>
+//#include "src/electrumclient/electrum_interface.hpp"
 
 using namespace bc;
 using namespace bc::chain;
