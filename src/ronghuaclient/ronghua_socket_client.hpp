@@ -5,10 +5,10 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
 #include <nlohmann/json.hpp>
-#include "binglib/ronghua_input_queue.hpp"
-//#include "src/ronghuaclient/ronghua_input_queue.hpp"
-#include "binglib/electrum_interface.hpp"
-//#include "src/electrumclient/electrum_interface.hpp"
+//#include "binglib/ronghua_input_queue.hpp"
+#include "src/ronghuaclient/ronghua_input_queue.hpp"
+//#include "binglib/electrum_interface.hpp"
+#include "src/electrumclient/electrum_interface.hpp"
 
 class RonghuaSocketClient {
 public:

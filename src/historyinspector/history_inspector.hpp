@@ -1,10 +1,10 @@
 #ifndef BINGDIYI_HISTORY_INSPECTOR_HPP
 #define BINGDIYI_HISTORY_INSPECTOR_HPP
 
-#include <binglib/wallet_state.hpp>
-//#include "src/walletstate/wallet_state.hpp"
-#include <binglib/libb_client.hpp>
-//#include <src/libbitcoinclient/libb_client.hpp>
+//#include <binglib/wallet_state.hpp>
+#include "src/walletstate/wallet_state.hpp"
+//#include <binglib/libb_client.hpp>
+#include <src/libbitcoinclient/libb_client.hpp>
 #include <bitcoin/system.hpp>
 
 

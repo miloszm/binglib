@@ -1,10 +1,12 @@
-#include <binglib/bing_common.hpp>
+//#include <binglib/bing_common.hpp>
+#include "src/common/bing_common.hpp"
 #include <bitcoin/system.hpp>
-#include <binglib/libb_client.hpp>
-//#include <src/libbitcoinclient/libb_client.hpp>
-#include <binglib/funds_finder.hpp>
-//#include "src/libbfunds/funds_finder.hpp"
-#include <binglib/address_converter.hpp>
+//#include <binglib/libb_client.hpp>
+#include <src/libbitcoinclient/libb_client.hpp>
+//#include <binglib/funds_finder.hpp>
+#include "src/libbfunds/funds_finder.hpp"
+//#include <binglib/address_converter.hpp>
+#include "src/utility/address_converter.hpp"
 #include "online_p2pkh_tx_creator.hpp"
 
 

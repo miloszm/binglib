@@ -1,10 +1,12 @@
 #ifndef PURSE_ACCESSOR_HPP
 #define PURSE_ACCESSOR_HPP
 
-#include <binglib/bing_common.hpp>
-#include <binglib/electrum_interface.hpp>
-#include <binglib/libb_client.hpp>
-//#include "src/libbitcoinclient/libb_client.hpp"
+//#include <binglib/bing_common.hpp>
+#include "src/common/bing_common.hpp"
+//#include <binglib/electrum_interface.hpp>
+#include "src/electrumclient/electrum_interface.hpp"
+//#include <binglib/libb_client.hpp>
+#include "src/libbitcoinclient/libb_client.hpp"
 #include <bitcoin/system.hpp>
 
 using namespace std;

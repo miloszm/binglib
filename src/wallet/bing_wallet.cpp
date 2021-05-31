@@ -1,4 +1,5 @@
-#include <binglib/bing_common.hpp>
+//#include <binglib/bing_common.hpp>
+#include "src/common/bing_common.hpp"
 #define WITH_ICU
 #include <bitcoin/system/wallet/electrum.hpp>
 #include "bing_wallet.hpp"

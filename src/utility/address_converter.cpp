@@ -1,4 +1,5 @@
-#include <binglib/bing_common.hpp>
+//#include <binglib/bing_common.hpp>
+#include "src/common/bing_common.hpp"
 #include "address_converter.hpp"
 #include <bitcoin/system.hpp>
 #include <vector>

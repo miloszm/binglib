@@ -1,9 +1,11 @@
 #ifndef FUNDS_FINDER_HPP
 #define FUNDS_FINDER_HPP
 
-#include <binglib/bing_common.hpp>
+//#include <binglib/bing_common.hpp>
+#include "src/common/bing_common.hpp"
 #include <bitcoin/system.hpp>
-#include <binglib/electrum_model.hpp>
+//#include <binglib/electrum_model.hpp>
+#include "src/electrumclient/electrum_model.hpp"
 
 class FundsFinder {
 public:

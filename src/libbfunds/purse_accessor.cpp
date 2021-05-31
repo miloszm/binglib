@@ -1,6 +1,7 @@
 #include "purse_accessor.hpp"
 #include "funds_finder.hpp"
-#include <binglib/address_converter.hpp>
+//#include <binglib/address_converter.hpp>
+#include "src/utility/address_converter.hpp"
 
 using namespace std;
 using namespace bc;

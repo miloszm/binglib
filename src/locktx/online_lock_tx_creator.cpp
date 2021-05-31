@@ -1,6 +1,7 @@
 #include "online_lock_tx_creator.hpp"
 #include "src/libbscript/redeem_script.hpp"
-#include <binglib/address_converter.hpp>
+//#include <binglib/address_converter.hpp>
+#include "src/utility/address_converter.hpp"
 //#include <binglib/funds_finder.hpp>
 #include <src/libbfunds/funds_finder.hpp>
 

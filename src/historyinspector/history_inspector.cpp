@@ -1,6 +1,8 @@
-#include <binglib/bing_common.hpp>
+//#include <binglib/bing_common.hpp>
+#include "src/common/bing_common.hpp"
 #include "history_inspector.hpp"
-#include <binglib/address_converter.hpp>
+//#include <binglib/address_converter.hpp>
+#include "src/utility/address_converter.hpp"
 
 using namespace std;
 using namespace bc;

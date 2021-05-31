@@ -1,7 +1,9 @@
-#include <binglib/bing_common.hpp>
+//#include <binglib/bing_common.hpp>
+#include "src/common/bing_common.hpp"
 #include "wallet_state.hpp"
 #include <algorithm>
-#include <binglib/address_converter.hpp>
+//#include <binglib/address_converter.hpp>
+#include "src/utility/address_converter.hpp"
 
 using namespace std;
 using namespace bc;
