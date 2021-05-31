@@ -1,5 +1,5 @@
 #include <binglib/bing_common.hpp>
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 #include "offline_unlock_tx_creator.hpp"
 #include "src/libbscript/redeem_script.hpp"
 

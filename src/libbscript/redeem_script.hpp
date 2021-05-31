@@ -2,7 +2,7 @@
 #define REDEEM_SCRIPT_HPP
 
 #include <binglib/bing_common.hpp>
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 
 class RedeemScript {
 public:

@@ -1,7 +1,7 @@
 #ifndef BING_WALLET_HPP
 #define BING_WALLET_HPP
 
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 using namespace bc::wallet;
 #include <string>
 

@@ -2,7 +2,7 @@
 #define FUNDS_FINDER_HPP
 
 #include <binglib/bing_common.hpp>
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 #include <binglib/electrum_model.hpp>
 
 class FundsFinder {

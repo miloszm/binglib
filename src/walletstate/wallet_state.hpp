@@ -2,7 +2,8 @@
 #define WALLET_STATE_HPP
 
 #include <binglib/bing_wallet.hpp>
-#include <bitcoin/bitcoin.hpp>
+//#include <src/wallet/bing_wallet.hpp>
+#include <bitcoin/system.hpp>
 #include <binglib/blocking_queue.hpp>
 //#include "src/utility/blocking_queue.hpp"
 #include <binglib/electrum_interface.hpp>

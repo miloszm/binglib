@@ -3,8 +3,9 @@
 
 #include <binglib/bing_common.hpp>
 #include <binglib/libb_client.hpp>
+//#include <src/libbitcoinclient/libb_client.hpp>
 #include <binglib/electrum_interface.hpp>
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 #include <string>
 
 using namespace std;

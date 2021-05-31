@@ -1,7 +1,7 @@
 #ifndef OFFLINE_UNLOCK_TX_CREATOR_HPP
 #define OFFLINE_UNLOCK_TX_CREATOR_HPP
 
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 #include <string>
 
 using namespace std;

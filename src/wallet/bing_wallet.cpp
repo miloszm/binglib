@@ -1,4 +1,6 @@
 #include <binglib/bing_common.hpp>
+#define WITH_ICU
+#include <bitcoin/system/wallet/electrum.hpp>
 #include "bing_wallet.hpp"
 
 using namespace std;
@@ -16,10 +18,10 @@ void BingWallet::derive_electrum_addresses(
   addresses_to_data.clear();
 
   const word_list mnemonic = split(seed_phrase, " ");
-  if (!electrum::validate_mnemonic(mnemonic, language::en))
+  if (!wallet::electrum::validate_mnemonic(mnemonic, language::en))
     throw std::invalid_argument("incorrect mnemonic");
 
-  long_hash seed = electrum::decode_mnemonic(mnemonic);
+  long_hash seed = wallet::electrum::decode_mnemonic(mnemonic);
   data_chunk seedAsChunk(seed.begin(), seed.end());
 
   uint64_t testnet_or_mainnet{0};

@@ -1,6 +1,7 @@
 #include <binglib/bing_common.hpp>
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 #include <binglib/libb_client.hpp>
+//#include <src/libbitcoinclient/libb_client.hpp>
 #include <binglib/funds_finder.hpp>
 //#include "src/libbfunds/funds_finder.hpp"
 #include <binglib/address_converter.hpp>

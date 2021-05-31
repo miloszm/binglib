@@ -1,7 +1,7 @@
 #ifndef BING_CLIENT_HPP
 #define BING_CLIENT_HPP
 
-#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/system.hpp>
 #include <bitcoin/client.hpp>
 #include <vector>
 
