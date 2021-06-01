@@ -104,7 +104,7 @@ AddressHistory RonghuaClient::getHistory(string address) {
     return address_history;
 }
 
-vector<AddressHistory> RonghuaClient::getHistoryBulk(vector<string> addresses) {
+vector<AddressHistory> RonghuaClient::getHistoryBulk(vector<string> addresses, vector<ProgressCallback>& progress_callbacks) {
     cout << "getHistoryBulk " << addresses.size() << "\n";
     vector<AddressHistory> histories;
     const int target_count = addresses.size();
@@ -201,7 +201,7 @@ string RonghuaClient::getTransaction(string txid) {
     return response;
 }
 
-vector<string> RonghuaClient::getTransactionBulk(vector<string> txids) {
+vector<string> RonghuaClient::getTransactionBulk(vector<string> txids, vector<ProgressCallback>& progress_callbacks) {
     cout << "getTransactionBulk " << txids.size() << "\n";
     vector<string> txhexes;
     const int target_count = txids.size();

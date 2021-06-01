@@ -20,9 +20,9 @@ public:
     void scripthashSubscribe(string scripthash) override;
     void scripthashSubscribeBulk(vector<string> scripthashes) override;
     AddressHistory getHistory(string address) override;
-    vector<AddressHistory> getHistoryBulk(vector<string> addresses) override;
+    vector<AddressHistory> getHistoryBulk(vector<string> addresses, vector<ProgressCallback>& progress_callbacks) override;
     string getTransaction(string txid) override;
-    vector<string> getTransactionBulk(vector<string> txids) override;
+    vector<string> getTransactionBulk(vector<string> txids, vector<ProgressCallback>& progress_callbacks) override;
     AddressBalance getBalance(string address) override;
     string getBlockHeader(int height) override;
     vector<Utxo> getUtxos(string scripthash) override;

@@ -52,8 +52,6 @@ WalletState::get_transaction(XElectrumInterface &electrum_api_client,
     if (tx_hex.empty()) {
         tx_hex = electrum_api_client.client().getTransaction(txid);
         txid_2_txhex_cache_[txid] = tx_hex;
-        ProgressEvent progress_event {0, 0, 1};
-        push_progress_event(progress_event);
     }
     return hex_2_tx(tx_hex);
 }
@@ -69,8 +67,6 @@ void WalletState::get_history(XElectrumInterface &electrum_api_client,
     if (address_history.empty()) {
         string address_spkh = AddressConverter::base58_to_spkh_hex(address);
         AddressHistory history = electrum_api_client.client().getHistory(address_spkh);
-        ProgressEvent progress_event {1, static_cast<int>(history.size()), 0};
-        push_progress_event(progress_event);
         for (const AddressHistoryItem &history_item : history) {
             AddressHistoryItem ahi{history_item.txid, history_item.height, true};
             history_items.push_back(ahi);
@@ -107,13 +103,16 @@ void WalletState::refresh_all_history_bulk(XElectrumInterface &electrum_api_clie
     auto cmp = [](const AddressHistoryItem& a, const AddressHistoryItem& b) { return a.txid < b.txid; };
     std::set<AddressHistoryItem, decltype(cmp)> ahi_set(cmp);
 
+    ProgressEvent progress_event { 0, static_cast<int>(addresses_.size()), 0, 0};
+    push_progress_event(progress_event);
+
     vector<string> addresses_spkh;
     for (auto a: addresses_){
         string address_spkh = AddressConverter::base58_to_spkh_hex(a);
         addresses_spkh.push_back(address_spkh);
     }
 
-    auto histories = electrum_api_client.client().getHistoryBulk(addresses_spkh);
+    auto histories = electrum_api_client.client().getHistoryBulk(addresses_spkh, progress_callbacks_);
 
     // note, we assume get-history-bulk does not change the 1-1 of addresses and returned histories
     int i = 0;
@@ -132,8 +131,6 @@ void WalletState::refresh_all_history_bulk(XElectrumInterface &electrum_api_clie
     for (auto ahi: ahi_set) {
         all_history_.push_back(ahi);
     }
-    ProgressEvent progress_event {static_cast<int>(addresses_.size()), static_cast<int>(all_history_.size()), 0};
-    push_progress_event(progress_event);
 }
 
 vector<TransactionInfo>
@@ -182,7 +179,7 @@ WalletState::get_all_txs_sorted_bulk(XElectrumInterface &electrum_api_client) {
         txids.push_back(item.txid);
     }
     // we assume getTransactionBulk does not change the order !!
-    vector<string> tx_hexes = electrum_api_client.client().getTransactionBulk(txids);
+    vector<string> tx_hexes = electrum_api_client.client().getTransactionBulk(txids, progress_callbacks_);
     int i = 0;
     for (const AddressHistoryItem &item : all_history_) {
         string tx_hex = tx_hexes.at(i);
@@ -191,8 +188,6 @@ WalletState::get_all_txs_sorted_bulk(XElectrumInterface &electrum_api_client) {
         txs.push_back(transaction_info);
         ++i;
     }
-    ProgressEvent progress_event { 0, 0, static_cast<int>(txs.size())};
-    push_progress_event(progress_event);
     return txs;
 }
 
@@ -265,12 +260,10 @@ void WalletState::push_progress_event(ProgressEvent progress_event) {
 }
 
 void WalletState::load_txs_bulk(XElectrumInterface &electrum_api_client, const vector<string>& txids) {
-    vector<string> funding_tx_hexes = electrum_api_client.client().getTransactionBulk(txids);
+    vector<string> funding_tx_hexes = electrum_api_client.client().getTransactionBulk(txids, progress_callbacks_);
     int i = 0;
     for (auto txid: txids){
         txid_2_txhex_cache_[txid] = funding_tx_hexes.at(i);
         ++i;
     }
-    ProgressEvent progress_event { 0, 0, static_cast<int>(funding_tx_hexes.size())};
-    push_progress_event(progress_event);
 }

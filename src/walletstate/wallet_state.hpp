@@ -37,14 +37,6 @@ struct HistoryViewRow {
     bool fresh;
 };
 
-struct ProgressEvent {
-    int history_read_count;
-    int tx_pending_count;
-    int tx_read_count;
-};
-
-typedef std::function<void(ProgressEvent)> ProgressCallback;
-
 class WalletState {
   public:
     WalletState(vector<string> &addresses, map<string,AddressDerivationResult>& address_to_data);
