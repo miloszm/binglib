@@ -89,7 +89,7 @@ LockTxInfo OnlineLockTxCreator::do_construct_p2sh_time_locking_tx_from_address(
     if (utxos.empty()){
         ostringstream oss;
         oss << "Insufficient funds, required " << satoshis_needed << ", maximum at one address available " << available_funds << "\n";
-        throw std::invalid_argument(oss.str());
+        throw InsufficientFundsException(oss.str(), satoshis_needed, available_funds);
     }
     auto refund = available_funds - satoshis_needed;
 

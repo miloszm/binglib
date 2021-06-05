@@ -46,7 +46,8 @@ include_binglib_HEADERS = \
     src/locktx/online_lock_tx_creator.hpp \
     src/unlocktx/offline_unlock_tx_creator.hpp \
     src/walletstate/wallet_state.hpp \
-    src/historyinspector/history_inspector.hpp
+    src/historyinspector/history_inspector.hpp \
+    src/common/bing_exception.hpp
 
 
 

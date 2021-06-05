@@ -92,8 +92,8 @@ string OnlineP2pkhTxCreator::do_construct_p2pkh_tx_from_address(
     auto satoshis_needed = amount_to_transfer + satoshis_fee;
     if (utxos.empty()){
         ostringstream oss;
-        oss << "Insufficient funds, required " << satoshis_needed << ", maximum available " << available_funds;
-        throw std::invalid_argument(oss.str());
+        oss << "Insufficient funds, required " << satoshis_needed << ", available " << available_funds;
+        throw InsufficientFundsException(oss.str(), satoshis_needed, available_funds);
     }
     auto refund = available_funds - satoshis_needed;
 
