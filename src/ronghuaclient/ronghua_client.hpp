@@ -62,9 +62,6 @@ private:
     tcp::resolver::results_type endpoints_;
     std::mutex mutex_;
     std::atomic<int> id_counter;
-    string hostname_;
-    string service_;
-    string certification_file_path_;
     std::atomic<bool> interrupt_requested_;
     vector<ElectrumErrorCallback> electrum_error_callbacks_;
 

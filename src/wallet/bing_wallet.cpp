@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "src/common/bing_common.hpp"
-#define WITH_ICU
+#define WITH_ICU 1
 #include <bitcoin/system/wallet/electrum.hpp>
 #include "bing_wallet.hpp"
 

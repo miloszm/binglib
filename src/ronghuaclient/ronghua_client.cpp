@@ -59,12 +59,10 @@ bool RonghuaClient::init(string hostname, string service,
     client_.reset(new RonghuaSocketClient(*io_context_, *ctx_, endpoints_, interrupt_requested_, electrum_error_callbacks_));
     io_context_->run();
     client_.get()->run_receiving_loop();
-//    client_.get()->prepare_connection.lock();
     return true;
 }
 
 void RonghuaClient::stop() {
-//    client_.get()->prepare_connection.unlock();
     client_.get()->stop();
     io_context_->stop();
 }
@@ -245,7 +243,6 @@ void RonghuaClient::doGetTransactionBulk(const vector<string>& txids, vector<str
         try {
             string response = r.at("result");
             txhexes.push_back(response);
-            //cout << "doGetTransactionBulk " << txids.at(i) << "\n";
         } catch(exception& e){
             process_exception(e, r, "blockchain.transaction.get");
         }

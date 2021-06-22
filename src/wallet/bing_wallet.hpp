@@ -31,8 +31,8 @@ struct AddressDerivationResult {
 };
 
 /**
- * derives `count` of addresses and a corresponding address to ec_private map
- * from a given seed_phrase
+ * from a given seed_phrase, it derives `count` of addresses
+ * and a corresponding address-to-ec_private map
  * count0 is the number of addresses with path m/0/x ("receiving" in Electrum speak)
  * count1 is the number of addresses with path m/1/x ("change" in Electrum speak)
  */

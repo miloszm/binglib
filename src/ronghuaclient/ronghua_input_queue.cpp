@@ -19,7 +19,6 @@
 #include "ronghua_input_queue.hpp"
 #include <chrono>
 #include <thread>
-#include <iostream>
 
 using namespace std::chrono_literals;
 using json = nlohmann::json;

@@ -40,11 +40,9 @@ RonghuaSocketClient::RonghuaSocketClient(boost::asio::io_context &io_context,
                                    vector<ElectrumErrorCallback>& electrum_error_callbacks
                                    )
         : socket_(io_context, context), io_context_(&io_context), interrupt_requested_(interrupt_requested), electrum_error_callbacks_(electrum_error_callbacks) {
-//    prepare_connection.lock();
     socket_.set_verify_mode(boost::asio::ssl::verify_none);
     socket_.set_verify_callback(
             std::bind(&RonghuaSocketClient::verify_certificate, this, std::placeholders::_1, std::placeholders::_2));
-//    timer_.reset(new boost::asio::deadline_timer (io_context.get_executor()));
     connect(endpoints);
 }
 
@@ -78,7 +76,6 @@ void RonghuaSocketClient::connect(const tcp::resolver::results_type &endpoints) 
                                        handshake();
                                    } else {
                                        push_error(error.value(), error.message());
-                                       //throw std::runtime_error(error.message());
                                    }
                                });
 }
@@ -86,11 +83,8 @@ void RonghuaSocketClient::connect(const tcp::resolver::results_type &endpoints) 
 void RonghuaSocketClient::handshake() {
     socket_.async_handshake(boost::asio::ssl::stream_base::client,
                             [this](const boost::system::error_code &error) {
-                                if (!error) {
-                                    // prepare_connection.unlock();
-                                } else {
+                                if (error) {
                                     push_error(error.value(), error.message());
-                                    //throw std::runtime_error(error.message());
                                 }
                             });
 }
