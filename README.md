@@ -1,6 +1,6 @@
 # binglib
 
-*Bitcoin Wallet Helper Library*
+*Bitcoin Wallet Helper Library with Focus on CLTV*
 
 **License Overview**
 
@@ -26,13 +26,25 @@ The functionality includes:
 - AddressConverter converts base58 address format to Script Public Key Hash format
 
 The above functionality provides core functions for the Bitcoin wallet.
-Focus of the functionality is on CLTV operation, to allow the wallet to be able to
-lock and unlock funds at a given Bitcoin address.
+Focus of the functionality is on the CLTV operation, to allow wallets to
+lock and unlock funds at a given Bitcoin address. Generic wallet functionality,
+such as wallet history or customary funds transfer is also supported.
 
 **Limitations**
 
 At the moment, the library does not support Segwit, it only works with legacy addresses.
 In the next phase, the library will be extended to support Segwit and Taproot addresses.
+
+## Installation
+
+To build on macOS, the following Autotools commands are used.
+```sh
+$ ./autoreconf -i
+$ ./configure
+$ make
+$ make install
+```
+binglib requires libbitcoin, boost and libsecp256k1.
 
 
 
