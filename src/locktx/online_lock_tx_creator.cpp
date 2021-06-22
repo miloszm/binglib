@@ -140,10 +140,7 @@ LockTxInfo OnlineLockTxCreator::do_construct_p2sh_time_locking_tx_from_address(
         // sig
         script previousLockingScript = script().to_pay_key_hash_pattern(bitcoin_short_hash(pub_key_data_chunk));
         endorsement sig;
-        if(previousLockingScript.create_endorsement(sig, priv_key_ec.secret(), previousLockingScript, tx, i, all))
-        {
-            std::cout << "Signature: " << encode_base16(sig) << std::endl;
-        }
+        previousLockingScript.create_endorsement(sig, priv_key_ec.secret(), previousLockingScript, tx, i, all);
         // unlocking previous
         operation::list sigScript;
         sigScript.push_back(operation(sig));
@@ -152,13 +149,6 @@ LockTxInfo OnlineLockTxCreator::do_construct_p2sh_time_locking_tx_from_address(
 
         tx.inputs()[i].set_script(scriptUnlockingPreviousLockingScript);
     }
-
-    cout << "==========================" << "\n";
-    cout << "==========================" << "\n";
-    std::cout << "Transaction with frozen output until " << lock_until << ":" << std::endl;
-    std::cout << encode_base16(tx.to_data()) << std::endl;
-    cout << "==========================" << "\n";
-    cout << "==========================" << "\n";
 
     string tx_to_unlock = encode_hash(tx.hash());
 

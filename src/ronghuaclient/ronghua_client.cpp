@@ -51,7 +51,6 @@ bool RonghuaClient::init(string hostname, string service,
     boost::system::error_code ec;
     endpoints_ = resolver.resolve(hostname, service, ec);
     if (ec.failed()){
-        cout << "resolver error: " << ec.value() << " " << ec.message() << "\n";
         return false;
     }
 
@@ -104,7 +103,6 @@ AddressHistory RonghuaClient::getHistory(string address) {
     ElectrumRequest request{"blockchain.scripthash.get_history", ++id_counter, av};
     json json_request;
     electrum_request_to_json(json_request, request);
-    cout << "getHistory " << address << "\n";
     AddressHistory address_history;
     json json_response;
     try {
@@ -117,7 +115,6 @@ AddressHistory RonghuaClient::getHistory(string address) {
 }
 
 vector<AddressHistory> RonghuaClient::getHistoryBulk(vector<string> addresses, vector<ProgressCallback>& progress_callbacks) {
-    cout << "getHistoryBulk " << addresses.size() << "\n";
     vector<AddressHistory> histories;
     const int target_count = addresses.size();
     const int chunk_factor = 25;
@@ -131,7 +128,6 @@ vector<AddressHistory> RonghuaClient::getHistoryBulk(vector<string> addresses, v
 }
 
 void RonghuaClient::doGetHistoryBulk(const vector<string>& addresses, vector<AddressHistory>& histories) {
-    cout << "doGetHistoryBulk " << addresses.size() << "\n";
     vector<int> ids;
     for (string address: addresses) {
         vector<string> av{address};
@@ -148,7 +144,6 @@ void RonghuaClient::doGetHistoryBulk(const vector<string>& addresses, vector<Add
             AddressHistory ah;
             address_history_from_json(r["result"], ah);
             histories.push_back(ah);
-            cout << "getHistoryBulk " << addresses.at(i) << "\n";
         } catch(exception& e){
             process_exception(e, r, "blockchain.scripthash.get_history");
         }
@@ -177,7 +172,6 @@ vector<Utxo> RonghuaClient::getUtxos(string scripthash) {
     ElectrumRequest request{"blockchain.scripthash.listunspent", ++id_counter, scripthashv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    cout << "getUtxos " << scripthash << "\n";
     vector<Utxo> utxos;
     json json_response;
     try {
@@ -194,7 +188,6 @@ vector<Utxo> RonghuaClient::getUtxos(string scripthash) {
 }
 
 string RonghuaClient::getTransaction(string txid) {
-    cout << "getTransaction " << txid << "\n";
     if (txid.empty()){
         throw std::invalid_argument("getTransaction txid is empty");
     }
@@ -214,7 +207,6 @@ string RonghuaClient::getTransaction(string txid) {
 }
 
 vector<string> RonghuaClient::getTransactionBulk(vector<string> txids, vector<ProgressCallback>& progress_callbacks) {
-    cout << "getTransactionBulk " << txids.size() << "\n";
     vector<string> txhexes;
     const int target_count = txids.size();
     const int chunk_factor = 100;
@@ -311,7 +303,6 @@ string RonghuaClient::broadcastTransaction(string tx_hex) {
     ElectrumRequest request{"blockchain.transaction.broadcast", ++id_counter, tx_hexv};
     json json_request;
     electrum_request_to_json(json_request, request);
-    cout << "broadcastTransaction\n";
     string response;
     json json_response;
     try {
@@ -327,13 +318,10 @@ vector<string> RonghuaClient::getVersion(string client_name, vector<string> prot
     ElectrumVersionRequest request{"server.version", ++id_counter, client_name, protocol_min_max};
     json json_request;
     electrum_request_to_json(json_request, request);
-    cout << "getVersion\n";
-    cout << json_request.dump(4) << "\n";
     vector<string> response;
     json json_response;
     try {
         json_response = send_request(json_request, id_counter);
-        cout << json_response.dump(4) << "\n";
         json_response.at("result").get_to(response);
     } catch(exception& e){
         process_exception(e, json_response, "blockchain.transaction.broadcast");

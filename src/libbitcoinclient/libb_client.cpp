@@ -20,9 +20,6 @@
 //#include <binglib/bing_common.hpp>
 #include "src/common/bing_common.hpp"
 
-// TODO
-// eliminate all cout here and convert to exceptions
-
 void LibbClient::init(std::string url) {
   url_ = url;
   re_init();
@@ -73,8 +70,6 @@ void LibbClient::fetch_utxo(const wallet::payment_address address,
   client_->blockchain_fetch_unspent_outputs(on_error, on_reply, address,
                                             satoshis, algorithm);
   client_->wait();
-
-  cout << "LibbClient::fetch_utxo " << address << "\n";
 }
 
 void LibbClient::fetch_history(const wallet::payment_address &address,
@@ -137,8 +132,6 @@ void LibbClient::fetch_header(int height, chain::header &header) {
   client_->wait();
   if (is_error)
     throw std::invalid_argument(oss.str());
-
-  // cout << "LibbClient::fetch_header " << height << "\n";
 }
 
 void LibbClient::send_tx(std::string tx_hex) {

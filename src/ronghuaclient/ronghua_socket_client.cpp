@@ -182,7 +182,6 @@ ElectrumMessage RonghuaSocketClient::from_json(nlohmann::json message) {
 }
 
 void RonghuaSocketClient::do_interrupt() {
-    cout << "entering RonghuaSocketClient::do_interrupt\n";
     ElectrumMessage poison_message{json::parse("{}"), "", false, 0};
     queue_.push(poison_message);
     io_context_->stop();

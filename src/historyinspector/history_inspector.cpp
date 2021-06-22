@@ -107,18 +107,12 @@ wallet::payment_address::list HistoryInspector::get_addresses(output &o) {
 
 void HistoryInspector::analyse_tx_balances(string tx_id,
                                            vector<TxBalance> &balance_items) {
-    if (tx_id.empty()){
-        cout << "empty txid in analyse_tx_balances\n";
-    }
     chain::transaction tx =
         wallet_state_.get_transaction(electrum_api_client_, tx_id);
     vector<TxBalanceInput> balance_inputs;
     vector<TxBalanceOutput> balance_outputs;
     for (auto &i : tx.inputs()) {
         string funding_tx_id = encode_hash(i.previous_output().hash());
-        if (funding_tx_id.empty()){
-            cout << "empty funding_tx_id in analyse_tx_balances\n";
-        }
         int funding_idx = i.previous_output().index();
         chain::transaction funding_tx =
             wallet_state_.get_transaction(electrum_api_client_, funding_tx_id);
