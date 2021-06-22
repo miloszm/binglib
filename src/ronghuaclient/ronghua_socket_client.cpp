@@ -1,3 +1,21 @@
+/**
+ * Copyright (c) 2020-2021 binglib developers (see AUTHORS)
+ *
+ * This file is part of binglib.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include "ronghua_socket_client.hpp"
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
@@ -84,10 +102,6 @@ void RonghuaSocketClient::send_request(json json_request) {
     std::string req = req0 + "\n";
     strcpy(request_, req.data());
     size_t request_length = strlen(req.data());
-    //cout << "sending request: " << req << "\n";
-
-//    timer_.get()->expires_from_now(boost::posix_time::seconds(10));
-//    timer_.get()->async_wait(boost::bind(&RonghuaSocketClient::timeout_handler, this, boost::asio::placeholders::error));
     boost::asio::write(socket_, boost::asio::buffer(request_, request_length));
 }
 
@@ -117,12 +131,6 @@ void RonghuaSocketClient::run_receiving_loop() {
     }
 }
 
-//void RonghuaSocketClient::timeout_handler(const boost::system::error_code& e) {
-//    if (e != boost::asio::error::operation_aborted) {
-//        push_error(boost::system::errc::timed_out, "ronghua timeout");
-//    }
-//}
-
 void RonghuaSocketClient::async_read() {
     if (!interrupt_requested_) {
         socket_.async_read_some(boost::asio::buffer(buf, 512),
@@ -133,14 +141,8 @@ void RonghuaSocketClient::async_read() {
 }
 
 void RonghuaSocketClient::do_read(const boost::system::error_code& error, size_t length) {
-    //unique_lock<mutex> lock(read_mutex_);
-
-//    timer_.get()->cancel();
     if (error) {
         push_error(error.value(), error.message());
-//        if (error.value() != 60) {
-//            throw std::runtime_error(error.message());
-//        }
     }
 
     if (length > 0) {
