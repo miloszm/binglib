@@ -21,6 +21,9 @@
 
 #include <bitcoin/system.hpp>
 #include <string>
+#include <binglib/bing_exception.hpp>
+//#include "src/common/bing_exception.hpp"
+
 
 using namespace std;
 

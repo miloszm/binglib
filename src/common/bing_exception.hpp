@@ -40,4 +40,18 @@ public:
     }
 };
 
+class InvalidAddressException : public std::exception {
+public:
+    std::string message_;
+
+    explicit InvalidAddressException(const std::string& message)
+        : message_(message) {}
+
+    virtual ~InvalidAddressException() noexcept {}
+
+    virtual const char* what() const noexcept {
+        return message_.c_str();
+    }
+};
+
 #endif

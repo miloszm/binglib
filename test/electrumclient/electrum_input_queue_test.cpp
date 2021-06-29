@@ -19,8 +19,8 @@
 #define BOOST_TEST_MODULE bing_test
 #include <boost/test/included/unit_test.hpp>
 
-#include <binglib/electrum_input_queue.hpp>
-#include <binglib/json_socket_client.hpp>
+#include <binglib/ronghua_input_queue.hpp>
+#include <binglib/ronghua_socket_client.hpp>
 #include <iostream>
 
 using namespace std;
@@ -29,7 +29,7 @@ using namespace std;
 
 BOOST_AUTO_TEST_CASE(electrum_input_queue_test)
 {
-    ElectrumInputQueue queue;
+    RonghuaInputQueue queue;
 
     for (int i = 1; i < 4; i++){
         ElectrumMessage message {json::parse("{}"), "", true, i};
@@ -55,24 +55,24 @@ BOOST_AUTO_TEST_CASE(electrum_input_queue_test)
 BOOST_AUTO_TEST_CASE(electrum_message_from_json_test)
 {
     json msg_json_1 = json::parse(R"({"jsonrpc":"2.0","method":"ping","id":17})");
-    ElectrumMessage message1 = JsonSocketClient::from_json(msg_json_1);
+    ElectrumMessage message1 = RonghuaSocketClient::from_json(msg_json_1);
     BOOST_TEST(message1.method == "ping");
     BOOST_TEST(message1.has_correlation_id == true);
     BOOST_TEST(message1.correlation_id == 17);
 
     json msg_json_2 = json::parse(R"({"jsonrpc":"2.0","id":18})");
-    ElectrumMessage message2 = JsonSocketClient::from_json(msg_json_2);
+    ElectrumMessage message2 = RonghuaSocketClient::from_json(msg_json_2);
     BOOST_TEST(message2.method == "");
     BOOST_TEST(message2.has_correlation_id == true);
     BOOST_TEST(message2.correlation_id == 18);
 
     json msg_json_3 = json::parse(R"({"jsonrpc":"2.0","method":"ping2"})");
-    ElectrumMessage message3 = JsonSocketClient::from_json(msg_json_3);
+    ElectrumMessage message3 = RonghuaSocketClient::from_json(msg_json_3);
     BOOST_TEST(message3.method == "ping2");
     BOOST_TEST(message3.has_correlation_id == false);
 
     json msg_json_4 = json::parse(R"({"jsonrpc":"2.0","method":"ping2","params": ["p1","p2"]})");
-    ElectrumMessage message4 = JsonSocketClient::from_json(msg_json_4);
+    ElectrumMessage message4 = RonghuaSocketClient::from_json(msg_json_4);
     BOOST_TEST(message4.method == "ping2");
     BOOST_TEST(message4.has_correlation_id == false);
     BOOST_TEST(message4.params.size() == 2);

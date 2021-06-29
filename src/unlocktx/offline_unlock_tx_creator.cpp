@@ -59,7 +59,11 @@ string OfflineUnlockTxCreator::construct_unlock_tx(
     input1.set_previous_output(utxo);
     input1.set_sequence(0);
 
-    script currentLockingScript = script().to_pay_key_hash_pattern(payment_address(target_addr).hash());
+    payment_address target_payment_address(target_addr);
+    if (!target_payment_address) {
+        throw InvalidAddressException("Invalid target address");
+    }
+    script currentLockingScript = script().to_pay_key_hash_pattern(target_payment_address.hash());
     output output1(satoshis_to_transfer, currentLockingScript);
 
     transaction tx = transaction();

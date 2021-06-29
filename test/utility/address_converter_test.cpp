@@ -26,6 +26,12 @@
 using namespace std;
 
 
+bool is_address_mm(const data_slice& decoded)
+{
+    return (decoded.size() == payment_size) && verify_checksum(decoded);
+}
+
+
 
 BOOST_AUTO_TEST_CASE(address_2_spkh_conversion_test)
 {
@@ -36,7 +42,18 @@ BOOST_AUTO_TEST_CASE(address_2_spkh_conversion_test)
 BOOST_AUTO_TEST_CASE(spkh_2_address_conversion_test)
 {
     vector<string> addresses {"mpS14bFCZiHFRxfNNbnPT2FScJBrm96iLE"};
-    WalletState wallet_state(addresses);
+    map<string,AddressDerivationResult> address_to_data;
+    WalletState wallet_state(addresses, address_to_data);
     string address = wallet_state.spkh_2_address("af89af88915ddf9ee02b223800d66aec14e01bb523bd870c6c358fb935d9f004");
     BOOST_TEST(address == "mpS14bFCZiHFRxfNNbnPT2FScJBrm96iLE");
+}
+
+BOOST_AUTO_TEST_CASE(invalid_address_conversion)
+{
+    payment_address invalid_payment_address_1 = payment_address("pies");
+    bool valid_1{invalid_payment_address_1};
+    BOOST_TEST(valid_1 == false);
+    payment_address invalid_payment_address_2 = payment_address("tb1qxns7rtlkql56lp6mt2dmp79yrumnmja66t052d");
+    bool valid_2{invalid_payment_address_2};
+    BOOST_TEST(valid_2 == false);
 }

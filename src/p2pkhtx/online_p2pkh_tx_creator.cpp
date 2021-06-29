@@ -55,7 +55,11 @@ string OnlineP2pkhTxCreator::construct_p2pkh_tx_from_address(
         const std::string target_addr
 ) {
     chain::points_value points_value;
-    libb_client.fetch_utxo(payment_address(src_addr), 1, wallet::select_outputs::algorithm::individual, points_value);
+    payment_address source_payment_address(src_addr);
+    if (!source_payment_address) {
+        throw InvalidAddressException("Invalid target address");
+    }
+    libb_client.fetch_utxo(source_payment_address, 1, wallet::select_outputs::algorithm::individual, points_value);
     auto satoshis_needed = amount_to_transfer + satoshis_fee;
     auto utxos_funds = FundsFinder::find_funds(satoshis_needed, points_value);
     auto utxos = utxos_funds.first;
@@ -114,9 +118,13 @@ string OnlineP2pkhTxCreator::do_construct_p2pkh_tx_from_address(
     }
     auto refund = available_funds - satoshis_needed;
 
+    payment_address target_payment_address(target_addr);
+    if (!target_payment_address) {
+        throw InvalidAddressException("Invalid target address");
+    }
     // output 0
     script current_locking_script =
-            script().to_pay_key_hash_pattern(payment_address(target_addr).hash());
+            script().to_pay_key_hash_pattern(target_payment_address.hash());
     output output0(amount_to_transfer, current_locking_script);
 
     // tx
@@ -128,8 +136,13 @@ string OnlineP2pkhTxCreator::do_construct_p2pkh_tx_from_address(
         tx.inputs().push_back(input1);
     }
     tx.outputs().push_back(output0);
+
+    payment_address source_payment_address(src_addr);
+    if (!source_payment_address){
+        throw InvalidAddressException("Invalid source address");
+    }
     if (refund > 0){
-        output output1(refund, script().to_pay_key_hash_pattern(payment_address(src_addr).hash()));
+        output output1(refund, script().to_pay_key_hash_pattern(source_payment_address.hash()));
         tx.outputs().push_back(output1);
     }
     tx.set_version(1);

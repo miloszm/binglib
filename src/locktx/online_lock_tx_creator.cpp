@@ -52,7 +52,11 @@ LockTxInfo OnlineLockTxCreator::construct_p2sh_time_locking_tx_from_address(
         const uint32_t lock_until
 ) {
     chain::points_value points_value;
-    libb_client.fetch_utxo(payment_address(src_addr), 1, wallet::select_outputs::algorithm::individual, points_value);
+    payment_address source_payment_address(src_addr);
+    if (!source_payment_address) {
+        throw InvalidAddressException("Invalid source address");
+    }
+    libb_client.fetch_utxo(source_payment_address, 1, wallet::select_outputs::algorithm::individual, points_value);
     auto satoshis_needed = amount_to_transfer + satoshis_fee;
     auto utxos_funds = FundsFinder::find_funds(satoshis_needed, points_value);
     auto utxos = utxos_funds.first;
@@ -129,8 +133,12 @@ LockTxInfo OnlineLockTxCreator::do_construct_p2sh_time_locking_tx_from_address(
         tx.inputs().push_back(input1);
     }
     tx.outputs().push_back(output0);
+    payment_address source_payment_address(src_addr);
+    if (!source_payment_address) {
+        throw InvalidAddressException("Invalid source address");
+    }
     if (refund > 0){
-        output output1(refund, script().to_pay_key_hash_pattern(payment_address(src_addr).hash()));
+        output output1(refund, script().to_pay_key_hash_pattern(source_payment_address.hash()));
         tx.outputs().push_back(output1);
     }
     tx.set_version(1);
