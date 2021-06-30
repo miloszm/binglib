@@ -40,17 +40,25 @@ public:
     }
 };
 
-class InvalidAddressException : public std::exception {
+class InvalidTargetAddressException : public std::exception {
 public:
-    std::string message_;
+    explicit InvalidTargetAddressException(){}
 
-    explicit InvalidAddressException(const std::string& message)
-        : message_(message) {}
-
-    virtual ~InvalidAddressException() noexcept {}
+    virtual ~InvalidTargetAddressException() noexcept {}
 
     virtual const char* what() const noexcept {
-        return message_.c_str();
+        return "invalid target address";
+    }
+};
+
+class InvalidSourceAddressException : public std::exception {
+public:
+    explicit InvalidSourceAddressException(){}
+
+    virtual ~InvalidSourceAddressException() noexcept {}
+
+    virtual const char* what() const noexcept {
+        return "invalid source address";
     }
 };
 
