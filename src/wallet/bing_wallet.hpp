@@ -42,6 +42,7 @@ public:
   derive_electrum_addresses(bool testnet, const string seed_phrase, int count0, int count1,
                    vector<string> &addresses,
                    map<string, AddressDerivationResult> &addresses_to_data);
+  static bool is_mnemonic_valid(const string& seed_phrase);
 };
 
 #endif

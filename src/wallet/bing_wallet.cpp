@@ -27,6 +27,11 @@ using namespace bc::chain;
 using namespace bc::wallet;
 using namespace bc::machine;
 
+bool BingWallet::is_mnemonic_valid(const string& seed_phrase) {
+    const word_list mnemonic = split(seed_phrase, " ");
+    return wallet::electrum::validate_mnemonic(mnemonic, language::en);
+}
+
 void BingWallet::derive_electrum_addresses(
     bool testnet, const string seed_phrase, int count0, int count1,
     vector<string> &addresses,
