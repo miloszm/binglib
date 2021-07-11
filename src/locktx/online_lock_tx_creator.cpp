@@ -166,7 +166,7 @@ LockTxInfo OnlineLockTxCreator::do_construct_p2sh_time_locking_tx_from_address(
     infoss << "===== data that will be needed to unlock the funds: ====" << "\n";
     infoss << "1) lock time: " << lock_until << " <=> " << std::put_time(std::localtime(&t), "%c %Z") << "\n";
     infoss << "2) private key of address: " << src_addr << "\n";
-    infoss << "3) available amount: " << amount_to_transfer << "\n";
+    infoss << "3) available amount: " << amount_to_transfer << " satoshi" << "\n";
     infoss << "   from ^^ please subtract fee" << "\n";
     infoss << "4) funding transaction id: " << tx_to_unlock << "\n";
     infoss << "5) desired target address to which the unlocked funds will be transferred" << "\n";
