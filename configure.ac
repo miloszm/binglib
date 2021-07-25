@@ -1,4 +1,4 @@
-AC_INIT([bingx], [0.0.2], [mm@example.com])
+AC_INIT([bingx], [0.4.0], [mm@labzm.com])
 
 AC_CONFIG_MACRO_DIR([m4])
 

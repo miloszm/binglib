@@ -91,10 +91,10 @@ void PurseAccessor::scan_balances(ElectrumInterface &electrum_api_client,
 
 AddressFundsInfo PurseAccessor::look_for_address_with_balance(
     uint64_t requested_funds,
-    vector<string> &addresses, map<string, uint64_t> &address_to_balance) {
+    const vector<string> &addresses, const map<string, uint64_t> &address_to_balance) {
   AddressFundsInfo maxFunds = AddressFundsInfo{"", 0, 0};
-  for (string& a : addresses) {
-    uint64_t balance = address_to_balance[a];
+  for (const string& a : addresses) {
+    uint64_t balance = address_to_balance.at(a);
     if (balance >= requested_funds) {
         return AddressFundsInfo{a, requested_funds, balance};
     } else {

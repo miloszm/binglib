@@ -75,8 +75,8 @@ public:
                             map<string, uint64_t> &address_to_balance);
   static AddressFundsInfo
   look_for_address_with_balance(uint64_t requested_funds,
-                                std::vector<string> &addresses,
-                                map<string, uint64_t> &address_to_balance);
+                                const std::vector<string> &addresses,
+                                const map<string, uint64_t> &address_to_balance);
 
   static void find_utxos(LibbClient &libb_client, vector<string>& addresses, map<string, uint64_t>& address_to_balance, map<string, vector<UtxoInfo>>& address_to_utxos);
 
