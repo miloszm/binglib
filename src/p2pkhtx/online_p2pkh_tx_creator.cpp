@@ -57,7 +57,7 @@ string OnlineP2pkhTxCreator::construct_p2pkh_tx_from_address(
     chain::points_value points_value;
     payment_address source_payment_address(src_addr);
     if (!source_payment_address) {
-        throw InvalidTargetAddressException();
+        throw InvalidSourceAddressException();
     }
     libb_client.fetch_utxo(source_payment_address, 1, wallet::select_outputs::algorithm::individual, points_value);
     auto satoshis_needed = amount_to_transfer + satoshis_fee;
@@ -119,6 +119,9 @@ string OnlineP2pkhTxCreator::do_construct_p2pkh_tx_from_address(
     auto refund = available_funds - satoshis_needed;
 
     payment_address target_payment_address(target_addr);
+    if (target_payment_address.version() ==  payment_address::mainnet_p2sh || target_payment_address.version() ==  payment_address::testnet_p2sh){
+        throw InvalidTargetAddressException();
+    }
     if (!target_payment_address) {
         throw InvalidTargetAddressException();
     }

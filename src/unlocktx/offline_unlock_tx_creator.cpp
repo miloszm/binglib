@@ -60,6 +60,9 @@ string OfflineUnlockTxCreator::construct_unlock_tx(
     input1.set_sequence(0);
 
     payment_address target_payment_address(target_addr);
+    if (target_payment_address.version() ==  payment_address::mainnet_p2sh || target_payment_address.version() ==  payment_address::testnet_p2sh){
+        throw InvalidTargetAddressException();
+    }
     if (!target_payment_address) {
         throw InvalidTargetAddressException();
     }
