@@ -54,6 +54,7 @@ public:
     void stop() override;
     void subscribe_to_error_events(ElectrumErrorCallback error_callback) override;
     void clear_error_events_subscriptions() override;
+    nlohmann::json send_request(nlohmann::json json_request, int id);
 
 private:
     unique_ptr<RonghuaSocketClient> client_;
@@ -65,7 +66,6 @@ private:
     std::atomic<bool> interrupt_requested_;
     vector<ElectrumErrorCallback> electrum_error_callbacks_;
 
-    nlohmann::json send_request(nlohmann::json json_request, int id);
     int send_request_no_response(json json_request, int id);
     void send_request_eat_response(nlohmann::json json_request, int id);
     void process_exception(exception& e, nlohmann::json response, const string& msg);
