@@ -21,7 +21,7 @@ The functionality includes:
 - OnlineP2pkhTxCreator creates a transaction (P2PKH) which transfers funds between addresses
 - OfflineUnlockTxCreator creates a transaction (P2PKH) which unlocks and transfers funds
 - BingWallet derives addresses from a given Electrum format seed phrase
-- RohghuaClient implements ElectrumInterface providing access to Electrum Server API
+- RonghuaClient implements ElectrumInterface providing access to Electrum Server API
 - WalletState holds wallet state such as addresses and transactions history
 - AddressConverter converts base58 address format to Script Public Key Hash format
 
