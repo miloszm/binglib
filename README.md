@@ -30,6 +30,8 @@ Focus of the functionality is on the CLTV operation, to allow wallets to
 lock and unlock funds at a given Bitcoin address. Generic wallet functionality,
 such as wallet history or customary funds transfer is also supported.
 
+UI desktop wallet that uses this library can be seen in the demo at: https://www.youtube.com/watch?v=eBqC2IIbnQA
+
 **Limitations**
 
 At the moment, the library does not support Segwit, it only works with legacy addresses.
